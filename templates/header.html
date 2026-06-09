@@ -2,52 +2,73 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<title>Restaurante The Venue</title>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="description" content="The Venue template project">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css" href="{% static 'public/styles/bootstrap-4.1.2/bootstrap.min.css' %}">
-<link href="{% static 'public/plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" href="{% static 'public/plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'public/plugins/OwlCarousel2-2.2.1/owl.theme.default.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'public/plugins/OwlCarousel2-2.2.1/animate.css' %}">
-<link href="{% static 'public/plugins/colorbox/colorbox.css' %}" rel="stylesheet" type="text/css">
-<link href="{% static 'public/plugins/jquery-datepicker/jquery-ui.css' %}" rel="stylesheet" type="text/css">
-<link href="{% static 'public/plugins/jquery-timepicker/jquery.timepicker.css' %}" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" href="{% static 'public/styles/main_styles.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'public/styles/responsive.css' %}">
+    <title>Restaurante The Venue</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="The Venue template project">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'public/styles/bootstrap-4.1.2/bootstrap.min.css' %}">
+    <link href="{% static 'public/plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="{% static 'public/plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'public/plugins/OwlCarousel2-2.2.1/owl.theme.default.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'public/plugins/OwlCarousel2-2.2.1/animate.css' %}">
+    <link href="{% static 'public/plugins/colorbox/colorbox.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'public/plugins/jquery-datepicker/jquery-ui.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'public/plugins/jquery-timepicker/jquery.timepicker.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="{% static 'public/styles/main_styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'public/styles/responsive.css' %}">
 </head>
+
 <body>
 
 <div class="super_container">
-	
-	<!-- Encabezado principal del restaurante -->
 
-	<header class="header">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="header_content d-flex flex-row align-items-center justify-content-start">
-						<div class="logo">
-							<a href="#">
-								<div>The Venue Premium</div>
-								<div>Restaurante Gourmet</div>
+    <!-- Header -->
+
+    <header class="header">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+
+                    <div class="header_content d-flex flex-row align-items-center">
+
+                        <!-- Logo -->
+                        <div class="logo">
+                            <a href="{% url 'home' %}">
+                                <div>The Venue Premium</div>
+                                <div>Restaurante Gourmet</div>
+                            </a>
+                        </div>
+
+                        <!-- Menú -->
+                        <nav class="main_nav ml-5">
+                            <ul class="d-flex flex-row align-items-center justify-content-start">
+                                <li><a href="{% url 'home' %}">Inicio</a></li>
+                                <li><a href="{% url 'about' %}">Nosotros</a></li>
+                                <li><a href="{% url 'menu' %}">Carta</a></li>
+                                <li><a href="#">Delivery Express</a></li>
+                                <li><a href="{% url 'blog' %}">Blog</a></li>
+                                <li><a href="{% url 'contact' %}">Contacto</a></li>
+                            </ul>
+                        </nav>
+
+                        <!-- Login + Teléfono -->
+                        <div class="ml-auto d-flex align-items-center">
+
+                            <a href="{% url 'login' %}" class="btn btn-warning mr-3">
+   							 <i class="fa fa-user"></i> Login
 							</a>
-						</div>
-						<nav class="main_nav">
-							<ul class="d-flex flex-row align-items-center justify-content-start">
-								<li><a href="{% url 'home' %}">Inicio</a></li>
-								<li><a href="{% url 'about' %}">Nosotros</a></li>
-								<li><a href="{% url 'menu' %}">Cartya</a></li>
-								<li><a href="#">Delivey Express</a></li>
-								<li><a href="{% url 'blog' %}">blog</a></li>
-								<li><a href="{% url 'contact' %}">Contacto</a></li>
-							</ul>
-						</nav>
-						<div class="reservations_phone ml-auto">Reservations: +593 98 446 4591</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</header>
+
+                            <div class="reservations_phone">
+                                +593 98 446 4591
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </header>
