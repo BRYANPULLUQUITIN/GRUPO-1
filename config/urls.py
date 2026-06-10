@@ -23,6 +23,6 @@ urlpatterns = [
     path('blog/',include('inicio.urls')),
     path('contact/',include('inicio.urls')),
     path('menu/',include('inicio.urls')),
-    path('login/',include('inicio.urls')),
-  
+    
+    
 ]
