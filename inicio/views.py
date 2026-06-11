@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login as auth_login
 
 # Create your views here.
@@ -20,4 +20,24 @@ def about(request):
 
 def home(request):
   return render(request, 'home.html')
+
+def login_view(request):  # Cambié el nombre para no confundir con la función login de Django
+    if request.method == 'POST':
+        username = request.POST.get('username')  # Usa .get() para evitar errores
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            auth_login(request, user)
+            return redirect('dashboard')  
+        else:
+            return render(request, 'login.html', {'error': 'Usuario o contraseña incorrectos'})
+    
+    return render(request, 'login.html')
+
+
+def dashboard(request):
+    return render(request, 'dashboard.html')
+
 

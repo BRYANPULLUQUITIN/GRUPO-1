@@ -1,8 +1,9 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<title>Restaurante The Venue</title>
+<title>The Venue</title>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="description" content="The Venue template project">
@@ -22,7 +23,7 @@
 
 <div class="super_container">
 	
-	<!-- Encabezado principal del restaurante -->
+	<!-- Header -->
 
 	<header class="header">
 		<div class="container">
@@ -31,23 +32,23 @@
 					<div class="header_content d-flex flex-row align-items-center justify-content-start">
 						<div class="logo">
 							<a href="#">
-								<div>The Venue Premium</div>
-								<div>Restaurante Gourmet</div>
+								<div>The Venue</div>
+								<div>restaurant</div>
 							</a>
 						</div>
 						<nav class="main_nav">
 							<ul class="d-flex flex-row align-items-center justify-content-start">
-								<li><a href="{% url 'home' %}">Inicio</a></li>
-								<li><a href="{% url 'about' %}">Nosotros</a></li>
-								<li><a href="{% url 'menu' %}">Cartya</a></li>
-								<li><a href="#">Delivey Express</a></li>
+								<li><a href="{% url 'home' %}">Casita</a></li>
+								<li><a href="{% url 'about' %}">about us</a></li>
+								<li><a href="{% url 'menu' %}">menu</a></li>
 								<li><a href="{% url 'blog' %}">blog</a></li>
-								<li><a href="{% url 'contact' %}">Contacto</a></li>
+								<li><a href="{% url 'contact' %}">contact</a></li>
+                                <li><a href="{% url 'login' %}">Inicio de sesion</a></li>
 							</ul>
 						</nav>
-						<div class="reservations_phone ml-auto">Reservations: +593 98 446 4591</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</header>
+</div>

@@ -1,0 +1,365 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Dashboard Admin | Private Area</title>
+    
+    <!-- Bootstrap 4 + Dripicons (dw) + jQuery (necesarios para dropdowns y funcionalidad) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/dripicons/2.0.0/webfont.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- IonIcons para el icono de flecha -->
+    <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+    
+    <style>
+        /* Estilos mínimos para respetar el layout original y asegurar funcionamiento */
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background: #ffffff;
+            box-shadow: 0 1px 15px rgba(0,0,0,0.04);
+            padding: 0 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            height: 70px;
+        }
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .menu-icon, .search-toggle-icon {
+            font-size: 24px;
+            cursor: pointer;
+            color: #5c5f73;
+            transition: 0.2s;
+        }
+        .menu-icon:hover, .search-toggle-icon:hover {
+            color: #0062cc;
+        }
+        .header-search {
+            position: relative;
+        }
+        .header-search .form-group {
+            position: relative;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0a4b8;
+            font-size: 18px;
+        }
+        .search-input {
+            padding-left: 38px;
+            border-radius: 30px;
+            border: 1px solid #e4e6ef;
+            height: 42px;
+            width: 240px;
+            background-color: #f5f6fa;
+            transition: 0.2s;
+        }
+        .search-input:focus {
+            width: 300px;
+            border-color: #0062cc;
+            outline: none;
+        }
+        .dropdown-toggle.no-arrow::after {
+            display: none;
+        }
+        .dropdown-menu {
+            border-radius: 12px;
+            margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: none;
+        }
+        .notification-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        .notification-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .notification-list li {
+            border-bottom: 1px solid #edf2f9;
+            transition: 0.1s;
+        }
+        .notification-list li:hover {
+            background: #f8f9fe;
+        }
+        .notification-list li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 18px;
+            text-decoration: none;
+            gap: 12px;
+        }
+        .notification-list li a img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #eef2f7;
+        }
+        .notification-list li a h3 {
+            font-size: 14px;
+            margin: 0 0 5px;
+            font-weight: 600;
+            color: #1a2c3e;
+        }
+        .notification-list li a p {
+            font-size: 12px;
+            margin: 0;
+            color: #6c7a8e;
+        }
+        .badge.notification-active {
+            background-color: #f64e60;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            padding: 0;
+        }
+        .user-info-dropdown .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .user-icon img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e2e8f0;
+        }
+        .user-name {
+            font-weight: 500;
+            color: #2d3748;
+        }
+        .github-link img {
+            width: 24px;
+            opacity: 0.6;
+            transition: 0.2s;
+        }
+        .github-link img:hover {
+            opacity: 1;
+        }
+        .dropdown-menu-icon-list .dropdown-item i {
+            margin-right: 10px;
+            width: 20px;
+        }
+        @media (max-width: 768px) {
+            .header {
+                height: auto;
+                padding: 12px 15px;
+                gap: 12px;
+            }
+            .search-input {
+                width: 160px;
+            }
+            .user-name {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <!-- Parte izquierda: menú + buscador avanzado -->
+    <div class="header-left">
+        <!-- Ícono de menú lateral (puede enlazar a dashboard o toggle sidebar) -->
+        
+        
+        <!-- Ícono que despliega el buscador (toggle) -->
+        <div class="search-toggle-icon dw dw-search2" id="searchToggleBtn" style="cursor: pointer;"></div>
+        
+        <!-- Formulario de búsqueda avanzada (original) -->
+        <div class="header-search" id="headerSearchBlock" style="display: none;">
+            <form method="GET" action="{% url 'buscar_avanzada' %}">
+                <div class="form-group mb-0">
+                    <i class="dw dw-search2 search-icon"></i>
+                    <input type="text" class="form-control search-input" name="query" placeholder="Buscar...">
+                    <div class="dropdown" style="display: inline-block;">
+                        <a class="dropdown-toggle no-arrow" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="ion-arrow-down-c"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" style="padding: 15px; min-width: 260px;">
+                            <div class="form-group row">
+                                <label class="col-sm-12 col-md-3 col-form-label">Desde</label>
+                                <div class="col-sm-12 col-md-9">
+                                    <input class="form-control form-control-sm" type="date" name="fecha_desde">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-12 col-md-3 col-form-label">Hasta</label>
+                                <div class="col-sm-12 col-md-9">
+                                    <input class="form-control form-control-sm" type="date" name="fecha_hasta">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-12 col-md-3 col-form-label">Asunto</label>
+                                <div class="col-sm-12 col-md-9">
+                                    <input class="form-control form-control-sm" type="text" name="asunto" placeholder="Asunto">
+                                </div>
+                            </div>
+                            <div class="text-right mt-2">
+                                <button type="submit" class="btn btn-primary btn-sm">Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Parte derecha: notificaciones, settings, perfil, github -->
+    <div class="header-right">
+        <!-- Configuración / Ajustes -->
+        <div class="dashboard-setting user-notification">
+            <div class="dropdown">
+                <a class="dropdown-toggle no-arrow" href="{% url 'ajustes' %}" data-toggle="tooltip" title="Configuración">
+                    <i class="dw dw-settings2"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Notificaciones (dropdown con items dinámicos y URLs) -->
+        <div class="user-notification">
+            <div class="dropdown">
+                <a class="dropdown-toggle no-arrow" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="icon-copy dw dw-notification"></i>
+                    <span class="badge notification-active"></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" style="width: 340px;">
+                    <div class="notification-list mx-h-350 customscroll">
+                        <ul>
+                            <li>
+                                <a href="{% url 'notificacion_detalle' id=1 %}">
+                                    <img src="{% static 'private/images/avatar1.jpg' %}" alt="user">
+                                    <div><h3>Juan Cruz</h3><p>Nuevo registro en el sistema - Revisar permisos.</p></div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'notificacion_detalle' id=2 %}">
+                                    <img src="{% static 'private/images/avatar2.jpg' %}" alt="user">
+                                    <div><h3>María López</h3><p>Actualización de perfil completada.</p></div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'notificacion_detalle' id=3 %}">
+                                    <img src="{% static 'private/images/avatar3.jpg' %}" alt="user">
+                                    <div><h3>Carlos Ruiz</h3><p>Nuevo mensaje en el centro de ayuda.</p></div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'notificacion_detalle' id=4 %}">
+                                    <img src="{% static 'private/images/avatar4.jpg' %}" alt="user">
+                                    <div><h3>Laura Méndez</h3><p>Recordatorio: reunión a las 15:00.</p></div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'notificacion_detalle' id=5 %}">
+                                    <img src="{% static 'private/images/avatar5.jpg' %}" alt="user">
+                                    <div><h3>Diego Morales</h3><p>Se requiere aprobación de documento.</p></div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dropdown de usuario (Profile, Settings, Help, Logout) -->
+        <div class="user-info-dropdown">
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="user-icon">
+                        <img src="{% static 'private/images/user-photo.jpg' %}" alt="avatar">
+                    </span>
+                    <span class="user-name">Ross C. Lopez</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                    <a class="dropdown-item" href="{% url 'perfil_usuario' %}"><i class="dw dw-user1"></i> Mi Perfil</a>
+                    <a class="dropdown-item" href="{% url 'configuracion_cuenta' %}"><i class="dw dw-settings2"></i> Configuración</a>
+                    <a class="dropdown-item" href="{% url 'ayuda_soporte' %}"><i class="dw dw-help"></i> Centro de ayuda</a>
+                    <a class="dropdown-item" href="{% url 'cerrar_sesion' %}"><i class="dw dw-logout"></i> Cerrar sesión</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Link externo a GitHub (puedes redirigir a repo privado o dejarlo) -->
+        <div class="github-link">
+            <a href="https://github.com/tu-usuario/tu-repo-privado" target="_blank">
+                <img src="{% static 'private/images/github-icon.svg' %}" alt="GitHub">
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts necesarios para el funcionamiento de dropdowns, toggles y componentes -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // Funcionalidad toggle para mostrar/ocultar el buscador avanzado (respetando el comportamiento original)
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchToggle = document.getElementById('searchToggleBtn');
+        const searchBlock = document.getElementById('headerSearchBlock');
+        
+        if (searchToggle && searchBlock) {
+            searchToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (searchBlock.style.display === 'none' || getComputedStyle(searchBlock).display === 'none') {
+                    searchBlock.style.display = 'block';
+                    // opcional: enfocar input
+                    const inputSearch = searchBlock.querySelector('.search-input');
+                    if (inputSearch) inputSearch.focus();
+                } else {
+                    searchBlock.style.display = 'none';
+                }
+            });
+        }
+        
+        // Pequeña mejora: cerrar buscador si se hace clic fuera (opcional)
+        document.addEventListener('click', function(event) {
+            if (searchBlock && searchToggle) {
+                const isClickInside = searchBlock.contains(event.target) || searchToggle.contains(event.target);
+                if (!isClickInside && searchBlock.style.display === 'block') {
+                    searchBlock.style.display = 'none';
+                }
+            }
+        });
+    });
+</script>
+
+<!-- Nota: Las imágenes referenciadas en {% static %} deben existir en tu directorio static.
+     Ejemplo de estructura:
+     static/
+        private/
+            images/
+                avatar1.jpg, avatar2.jpg, user-photo.jpg, github-icon.svg
+     
+     Las URLs usadas (dashboard, buscar_avanzada, ajustes, notificacion_detalle, perfil_usuario, etc.)
+     deben estar definidas en tu archivo urls.py. Ajusta los nombres según tu proyecto.
+-->
+</body>
+</html>
