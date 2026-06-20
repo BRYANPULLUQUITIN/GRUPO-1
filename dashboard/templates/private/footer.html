@@ -1,93 +1,33 @@
 {% load static %}
-<!-- Footer Section - DeskApp Admin Template con Redireccionamientos Django -->
-<div class="footer-wrap pd-20 mb-20 card-box">
-    <!-- Créditos del Template con enlace externo (se abre en nueva pestaña por seguridad) -->
-    <span class="copyright-text">DeskApp - Bootstrap 4 Admin Template By 
-        <a href="https://github.com/dropways" target="_blank" rel="noopener noreferrer">Ankit Hingarajiya</a>
-    </span>
-    <!-- Separador sutil para mostrar redireccionamientos internos -->
-    <span class="mx-2 text-muted">|</span>
-    <!-- Enlaces de redireccionamiento interno del sistema (modo private) -->
-    <span class="internal-links">
-        <a href="{% url 'dashboard' %}" class="text-primary"><i class="dw dw-home"></i> Dashboard</a>
-        <span class="mx-1">•</span>
-        <a href="{% url 'admin_panel' %}" class="text-secondary"><i class="dw dw-settings2"></i> Administración</a>
-        <span class="mx-1">•</span>
-        <a href="{% url 'perfil_usuario' %}" class="text-info"><i class="dw dw-user"></i> Mi Perfil</a>
-        <span class="mx-1">•</span>
-        <a href="{% url 'soporte' %}" class="text-warning"><i class="dw dw-help"></i> Soporte</a>
-        <span class="mx-1">•</span>
-        <a href="{% url 'logout' %}" class="text-danger" onclick="return confirm('¿Cerrar sesión?')"><i class="dw dw-logout"></i> Salir</a>
-    </span>
-</div>
 
-<!-- Scripts necesarios para el funcionamiento (con rutas static corregidas) -->
-<script src="{% static 'vendors/scripts/core.js' %}"></script>
-<script src="{% static 'vendors/scripts/script.min.js' %}"></script>
-<script src="{% static 'vendors/scripts/process.js' %}"></script>
-<script src="{% static 'vendors/scripts/layout-settings.js' %}"></script>
-<script src="{% static 'src/plugins/jQuery-Knob-master/jquery.knob.min.js' %}"></script>
-<script src="{% static 'src/plugins/highcharts-6.0.7/code/highcharts.js' %}"></script>
-<script src="{% static 'src/plugins/highcharts-6.0.7/code/highcharts-more.js' %}"></script>
-<script src="{% static 'src/plugins/jvectormap/jquery-jvectormap-2.0.3.min.js' %}"></script>
-<script src="{% static 'src/plugins/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
-<script src="{% static 'vendors/scripts/dashboard2.js' %}"></script>
+	<div class="footer-wrap pd-20 mb-20 card-box">
+				DeskApp - Bootstrap 4 Admin Template By <a href="https://github.com/dropways" target="_blank">Ankit Hingarajiya</a>
+			</div>
+		</div>
+	</div>
+	
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+<!-- Use a single full jQuery build -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+<script src="{% static 'private/vendors/scripts/core.min.js' %}"></script>
 
-<!-- Estilos adicionales para mejorar el footer y mantener coherencia visual -->
-<style>
-    .footer-wrap {
-        background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        font-size: 14px;
-        transition: all 0.2s ease;
-    }
-    .footer-wrap a {
-        text-decoration: none;
-        transition: color 0.2s;
-        margin: 0 2px;
-    }
-    .footer-wrap a:hover {
-        text-decoration: underline;
-        opacity: 0.8;
-    }
-    .internal-links a {
-        font-weight: 500;
-        font-size: 13px;
-    }
-    .copyright-text {
-        color: #5c6f87;
-    }
-    @media (max-width: 768px) {
-        .footer-wrap {
-            text-align: center;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .internal-links {
-            display: inline-block;
-            margin-top: 6px;
-        }
-        .mx-2, .mx-1 {
-            display: inline-block;
-        }
-    }
-</style>
+<!-- Plugin CSS -->
+<link rel="stylesheet" href="{% static 'private/src/plugins/select2/dist/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'private/src/plugins/bootstrap-wysihtml5-master/bootstrap-wysihtml5.css' %}">
 
-<!-- Script de verificación de rutas estáticas (útil en entorno privado) -->
-<script>
-    (function() {
-        // Verifica si los scripts estáticos cargan correctamente (opcional, para debug)
-        console.log("Footer cargado - Enlaces internos redirigen a URLs de Django.");
-        // Se asegura que los enlaces no tengan comportamiento por defecto no deseado
-        document.querySelectorAll('.internal-links a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                // Solo prevenimos si la URL es '#' por si acaso, pero todas usan url template tag.
-                if (this.getAttribute('href') === '#') {
-                    e.preventDefault();
-                    console.warn('Enlace sin definir, revisa tu archivo urls.py');
-                }
-            });
-        });
-    })();
-</script>
+<!-- Plugin JS (must load before setting.js) -->
+<script src="{% static 'private/src/plugins/select2/dist/js/select2.full.min.js' %}"></script>
+<script src="{% static 'private/src/plugins/wysihtml5-master/dist/wysihtml5-0.3.0.js' %}"></script>
+<script src="{% static 'private/src/plugins/bootstrap-wysihtml5-master/bootstrap-wysihtml5.js' %}"></script>
+
+<script src="{% static 'private/src/scripts/setting.js' %}"></script>
+<script src="{% static 'private/src/plugins/apexcharts/apexcharts.min.js' %}"></script>
+<script src="{% static 'private/src/plugins/datatables/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'private/src/plugins/datatables/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'private/src/plugins/datatables/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'private/src/plugins/datatables/js/responsive.bootstrap4.min.js' %}"></script>
+
+</body>
+</html>
