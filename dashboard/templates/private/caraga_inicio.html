@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cargando... - Bienvenido</title>
+    <style>
+        /* --- Reset y estilos generales --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* --- Contenedor principal --- */
+        .loading-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 50px 60px;
+            border-radius: 30px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: slideUp 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* --- Borde decorativo --- */
+        .loading-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 300% 100%;
+            animation: gradientMove 3s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* --- Avatar del usuario --- */
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 48px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            animation: pulseAvatar 2s ease-in-out infinite;
+            user-select: none;
+        }
+
+        @keyframes pulseAvatar {
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+            }
+        }
+
+        /* --- Texto de bienvenida --- */
+        .welcome-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .username {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sub-text {
+            color: #718096;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+
+        /* --- Barra de progreso --- */
+        .progress-wrapper {
+            position: relative;
+            margin: 25px 0 15px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 50px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 50px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        /* Efecto de brillo en la barra */
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* --- Porcentaje --- */
+        .percentage {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin: 10px 0 5px;
+        }
+
+        .percentage span {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* --- Mensaje de estado --- */
+        .status-message {
+            color: #4a5568;
+            font-size: 0.95rem;
+            min-height: 28px;
+            margin: 5px 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .status-message .icon {
+            font-size: 1.2rem;
+        }
+
+        /* --- Puntos de carga (animación) --- */
+        .dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .dots span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: dotBounce 1.4s ease-in-out infinite;
+        }
+
+        .dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes dotBounce {
+            0%,
+            80%,
+            100% {
+                transform: scale(0.6);
+                opacity: 0.4;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* --- Botón (oculto inicialmente) --- */
+        .btn-continue {
+            display: none;
+            margin: 20px auto 0;
+            padding: 14px 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-continue:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-continue:active {
+            transform: scale(0.97);
+        }
+
+        .btn-continue.show {
+            display: inline-block;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Iconos decorativos flotantes --- */
+        .floating-icon {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.1;
+            animation: floatIcon 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .floating-icon:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+        .floating-icon:nth-child(2) {
+            bottom: 15%;
+            right: 5%;
+            animation-delay: 2s;
+            font-size: 2.5rem;
+        }
+        .floating-icon:nth-child(3) {
+            top: 50%;
+            right: 3%;
+            animation-delay: 4s;
+            font-size: 1.8rem;
+        }
+
+        @keyframes floatIcon {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+            }
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 600px) {
+            .loading-container {
+                padding: 30px 24px;
+                border-radius: 24px;
+            }
+
+            .welcome-text {
+                font-size: 1.4rem;
+            }
+
+            .user-avatar {
+                width: 75px;
+                height: 75px;
+                font-size: 36px;
+            }
+
+            .percentage {
+                font-size: 1.8rem;
+            }
+
+            .btn-continue {
+                padding: 12px 36px;
+                font-size: 1rem;
+            }
+
+            .floating-icon {
+                display: none;
+            }
+        }
+
+        /* --- Tema oscuro (opcional) --- */
+        @media (prefers-color-scheme: dark) {
+            .loading-container {
+                background: rgba(26, 32, 44, 0.95);
+            }
+
+            .welcome-text {
+                color: #e2e8f0;
+            }
+
+            .sub-text {
+                color: #a0aec0;
+            }
+
+            .percentage {
+                color: #e2e8f0;
+            }
+
+            .status-message {
+                color: #cbd5e0;
+            }
+
+            .progress-bar-bg {
+                background: #2d3748;
+            }
+
+            .user-avatar {
+                background: linear-gradient(135deg, #4c51bf, #6b46c1);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-container">
+        <!-- Iconos decorativos -->
+        <div class="floating-icon">✦</div>
+        <div class="floating-icon">✧</div>
+        <div class="floating-icon">✦</div>
+
+        <!-- Avatar del usuario -->
+        <div class="user-avatar" id="userAvatar">👤</div>
+
+        <!-- Bienvenida -->
+        <h1 class="welcome-text">
+            ¡Bienvenido, <span class="username" id="usernameDisplay">Usuario</span>!
+        </h1>
+        <p class="sub-text">Preparando tu experiencia personalizada</p>
+
+        <!-- Barra de progreso -->
+        <div class="progress-wrapper">
+            <div class="progress-bar-bg">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <!-- Porcentaje -->
+        <div class="percentage">
+            <span id="percentageDisplay">0</span>%
+        </div>
+
+        <!-- Mensaje de estado -->
+        <div class="status-message" id="statusMessage">
+            <span class="icon">🔄</span>
+            Cargando datos
+            <span class="dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+        </div>
+
+        <!-- Botón continuar -->
+        <button class="btn-continue" id="btnContinue">
+            ✨ Ir al panel principal
+        </button>
+    </div>
+
+    <script>
+        // =============================================
+        // 1. CONFIGURACIÓN
+        // =============================================
+        // Simula el nombre del usuario que inició sesión
+        // Puedes cambiar este valor o tomarlo de sessionStorage
+        const USERNAME = "María García";
+
+        // =============================================
+        // 2. ELEMENTOS DEL DOM
+        // =============================================
+        const progressBar = document.getElementById('progressBar');
+        const percentageDisplay = document.getElementById('percentageDisplay');
+        const statusMessage = document.getElementById('statusMessage');
+        const btnContinue = document.getElementById('btnContinue');
+        const usernameDisplay = document.getElementById('usernameDisplay');
+        const userAvatar = document.getElementById('userAvatar');
+
+        // =============================================
+        // 3. DATOS DE LA CARGA (simulados)
+        // =============================================
+        const loadingSteps = [
+            { progress: 10, message: '🔄 Conectando con el servidor...' },
+            { progress: 25, message: '📁 Cargando perfil de usuario...' },
+            { progress: 40, message: '📊 Sincronizando datos...' },
+            { progress: 55, message: '📨 Verificando mensajes...' },
+            { progress: 70, message: '📅 Cargando calendario...' },
+            { progress: 85, message: '🔒 Verificando seguridad...' },
+            { progress: 95, message: '🎨 Personalizando interfaz...' },
+            { progress: 100, message: '✅ ¡Todo listo!' },
+        ];
+
+        // =============================================
+        // 4. FUNCIÓN PRINCIPAL DE CARGA
+        // =============================================
+        function startLoading() {
+            let currentStep = 0;
+
+            // Mostrar el nombre del usuario
+            usernameDisplay.textContent = USERNAME;
+
+            // Inicializar avatar con la inicial del usuario
+            const initial = USERNAME.charAt(0).toUpperCase();
+            userAvatar.textContent = initial;
+
+            function loadNextStep() {
+                if (currentStep >= loadingSteps.length) {
+                    // Carga completa
+                    btnContinue.classList.add('show');
+                    statusMessage.innerHTML = `
+                        <span class="icon">✅</span>
+                        ¡Carga completada exitosamente!
+                    `;
+                    return;
+                }
+
+                const step = loadingSteps[currentStep];
+                const progress = step.progress;
+                const message = step.message;
+
+                // Actualizar barra y porcentaje
+                progressBar.style.width = progress + '%';
+                percentageDisplay.textContent = progress;
+
+                // Actualizar mensaje de estado
+                statusMessage.innerHTML = `
+                    <span class="icon">${message.split(' ')[0]}</span>
+                    ${message.substring(message.indexOf(' ') + 1)}
+                    <span class="dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                `;
+
+                currentStep++;
+
+                // Si no es el último paso, programar el siguiente
+                if (currentStep < loadingSteps.length) {
+                    // Velocidad variable para simular carga realista
+                    const delay = 300 + Math.random() * 600;
+                    setTimeout(loadNextStep, delay);
+                } else {
+                    // Último paso: completar con 100%
+                    setTimeout(() => {
+                        progressBar.style.width = '100%';
+                        percentageDisplay.textContent = '100';
+                        statusMessage.innerHTML = `
+                            <span class="icon">✅</span>
+                            ¡Carga completada exitosamente!
+                        `;
+                        btnContinue.classList.add('show');
+                    }, 300);
+                }
+            }
+
+            // Iniciar la carga después de un breve retraso
+            setTimeout(loadNextStep, 400);
+        }
+
+        // =============================================
+        // 5. EVENTOS
+        // =============================================
+
+        // Botón continuar: redirige al panel principal
+        btnContinue.addEventListener('click', function() {
+            // Animación de salida
+            const container = document.querySelector('.loading-container');
+            container.style.transition = 'all 0.5s ease';
+            container.style.transform = 'scale(0.9)';
+            container.style.opacity = '0';
+
+            setTimeout(() => {
+                // Aquí puedes redirigir a la página principal
+                // window.location.href = 'dashboard.html';
+                alert('🚀 Redirigiendo al panel principal...');
+                // Por ahora solo reiniciamos la carga para demo
+                location.reload();
+            }, 500);
+        });
+
+        // =============================================
+        // 6. INICIAR LA CARGA
+        // =============================================
+        document.addEventListener('DOMContentLoaded', startLoading);
+
+        // =============================================
+        // 7. OBTENER NOMBRE DE USUARIO DESDE SESSION STORAGE
+        // =============================================
+        // Descomenta estas líneas si quieres obtener el nombre
+        // desde sessionStorage (después del login)
+        /*
+        const storedUser = sessionStorage.getItem('username');
+        if (storedUser) {
+            USERNAME = storedUser;
+        }
+        */
+
+        console.log('🔐 Usuario autenticado:', USERNAME);
+        console.log('📦 Cargando datos...');
+    </script>
+
+</body>
+</html>

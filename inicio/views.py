@@ -30,13 +30,14 @@ def login_view(request):  # Cambié el nombre para no confundir con la función 
         
         if user is not None:
             auth_login(request, user)
-            return redirect('dashboard')  
+            return redirect('splash')  # Redirige a la página de splash después del login exitoso
         else:
             return render(request, 'login.html', {'error': 'Usuario o contraseña incorrectos'})
     
     return render(request, 'login.html')
 
-
+def splash(request):
+    return render(request, 'splash.html') 
 def dashboard(request):
     return render(request, 'dashboard.html')
 

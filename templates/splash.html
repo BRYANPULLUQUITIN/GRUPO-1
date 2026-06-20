@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargando... - Sistema de Acceso</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #7b1a3e;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* ── Burbujas decorativas de fondo ── */
+        .bubble {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+        }
+
+        .bubble-1 {
+            width: 420px;
+            height: 420px;
+            top: -100px;
+            right: -100px;
+            border: 30px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .bubble-2 {
+            width: 260px;
+            height: 260px;
+            bottom: -80px;
+            left: -60px;
+            border: 20px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .bubble-3 {
+            width: 160px;
+            height: 160px;
+            top: 40%;
+            left: 8%;
+            border: 14px solid rgba(255, 255, 255, 0.03);
+        }
+
+        /* ── Contenedor central ── */
+        .splash {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        /* ── Logo con anillos giratorios ── */
+        .logo-ring {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.10);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 30px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .logo-ring::before {
+            content: '';
+            position: absolute;
+            inset: -7px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.20);
+            animation: spin 3s linear infinite;
+        }
+
+        .logo-ring::after {
+            content: '';
+            position: absolute;
+            inset: -16px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            animation: spin 5s linear infinite reverse;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50%       { transform: scale(1.06); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        .logo-inner {
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c2185b, #f06292);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 8px 25px rgba(194, 24, 91, 0.40);
+        }
+
+        /* ── Nombre de la app ── */
+        .app-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 3px;
+            margin-bottom: 6px;
+        }
+
+        .app-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 50px;
+        }
+
+        /* ── Barra de progreso ── */
+        .bar-wrap {
+            width: 220px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 30px;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+
+        .bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #f06292, #e91e8c);
+            border-radius: 30px;
+            transition: width 0.5s ease;
+        }
+
+        /* ── Texto de estado ── */
+        .status-txt {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.55);
+            letter-spacing: 0.8px;
+            height: 20px;
+            transition: opacity 0.3s;
+        }
+
+        /* ── Puntos animados ── */
+        .dots {
+            display: flex;
+            gap: 8px;
+            margin-top: 36px;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.20);
+        }
+
+        .dot:nth-child(1) { animation: bounce 1.2s ease-in-out infinite 0.0s; }
+        .dot:nth-child(2) { animation: bounce 1.2s ease-in-out infinite 0.2s; }
+        .dot:nth-child(3) { animation: bounce 1.2s ease-in-out infinite 0.4s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { background: rgba(255,255,255,0.20); transform: scale(1); }
+            40%            { background: #f06292; transform: scale(1.5); }
+        }
+
+        /* ── Estado de éxito ── */
+        .check-area {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            animation: popIn 0.5s cubic-bezier(.34, 1.56, .64, 1) forwards;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.4); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        .check-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(76, 175, 80, 0.18);
+            border: 2px solid rgba(76, 175, 80, 0.50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: #81c784;
+        }
+
+        .check-txt {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.75);
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* ── Pie de página ── */
+        .footer {
+            position: fixed;
+            bottom: 28px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Burbujas decorativas -->
+    <div class="bubble bubble-1"></div>
+    <div class="bubble bubble-2"></div>
+    <div class="bubble bubble-3"></div>
+
+    <!-- Contenido splash -->
+    <div class="splash">
+
+        <!-- Logo -->
+        <div class="logo-ring">
+            <div class="logo-inner">S</div>
+        </div>
+
+        <!-- Nombre -->
+        <div class="app-name">DeskApp</div>
+        <div class="app-sub">Verificando credenciales...</div>
+
+        <!-- Carga -->
+        <div id="loadingArea">
+            <div class="bar-wrap">
+                <div class="bar" id="progressBar"></div>
+            </div>
+            <div class="status-txt" id="statusTxt">Iniciando sesión...</div>
+            <div class="dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Éxito -->
+        <div class="check-area" id="checkArea">
+            <div class="check-circle">✓</div>
+            <div class="check-txt">Acceso concedido</div>
+        </div>
+
+    </div>
+
+    <div class="footer">© 2026 SysAccess — Todos los derechos reservados</div>
+
+    <script>
+        // ── Mensajes y porcentajes de la barra ──────────────────────
+        const steps = [
+            { msg: 'Iniciando sesión...',           pct: 0,   delay: 0    },
+            { msg: 'Verificando credenciales...',   pct: 30,  delay: 800  },
+            { msg: 'Cargando perfil de usuario...', pct: 58,  delay: 1600 },
+            { msg: 'Preparando el dashboard...',    pct: 82,  delay: 2400 },
+            { msg: '¡Listo!',                       pct: 100, delay: 3000 },
+        ];
+
+        const bar    = document.getElementById('progressBar');
+        const txtEl  = document.getElementById('statusTxt');
+        const loading = document.getElementById('loadingArea');
+        const checkEl = document.getElementById('checkArea');
+
+        // Animar cada paso
+        steps.forEach(({ msg, pct, delay }) => {
+            setTimeout(() => {
+                bar.style.width = pct + '%';
+                txtEl.style.opacity = '0';
+                setTimeout(() => {
+                    txtEl.textContent  = msg;
+                    txtEl.style.opacity = '1';
+                }, 220);
+            }, delay);
+        });
+
+        // Mostrar pantalla de éxito y redirigir al dashboard
+        setTimeout(() => {
+            loading.style.transition = 'opacity 0.4s';
+            loading.style.opacity    = '0';
+
+            setTimeout(() => {
+                loading.style.display  = 'none';
+                checkEl.style.display  = 'flex';
+
+                // ── Redirige al dashboard después del check ──
+                setTimeout(() => {
+                    window.location.href = '/dashboard/';
+                    // Puedes cambiar la URL según tu proyecto:
+                    // window.location.href = 'dashboard.html';
+                }, 1200);
+            }, 400);
+        }, 3500);
+    </script>
+
+</body>
+</html>

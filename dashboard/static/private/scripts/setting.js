@@ -97,7 +97,7 @@ jQuery(document).ready(function(){
 			$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
 		});
 	});
-
+	
 	// custom select 2 init
 	$('.custom-select2').select2();
 
