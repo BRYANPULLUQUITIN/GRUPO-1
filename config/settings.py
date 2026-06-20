@@ -79,11 +79,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'Django', 
         'USER': 'postgres',
-        'PASSWORD': '12345', 
+        'PASSWORD': 'root', 
         'HOST': '127.0.0.1',
         'PORT': '5432',
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
     } 
 }
 
@@ -123,13 +121,24 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 
+# ── Static files ─────────────────────────────────────────────
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'inicio' / 'static'
+    BASE_DIR / 'inicio' / 'static',
+    BASE_DIR / 'dashboard' / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TEMPLATES[0]['DIRS'] = [BASE_DIR / 'templates']
-LOGIN_REDIRECT_URL = '/home/'
-LOGOUT_REDIRECT_URL = '/home/'
+
+# ── Auth redirects ────────────────────────────────────────────
+LOGIN_URL           = '/login/'       # redirige si no está autenticado
+LOGIN_REDIRECT_URL  = '/dashboard/'   # redirige tras login exitoso
+LOGOUT_REDIRECT_URL = '/login/'       # redirige tras logout
+
+# settings.py
+import os
+
+MEDIA_URL  = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

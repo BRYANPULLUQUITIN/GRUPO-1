@@ -27,7 +27,6 @@
             padding: 20px;
         }
 
-        /* Tarjeta principal con split */
         .login-card {
             display: flex;
             border-radius: 16px;
@@ -42,7 +41,6 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Panel lateral rosado */
         .side-panel {
             width: 200px;
             flex-shrink: 0;
@@ -108,7 +106,6 @@
             background: rgba(255, 255, 255, 0.15);
         }
 
-        /* Panel principal blanco */
         .main-panel {
             flex: 1;
             background: #fff;
@@ -119,7 +116,6 @@
             padding: 36px 44px;
         }
 
-        /* Avatar */
         .avatar {
             width: 72px;
             height: 72px;
@@ -144,7 +140,6 @@
             letter-spacing: 1.5px;
         }
 
-        /* Contenido de pestañas */
         .tab-content {
             display: none;
             width: 100%;
@@ -160,7 +155,6 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Inputs con línea inferior */
         .input-group {
             margin-bottom: 22px;
             position: relative;
@@ -201,7 +195,6 @@
             font-size: 13px;
         }
 
-        /* Opciones */
         .options {
             display: flex;
             justify-content: space-between;
@@ -239,7 +232,6 @@
             opacity: 0.75;
         }
 
-        /* Botón principal */
         .login-btn {
             width: 100%;
             padding: 14px;
@@ -265,7 +257,12 @@
             box-shadow: none;
         }
 
-        /* Divisor */
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .divider {
             display: flex;
             align-items: center;
@@ -283,7 +280,6 @@
             background: #e0e0e0;
         }
 
-        /* Botones sociales */
         .social-buttons {
             display: flex;
             gap: 12px;
@@ -312,18 +308,10 @@
             transform: translateY(-1px);
         }
 
-        .social-btn:active {
-            transform: translateY(0);
-        }
-
-        .social-btn i {
-            font-size: 20px;
-        }
-
-        .social-btn.google i  { color: #DB4437; }
+        .social-btn i { font-size: 20px; }
+        .social-btn.google i   { color: #DB4437; }
         .social-btn.facebook i { color: #4267B2; }
 
-        /* Mensajes */
         .error-message {
             background: #fce4ec;
             color: #b71c1c;
@@ -357,13 +345,8 @@
             75%       { transform: translateX(5px); }
         }
 
-        /* Responsive */
         @media (max-width: 600px) {
-            .login-card {
-                flex-direction: column;
-                min-height: auto;
-            }
-
+            .login-card { flex-direction: column; min-height: auto; }
             .side-panel {
                 width: 100%;
                 flex-direction: row;
@@ -371,293 +354,263 @@
                 gap: 16px;
                 min-height: 70px;
             }
-
             .side-panel::before,
-            .side-panel::after {
-                display: none;
-            }
-
-            .main-panel {
-                padding: 28px 24px;
-            }
-
-            .social-btn span {
-                display: none;
-            }
-
-            .social-btn {
-                padding: 13px;
-            }
-
-            .options {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
+            .side-panel::after { display: none; }
+            .main-panel { padding: 28px 24px; }
+            .social-btn span { display: none; }
+            .social-btn { padding: 13px; }
+            .options { flex-direction: column; align-items: flex-start; gap: 10px; }
         }
 
         @media (max-width: 380px) {
-            .container {
-                padding: 10px;
-            }
-
-            .main-panel {
-                padding: 22px 16px;
-            }
-
-            .main-title {
-                font-size: 18px;
-            }
+            .container { padding: 10px; }
+            .main-panel { padding: 22px 16px; }
+            .main-title { font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="login-card">
+<div class="container">
+    <div class="login-card">
 
-            <!-- Panel lateral rosado -->
-            <div class="side-panel">
-                <button class="side-btn active" id="btnLogin" onclick="switchTab('login')">LOGIN</button>
-                <button class="side-btn inactive" id="btnSignin" onclick="switchTab('signin')">SIGN IN</button>
+        <!-- Panel lateral -->
+        <div class="side-panel">
+            <button class="side-btn active" id="btnLogin" onclick="switchTab('login')">LOGIN</button>
+            <button class="side-btn inactive" id="btnSignin" onclick="switchTab('signin')">SIGN IN</button>
+        </div>
+
+        <!-- Panel principal -->
+        <div class="main-panel">
+
+            <div class="avatar">
+                <i class="fas fa-user-circle"></i>
             </div>
 
-            <!-- Panel principal -->
-            <div class="main-panel">
+            <div class="main-title" id="mainTitle">LOGIN</div>
 
-                <!-- Avatar -->
-                <div class="avatar">
-                    <i class="fas fa-user-circle"></i>
-                </div>
-
-                <div class="main-title" id="mainTitle">LOGIN</div>
-
-                <!-- Área de mensajes -->
-                <div id="msgArea" style="width:100%"></div>
-
-                <!-- Tab Login -->
-                <div id="loginTab" class="tab-content active">
-                    <form id="loginForm">
-                        <div class="input-group">
-                            <input type="email" id="loginEmail" placeholder="Email" required>
-                            <i class="fas fa-envelope icon"></i>
+            <!-- Mensajes Django (error / success desde el backend) -->
+            <div id="msgArea" style="width:100%">
+                {% if messages %}
+                    {% for msg in messages %}
+                        <div class="{% if msg.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+                            <i class="fas fa-{% if msg.tags == 'error' %}exclamation-circle{% else %}check-circle{% endif %}"></i>
+                            {{ msg }}
                         </div>
-
-                        <div class="input-group">
-                            <input type="password" id="loginPassword" placeholder="Contraseña" required>
-                            <i class="fas fa-lock icon"></i>
-                        </div>
-
-                        <div class="options">
-                            <label class="checkbox">
-                                <input type="checkbox" id="rememberMe">
-                                <span>Recordar</span>
-                            </label>
-                            <a class="forgot-password" onclick="showForgotPassword()">Olvido la contraseña?</a>
-                        </div>
-
-                        <button type="submit" class="login-btn">INICIAR SESION </button>
-                    </form>
-
-                    <div class="divider">Iniciar con otra cuenta</div>
-
-                    <div class="social-buttons">
-                        <button class="social-btn google" onclick="socialLogin('Google')">
-                            <i class="fab fa-google"></i>
-                            <span>Google</span>
-                        </button>
-                        <button class="social-btn facebook" onclick="socialLogin('Facebook')">
-                            <i class="fab fa-facebook-f"></i>
-                            <span>Facebook</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Tab Sign In -->
-                <div id="signinTab" class="tab-content">
-                    <form id="signinForm">
-                        <div class="input-group">
-                            <input type="text" id="signinName" placeholder="Nombre completo" required>
-                            <i class="fas fa-user icon"></i>
-                        </div>
-
-                        <div class="input-group">
-                            <input type="email" id="signinEmail" placeholder="Email" required>
-                            <i class="fas fa-envelope icon"></i>
-                        </div>
-
-                        <div class="input-group">
-                            <input type="password" id="signinPassword" placeholder="Contraseña" required>
-                            <i class="fas fa-lock icon"></i>
-                        </div>
-
-                        <div class="input-group">
-                            <input type="password" id="signinConfirmPassword" placeholder="Confirmar Contraseña" required>
-                            <i class="fas fa-check-circle icon"></i>
-                        </div>
-
-                        <button type="submit" class="login-btn">REGISTRARSE</button>
-                    </form>
-
-                    <div class="divider">Registrarse con otra cuenta</div>
-
-                    <div class="social-buttons">
-                        <button class="social-btn google" onclick="socialLogin('Google')">
-                            <i class="fab fa-google"></i>
-                            <span>Google</span>
-                        </button>
-                        <button class="social-btn facebook" onclick="socialLogin('Facebook')">
-                            <i class="fab fa-facebook-f"></i>
-                            <span>Facebook</span>
-                        </button>
-                    </div>
-                </div>
-
+                    {% endfor %}
+                {% endif %}
             </div>
+
+            <!-- ══ TAB LOGIN ══ -->
+            <div id="loginTab" class="tab-content active">
+                <form id="loginForm" method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="login">
+
+                    <div class="input-group">
+                        <input type="email" name="email" id="loginEmail"
+                               placeholder="Email" required
+                               value="{{ request.POST.email|default:'' }}">
+                        <i class="fas fa-envelope icon"></i>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" name="password" id="loginPassword"
+                               placeholder="Contraseña" required>
+                        <i class="fas fa-lock icon"></i>
+                    </div>
+
+                    <div class="options">
+                        <label class="checkbox">
+                            <input type="checkbox" id="rememberMe" name="remember">
+                            <span>Recordar</span>
+                        </label>
+                        <a class="forgot-password" href="#">¿Olvidó la contraseña?</a>
+                    </div>
+
+                    <button type="submit" class="login-btn" id="loginBtn">INICIAR SESIÓN</button>
+                </form>
+
+                <div class="divider">Iniciar con otra cuenta</div>
+                <div class="social-buttons">
+                    <button class="social-btn google" onclick="socialLogin('Google')">
+                        <i class="fab fa-google"></i><span>Google</span>
+                    </button>
+                    <button class="social-btn facebook" onclick="socialLogin('Facebook')">
+                        <i class="fab fa-facebook-f"></i><span>Facebook</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ══ TAB REGISTRO ══ -->
+            <div id="signinTab" class="tab-content">
+                <form id="signinForm" method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="register">
+
+                    <div class="input-group">
+                        <input type="text" name="full_name" id="signinName"
+                               placeholder="Nombre completo" required>
+                        <i class="fas fa-user icon"></i>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="email" name="email" id="signinEmail"
+                               placeholder="Email" required>
+                        <i class="fas fa-envelope icon"></i>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" name="password" id="signinPassword"
+                               placeholder="Contraseña" required>
+                        <i class="fas fa-lock icon"></i>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" name="confirm_password" id="signinConfirmPassword"
+                               placeholder="Confirmar Contraseña" required>
+                        <i class="fas fa-check-circle icon"></i>
+                    </div>
+
+                    <button type="submit" class="login-btn" id="signinBtn">REGISTRARSE</button>
+                </form>
+
+                <div class="divider">Registrarse con otra cuenta</div>
+                <div class="social-buttons">
+                    <button class="social-btn google" onclick="socialLogin('Google')">
+                        <i class="fab fa-google"></i><span>Google</span>
+                    </button>
+                    <button class="social-btn facebook" onclick="socialLogin('Facebook')">
+                        <i class="fab fa-facebook-f"></i><span>Facebook</span>
+                    </button>
+                </div>
+            </div>
+
         </div>
     </div>
+</div>
 
-    <script>
-        // ── Cambiar pestaña ──────────────────────────────────────────
-        function switchTab(tab) {
-            document.getElementById('loginTab').classList.toggle('active', tab === 'login');
-            document.getElementById('signinTab').classList.toggle('active', tab === 'signin');
-            document.getElementById('mainTitle').textContent = tab === 'login' ? 'LOGIN' : 'SIGN IN';
-            document.getElementById('btnLogin').className  = 'side-btn ' + (tab === 'login'   ? 'active' : 'inactive');
-            document.getElementById('btnSignin').className = 'side-btn ' + (tab === 'signin'  ? 'active' : 'inactive');
-            clearMessages();
-        }
+<script>
+    // ── Abrir tab correcto si Django devuelve error de registro ──
+    (function () {
+        var action = "{{ request.POST.action|default:'' }}";
+        if (action === 'register') switchTab('signin');
+    })();
 
-        // ── Mensajes ─────────────────────────────────────────────────
-        function clearMessages() {
-            document.getElementById('msgArea').innerHTML = '';
-        }
+    // ── Cambiar pestaña ──────────────────────────────────────────
+    function switchTab(tab) {
+        document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+        document.getElementById('signinTab').classList.toggle('active', tab === 'signin');
+        document.getElementById('mainTitle').textContent = tab === 'login' ? 'LOGIN' : 'SIGN IN';
+        document.getElementById('btnLogin').className  = 'side-btn ' + (tab === 'login'  ? 'active' : 'inactive');
+        document.getElementById('btnSignin').className = 'side-btn ' + (tab === 'signin' ? 'active' : 'inactive');
+        clearMessages();
+    }
 
-        function showError(message) {
-            clearMessages();
-            document.getElementById('msgArea').innerHTML =
-                `<div class="error-message"><i class="fas fa-exclamation-circle"></i>${message}</div>`;
-            setTimeout(clearMessages, 5000);
-        }
+    // ── Mensajes JS (solo validación frontend) ───────────────────
+    function clearMessages() {
+        document.getElementById('msgArea').innerHTML = '';
+    }
 
-        function showSuccess(message) {
-            clearMessages();
-            document.getElementById('msgArea').innerHTML =
-                `<div class="success-message"><i class="fas fa-check-circle"></i>${message}</div>`;
-            setTimeout(clearMessages, 3000);
-        }
+    function showError(message) {
+        clearMessages();
+        document.getElementById('msgArea').innerHTML =
+            `<div class="error-message"><i class="fas fa-exclamation-circle"></i>${message}</div>`;
+    }
 
-        // ── Validaciones ─────────────────────────────────────────────
-        function validateEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
+    function showSuccess(message) {
+        clearMessages();
+        document.getElementById('msgArea').innerHTML =
+            `<div class="success-message"><i class="fas fa-check-circle"></i>${message}</div>`;
+    }
 
-        function validatePassword(password) {
-            return password.length >= 6;
-        }
+    // ── Validaciones ─────────────────────────────────────────────
+    function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
 
-        // ── Formulario LOGIN ──────────────────────────────────────────
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
+    function validatePassword(password) {
+        return password.length >= 6;
+    }
+
+    // ── LOGIN: solo validación visual, POST lo maneja Django ─────
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+        const email    = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
+        if (!validateEmail(email)) {
             e.preventDefault();
-
-            const email    = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const remember = document.getElementById('rememberMe').checked;
-
-            if (!validateEmail(email)) {
-                showError('Por favor ingrese una dirección de correo electrónico');
-                return;
-            }
-            if (!validatePassword(password)) {
-                showError('Constraseña invalida, debe tener al menos 6 caracteres');
-                return;
-            }
-
-            showSuccess('Iicio de sesion exitoso! Redirigiendo...');
-
-            if (remember) {
-                localStorage.setItem('rememberedEmail', email);
-            } else {
-                localStorage.removeItem('rememberedEmail');
-            }
-
-            setTimeout(() => {
-                window.location.href = '/splash/';
-            }, 1500);
-        });
-
-        // ── Formulario SIGN IN (Registro) ─────────────────────────────
-        document.getElementById('signinForm').addEventListener('submit', function (e) {
+            showError('Por favor ingrese un correo electrónico válido.');
+            return;
+        }
+        if (!validatePassword(password)) {
             e.preventDefault();
-
-            const name            = document.getElementById('signinName').value;
-            const email           = document.getElementById('signinEmail').value;
-            const password        = document.getElementById('signinPassword').value;
-            const confirmPassword = document.getElementById('signinConfirmPassword').value;
-
-            if (!name || name.length < 3) {
-                showError('Por favor ingrese un nombre válido');
-                return;
-            }
-            if (!validateEmail(email)) {
-                showError('Por favor ingrese una dirección de correo electrónico válida');
-                return;
-            }
-            if (!validatePassword(password)) {
-                showError('Constraseña invalida, debe tener al menos 6 caracteres');
-                return;
-            }
-            if (password !== confirmPassword) {
-                showError('Verifique que las contraseñas coincidan');
-                return;
-            }
-
-            showSuccess('Cuenta creada exitosamente! Redirigiendo al login...');
-
-            setTimeout(() => {
-                switchTab('login');
-                document.getElementById('signinForm').reset();
-            }, 2000);
-        });
-
-        // ── Social login ──────────────────────────────────────────────
-        function socialLogin(provider) {
-            showSuccess(`Redirecting to ${provider} login...`);
-            setTimeout(() => {
-                console.log(`Logging in with ${provider}`);
-                // window.location.href = `/auth/${provider}/`;
-            }, 1000);
+            showError('La contraseña debe tener al menos 6 caracteres.');
+            return;
         }
 
-        // ── Forgot password ───────────────────────────────────────────
-        function showForgotPassword() {
-            const email = prompt('Please enter your email address to reset your password:');
-            if (email && validateEmail(email)) {
-                showSuccess('Password reset link has been sent to your email!');
-            } else if (email) {
-                showError('Please enter a valid email address');
-            }
+        // Recordar email
+        if (document.getElementById('rememberMe').checked) {
+            localStorage.setItem('rememberedEmail', email);
+        } else {
+            localStorage.removeItem('rememberedEmail');
         }
 
-        // ── Recordar email ────────────────────────────────────────────
-        (function loadRememberedEmail() {
-            const remembered = localStorage.getItem('rememberedEmail');
-            if (remembered) {
-                document.getElementById('loginEmail').value = remembered;
-                document.getElementById('rememberMe').checked = true;
-            }
-        })();
+        // Deshabilitar botón para evitar doble envío
+        document.getElementById('loginBtn').disabled = true;
+        document.getElementById('loginBtn').textContent = 'Verificando...';
+        // El form hace POST a Django — Django verifica y redirige a /splash/
+    });
 
-        // ── Enviar con Enter ──────────────────────────────────────────
-        document.querySelectorAll('form').forEach(function (form) {
-            form.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    form.querySelector('button[type="submit"]').click();
-                }
-            });
-        });
-    </script>
+    // ── REGISTRO: solo validación visual, POST lo maneja Django ──
+    document.getElementById('signinForm').addEventListener('submit', function (e) {
+        const name            = document.getElementById('signinName').value.trim();
+        const email           = document.getElementById('signinEmail').value.trim();
+        const password        = document.getElementById('signinPassword').value;
+        const confirmPassword = document.getElementById('signinConfirmPassword').value;
+
+        if (!name || name.length < 3) {
+            e.preventDefault();
+            showError('Por favor ingrese un nombre válido (mínimo 3 caracteres).');
+            return;
+        }
+        if (!validateEmail(email)) {
+            e.preventDefault();
+            showError('Por favor ingrese un correo electrónico válido.');
+            return;
+        }
+        if (!validatePassword(password)) {
+            e.preventDefault();
+            showError('La contraseña debe tener al menos 6 caracteres.');
+            return;
+        }
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            showError('Las contraseñas no coinciden.');
+            return;
+        }
+
+        document.getElementById('signinBtn').disabled = true;
+        document.getElementById('signinBtn').textContent = 'Registrando...';
+    });
+
+    // ── Social login (placeholder) ────────────────────────────────
+    function socialLogin(provider) {
+        showSuccess(`Redirigiendo a ${provider}...`);
+        setTimeout(() => {
+            console.log(`Login con ${provider} — integración pendiente`);
+        }, 1000);
+    }
+
+    // ── Recordar email al cargar ──────────────────────────────────
+    (function loadRememberedEmail() {
+        var remembered = localStorage.getItem('rememberedEmail');
+        if (remembered) {
+            document.getElementById('loginEmail').value = remembered;
+            document.getElementById('rememberMe').checked = true;
+        }
+    })();
+</script>
 
 </body>
 </html>

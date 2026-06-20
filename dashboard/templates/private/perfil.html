@@ -1,0 +1,1193 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mi Perfil — DeskApp</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'private/vendors/images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'private/vendors/images/favicon-32x32.png' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'private/vendors/styles/core.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'private/vendors/styles/icon-font.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'private/vendors/styles/style.css' %}">
+
+    <style>
+        /* ══════════════════════════════════════
+           VARIABLES Y BASE
+        ══════════════════════════════════════ */
+        :root {
+            --pink:    #c2185b;
+            --pink-lt: #f48fb1;
+            --navy:    #2a3f54;
+            --violet:  #7c3aed;
+            --violet-lt: #ede9fe;
+            --gray-50: #f8fafc;
+            --gray-100:#f1f5f9;
+            --gray-200:#e2e8f0;
+            --gray-400:#94a3b8;
+            --gray-600:#475569;
+            --gray-900:#0f172a;
+            --radius:  14px;
+            --shadow:  0 4px 24px rgba(0,0,0,.08);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,.13);
+        }
+
+        body { background: var(--gray-50); }
+
+        /* ══════════════════════════════════════
+           HERO CARD — cabecera del perfil
+        ══════════════════════════════════════ */
+        .profile-hero {
+            background: linear-gradient(135deg, var(--navy) 0%, #1e3a5f 60%, #2d1b69 100%);
+            border-radius: var(--radius);
+            padding: 40px 36px 32px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Círculos decorativos de fondo */
+        .profile-hero::before,
+        .profile-hero::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            opacity: .08;
+            background: #fff;
+        }
+        .profile-hero::before {
+            width: 280px; height: 280px;
+            top: -80px; right: -60px;
+        }
+        .profile-hero::after {
+            width: 160px; height: 160px;
+            bottom: -50px; right: 120px;
+        }
+
+        .hero-inner {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Avatar grande */
+        .hero-avatar {
+            position: relative;
+            flex-shrink: 0;
+        }
+        .hero-avatar img,
+        .hero-avatar .avatar-xl {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,.25);
+            object-fit: cover;
+            display: block;
+        }
+        .avatar-xl {
+            background: linear-gradient(135deg, var(--pink), #f06292);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        /* Botón de cambiar foto */
+        .btn-change-photo {
+            position: absolute;
+            bottom: 2px; right: 2px;
+            width: 28px; height: 28px;
+            background: var(--violet);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: transform .2s;
+        }
+        .btn-change-photo:hover { transform: scale(1.15); }
+        .btn-change-photo i { font-size: 11px; color: #fff; }
+        #input-foto { display: none; }
+
+        /* Info del héroe */
+        .hero-info { flex: 1; min-width: 200px; }
+        .hero-info h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            margin: 0 0 4px;
+            letter-spacing: -.3px;
+        }
+        .hero-role {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--pink-lt);
+            margin-bottom: 14px;
+        }
+
+        /* Stats rápidos */
+        .hero-stats {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item { text-align: center; }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: rgba(255,255,255,.55);
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            margin-top: 2px;
+        }
+        .stat-divider {
+            width: 1px;
+            background: rgba(255,255,255,.15);
+            align-self: stretch;
+        }
+
+        /* Badges de estado */
+        .badge-active {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(52,211,153,.18);
+            color: #6ee7b7;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+        .badge-active span {
+            width: 6px; height: 6px;
+            background: #34d399;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* ══════════════════════════════════════
+           TABS DE PERFIL
+        ══════════════════════════════════════ */
+        .profile-tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--gray-100);
+            padding: 4px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+        .profile-tab {
+            padding: 8px 20px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all .2s;
+            border: none;
+            background: transparent;
+            outline: none;
+        }
+        .profile-tab.active {
+            background: #fff;
+            color: var(--navy);
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+        }
+        .profile-tab:hover:not(.active) { color: var(--navy); }
+
+        /* Paneles */
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* ══════════════════════════════════════
+           CARD BASE
+        ══════════════════════════════════════ */
+        .pcard {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px 28px 24px;
+            margin-bottom: 24px;
+        }
+        .pcard-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .pcard-title i {
+            color: var(--violet);
+            font-size: 18px;
+        }
+
+        /* ══════════════════════════════════════
+           CAMPO DE INFO (modo vista)
+        ══════════════════════════════════════ */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .info-field {}
+        .info-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+            color: var(--gray-400);
+            margin-bottom: 4px;
+        }
+        .info-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-900);
+        }
+        .info-value.empty { color: var(--gray-400); font-style: italic; }
+
+        /* ══════════════════════════════════════
+           FORMULARIO DE EDICIÓN
+        ══════════════════════════════════════ */
+        .form-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--violet);
+            margin: 24px 0 14px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--violet-lt);
+        }
+        .form-section-title:first-of-type { margin-top: 0; }
+
+        .edit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+        }
+        .edit-grid .full { grid-column: 1 / -1; }
+
+        .form-label-custom {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .form-control-custom {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            color: var(--gray-900);
+            background: var(--gray-50);
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+        .form-control-custom:focus {
+            border-color: var(--violet);
+            box-shadow: 0 0 0 3px rgba(124,58,237,.1);
+            background: #fff;
+        }
+        .form-control-custom::placeholder { color: var(--gray-400); }
+
+        /* Select */
+        select.form-control-custom {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+
+        /* Textarea */
+        textarea.form-control-custom { resize: vertical; min-height: 90px; }
+
+        /* Toggle de contraseña */
+        .input-icon-wrap { position: relative; }
+        .input-icon-wrap .toggle-pass {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            color: var(--gray-400); cursor: pointer; font-size: 14px; border: none;
+            background: none; padding: 0; outline: none;
+        }
+        .input-icon-wrap .toggle-pass:hover { color: var(--violet); }
+
+        /* Zona de contraseña separada */
+        .pass-hint {
+            font-size: 11px;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+
+        /* Botones de acción */
+        .btn-save {
+            background: linear-gradient(135deg, var(--violet), #9333ea);
+            color: #fff;
+            border: none;
+            padding: 11px 28px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .15s;
+            box-shadow: 0 4px 14px rgba(124,58,237,.35);
+        }
+        .btn-save:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(124,58,237,.45);
+        }
+        .btn-save:active { transform: translateY(0); }
+
+        .btn-cancel {
+            background: var(--gray-100);
+            color: var(--gray-600);
+            border: none;
+            padding: 11px 24px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: background .15s;
+        }
+        .btn-cancel:hover { background: var(--gray-200); }
+
+        .form-footer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        /* Mensaje de éxito/error */
+        .alert-inline {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-left: auto;
+        }
+        .alert-inline.success {
+            background: #ecfdf5; color: #059669;
+            border: 1px solid #a7f3d0;
+        }
+        .alert-inline.error {
+            background: #fef2f2; color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        /* ══════════════════════════════════════
+           ZONA DE PELIGRO (cambio de contraseña)
+        ══════════════════════════════════════ */
+        .danger-zone {
+            border: 1.5px solid #fee2e2;
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-top: 4px;
+        }
+        .danger-zone .pcard-title i { color: #dc2626; }
+
+        .strength-bar {
+            height: 4px;
+            background: var(--gray-100);
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+        .strength-fill {
+            height: 100%;
+            border-radius: 2px;
+            width: 0;
+            transition: width .3s, background .3s;
+        }
+
+        /* ══════════════════════════════════════
+           ACTIVIDAD RECIENTE
+        ══════════════════════════════════════ */
+        .activity-list { list-style: none; padding: 0; margin: 0; }
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .activity-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            font-size: 15px;
+        }
+        .activity-icon.login  { background: #ede9fe; color: var(--violet); }
+        .activity-icon.edit   { background: #dbeafe; color: #2563eb; }
+        .activity-icon.upload { background: #fce7f3; color: var(--pink); }
+        .activity-text { flex: 1; }
+        .activity-text strong { font-size: 13px; font-weight: 600; color: var(--navy); }
+        .activity-text p { font-size: 12px; color: var(--gray-400); margin: 2px 0 0; }
+        .activity-time {
+            font-size: 11px;
+            color: var(--gray-400);
+            white-space: nowrap;
+            margin-top: 2px;
+        }
+
+        /* ══════════════════════════════════════
+           AVATAR INITIALS (igual que header)
+        ══════════════════════════════════════ */
+        .avatar-initials-sm {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c2185b, #f06292);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; color: white;
+            text-transform: uppercase;
+        }
+
+        /* ══════════════════════════════════════
+           RESPONSIVE
+        ══════════════════════════════════════ */
+        @media (max-width: 576px) {
+            .profile-hero { padding: 24px 20px 20px; }
+            .hero-info h2 { font-size: 20px; }
+            .hero-stats { gap: 16px; }
+            .pcard { padding: 20px 16px; }
+            .edit-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HEADER (mismo del base.html)
+══════════════════════════════════════ -->
+{% include 'partials/header.html' %}
+{% include 'partials/left-sidebar.html' %}
+
+<!-- ══════════════════════════════════════
+     CONTENIDO PRINCIPAL
+══════════════════════════════════════ -->
+<div class="mobile-menu-overlay"></div>
+<div class="main-container">
+    <div class="pd-ltr-20 xs-pd-20-10">
+        <div class="min-height-200px">
+
+            <!-- Breadcrumb -->
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="title">
+                            <h4>Mi Perfil</h4>
+                        </div>
+                        <nav aria-label="breadcrumb" role="navigation">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'dashboard' %}">Inicio</a>
+                                </li>
+                                <li class="breadcrumb-item active">Mi Perfil</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── HERO CARD ── -->
+            <div class="profile-hero">
+                <div class="hero-inner">
+                    <!-- Avatar -->
+                    <div class="hero-avatar">
+                        {% if request.user.profile.foto %}
+                            <img src="{{ request.user.profile.foto.url }}"
+                                 alt="{{ request.user.get_full_name }}"
+                                 id="hero-img">
+                        {% else %}
+                            <div class="avatar-xl" id="hero-img">
+                                {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+                            </div>
+                        {% endif %}
+                        <label class="btn-change-photo" for="input-foto" title="Cambiar foto">
+                            <i class="dw dw-camera"></i>
+                        </label>
+                        <input type="file" id="input-foto" accept="image/*">
+                    </div>
+
+                    <!-- Info -->
+                    <div class="hero-info">
+                        <div class="badge-active">
+                            <span></span> Activo
+                        </div>
+                        <h2>{{ request.user.get_full_name|default:request.user.username }}</h2>
+                        <p class="hero-role">
+                            {{ request.user.profile.cargo|default:"Sin cargo asignado" }}
+                            &nbsp;·&nbsp;
+                            {{ request.user.profile.departamento|default:"Sin departamento" }}
+                        </p>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">{{ request.user.date_joined|timesince|truncatewords:2 }}</div>
+                                <div class="stat-label">Miembro</div>
+                            </div>
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <div class="stat-value">
+                                    {% if request.user.last_login %}
+                                        {{ request.user.last_login|date:"d/m" }}
+                                    {% else %}—{% endif %}
+                                </div>
+                                <div class="stat-label">Último acceso</div>
+                            </div>
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <div class="stat-value">
+                                    {% if request.user.is_staff %}Admin{% else %}Usuario{% endif %}
+                                </div>
+                                <div class="stat-label">Rol</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── TABS ── -->
+            <div class="profile-tabs">
+                <button class="profile-tab active" data-tab="info">
+                    <i class="dw dw-user1"></i> Información
+                </button>
+                <button class="profile-tab" data-tab="edit">
+                    <i class="dw dw-edit2"></i> Editar perfil
+                </button>
+                <button class="profile-tab" data-tab="security">
+                    <i class="dw dw-padlock1"></i> Seguridad
+                </button>
+                <button class="profile-tab" data-tab="activity">
+                    <i class="dw dw-clock1"></i> Actividad
+                </button>
+            </div>
+
+            <!-- ══════════════════════════════════════
+                 TAB 1: INFORMACIÓN (solo lectura)
+            ══════════════════════════════════════ -->
+            <div class="tab-panel active" id="tab-info">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="pcard">
+                            <div class="pcard-title">
+                                <i class="dw dw-user1"></i> Datos personales
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-field">
+                                    <div class="info-label">Nombre</div>
+                                    <div class="info-value">
+                                        {{ request.user.first_name|default:"—" }}
+                                    </div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="info-label">Apellido</div>
+                                    <div class="info-value">
+                                        {{ request.user.last_name|default:"—" }}
+                                    </div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="info-label">Usuario</div>
+                                    <div class="info-value">@{{ request.user.username }}</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="info-label">Correo electrónico</div>
+                                    <div class="info-value">{{ request.user.email|default:"—" }}</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="info-label">Teléfono</div>
+                                    <div class="info-value {% if not request.user.profile.telefono %}empty{% endif %}">
+                                        {{ request.user.profile.telefono|default:"Sin registrar" }}
+                                    </div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="info-label">Fecha de nacimiento</div>
+                                    <div class="info-value {% if not request.user.profile.fecha_nacimiento %}empty{% endif %}">
+                                        {{ request.user.profile.fecha_nacimiento|date:"d/m/Y"|default:"Sin registrar" }}
+                                    </div>
+                                </div>
+                                <div class="info-field" style="grid-column: 1 / -1;">
+                                    <div class="info-label">Biografía</div>
+                                    <div class="info-value {% if not request.user.profile.bio %}empty{% endif %}">
+                                        {{ request.user.profile.bio|default:"Sin descripción" }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pcard">
+                            <div class="pcard-title">
+                                <i class="dw dw-apartment"></i> Datos laborales
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-field">
+                                    <div class="info-label">Cargo</div>
+                                    <div class="info-value {% if not request.user.profile.cargo %}empty{% endif %}">
+                                        {{ request.user.profile.cargo|default:"Sin registrar" }}
+                                    </div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="info-label">Departamento</div>
+                                    <div class="info-value {% if not request.user.profile.departamento %}empty{% endif %}">
+                                        {{ request.user.profile.departamento|default:"Sin registrar" }}
+                                    </div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="info-label">Fecha de ingreso</div>
+                                    <div class="info-value">
+                                        {{ request.user.date_joined|date:"d/m/Y" }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna lateral -->
+                    <div class="col-lg-4">
+                        <div class="pcard" style="text-align:center;">
+                            <div class="pcard-title" style="justify-content:center;">
+                                <i class="dw dw-star-1"></i> Estado de cuenta
+                            </div>
+                            <div style="margin-bottom:16px;">
+                                {% if request.user.profile.foto %}
+                                    <img src="{{ request.user.profile.foto.url }}"
+                                         style="width:72px;height:72px;border-radius:50%;object-fit:cover;
+                                                border:3px solid var(--violet-lt);margin:0 auto 12px;display:block;">
+                                {% else %}
+                                    <div class="avatar-initials-sm"
+                                         style="width:72px;height:72px;font-size:20px;margin:0 auto 12px;">
+                                        {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+                                    </div>
+                                {% endif %}
+                                <div style="font-weight:700;color:var(--navy);font-size:15px;">
+                                    {{ request.user.get_full_name|default:request.user.username }}
+                                </div>
+                                <div style="font-size:12px;color:var(--gray-400);">
+                                    {{ request.user.email }}
+                                </div>
+                            </div>
+                            <div style="display:flex;flex-direction:column;gap:10px;text-align:left;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;
+                                            padding:8px 12px;background:var(--gray-50);border-radius:8px;">
+                                    <span style="font-size:12px;color:var(--gray-600);">Estado</span>
+                                    <span style="font-size:12px;font-weight:600;color:#059669;">Activo</span>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;
+                                            padding:8px 12px;background:var(--gray-50);border-radius:8px;">
+                                    <span style="font-size:12px;color:var(--gray-600);">Rol</span>
+                                    <span style="font-size:12px;font-weight:600;color:var(--navy);">
+                                        {% if request.user.is_superuser %}Superadmin
+                                        {% elif request.user.is_staff %}Administrador
+                                        {% else %}Usuario{% endif %}
+                                    </span>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;
+                                            padding:8px 12px;background:var(--gray-50);border-radius:8px;">
+                                    <span style="font-size:12px;color:var(--gray-600);">Email verificado</span>
+                                    <span style="font-size:12px;font-weight:600;color:var(--violet);">Sí</span>
+                                </div>
+                            </div>
+                            <button class="btn-save" onclick="switchTab('edit')"
+                                    style="width:100%;margin-top:20px;">
+                                <i class="dw dw-edit2" style="margin-right:6px;"></i>Editar perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════
+                 TAB 2: EDITAR PERFIL
+            ══════════════════════════════════════ -->
+            <div class="tab-panel" id="tab-edit">
+                <form method="POST" action="{% url 'profile_update' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_profile">
+
+                    <div class="pcard">
+                        <div class="pcard-title">
+                            <i class="dw dw-edit2"></i> Editar datos personales
+                        </div>
+
+                        <div class="form-section-title">Datos de la cuenta</div>
+                        <div class="edit-grid">
+                            <div>
+                                <label class="form-label-custom">Nombre *</label>
+                                <input type="text" name="first_name" class="form-control-custom"
+                                       value="{{ request.user.first_name }}" required>
+                            </div>
+                            <div>
+                                <label class="form-label-custom">Apellido *</label>
+                                <input type="text" name="last_name" class="form-control-custom"
+                                       value="{{ request.user.last_name }}" required>
+                            </div>
+                            <div>
+                                <label class="form-label-custom">Nombre de usuario *</label>
+                                <input type="text" name="username" class="form-control-custom"
+                                       value="{{ request.user.username }}" required>
+                            </div>
+                            <div>
+                                <label class="form-label-custom">Correo electrónico *</label>
+                                <input type="email" name="email" class="form-control-custom"
+                                       value="{{ request.user.email }}" required>
+                            </div>
+                        </div>
+
+                        <div class="form-section-title">Datos personales</div>
+                        <div class="edit-grid">
+                            <div>
+                                <label class="form-label-custom">Teléfono</label>
+                                <input type="tel" name="telefono" class="form-control-custom"
+                                       value="{{ request.user.profile.telefono|default:'' }}"
+                                       placeholder="+593 99 999 9999">
+                            </div>
+                            <div>
+                                <label class="form-label-custom">Fecha de nacimiento</label>
+                                <input type="date" name="fecha_nacimiento" class="form-control-custom"
+                                       value="{{ request.user.profile.fecha_nacimiento|date:'Y-m-d'|default:'' }}">
+                            </div>
+                            <div class="full">
+                                <label class="form-label-custom">Biografía</label>
+                                <textarea name="bio" class="form-control-custom"
+                                          placeholder="Cuéntanos algo sobre ti...">{{ request.user.profile.bio|default:'' }}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-section-title">Datos laborales</div>
+                        <div class="edit-grid">
+                            <div>
+                                <label class="form-label-custom">Cargo</label>
+                                <input type="text" name="cargo" class="form-control-custom"
+                                       value="{{ request.user.profile.cargo|default:'' }}"
+                                       placeholder="Ej: Desarrollador Backend">
+                            </div>
+                            <div>
+                                <label class="form-label-custom">Departamento</label>
+                                <select name="departamento" class="form-control-custom">
+                                    <option value="">Seleccionar...</option>
+                                    {% for dept in departamentos %}
+                                        <option value="{{ dept }}"
+                                            {% if request.user.profile.departamento == dept %}selected{% endif %}>
+                                            {{ dept }}
+                                        </option>
+                                    {% endfor %}
+                                    <option value="{{ request.user.profile.departamento }}"
+                                        {% if request.user.profile.departamento %}selected{% endif %}>
+                                        {{ request.user.profile.departamento|default:"Sin departamento" }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-section-title">Foto de perfil</div>
+                        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                            {% if request.user.profile.foto %}
+                                <img src="{{ request.user.profile.foto.url }}"
+                                     id="preview-foto"
+                                     style="width:64px;height:64px;border-radius:50%;object-fit:cover;
+                                            border:3px solid var(--gray-200);">
+                            {% else %}
+                                <div class="avatar-xl" id="preview-foto"
+                                     style="width:64px;height:64px;font-size:18px;">
+                                    {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+                                </div>
+                            {% endif %}
+                            <div>
+                                <input type="file" name="foto" id="foto-input"
+                                       accept="image/*"
+                                       style="display:none;"
+                                       onchange="previewFoto(this)">
+                                <label for="foto-input"
+                                       style="cursor:pointer;padding:9px 18px;background:var(--violet-lt);
+                                              color:var(--violet);border-radius:8px;font-size:13px;
+                                              font-weight:600;display:inline-block;">
+                                    <i class="dw dw-upload2" style="margin-right:6px;"></i>Subir foto
+                                </label>
+                                <p style="font-size:11px;color:var(--gray-400);margin:6px 0 0;">
+                                    JPG, PNG o WebP. Máx. 5 MB.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-footer">
+                            <button type="submit" class="btn-save">
+                                <i class="dw dw-check" style="margin-right:6px;"></i>Guardar cambios
+                            </button>
+                            <button type="button" class="btn-cancel"
+                                    onclick="switchTab('info')">Cancelar</button>
+                            {% if messages %}
+                                {% for msg in messages %}
+                                    <div class="alert-inline {{ msg.tags }}"
+                                         style="display:flex;">
+                                        <i class="dw dw-check" style="margin-right:6px;"></i>
+                                        {{ msg }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ══════════════════════════════════════
+                 TAB 3: SEGURIDAD (cambio de contraseña)
+            ══════════════════════════════════════ -->
+            <div class="tab-panel" id="tab-security">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="pcard danger-zone">
+                            <div class="pcard-title">
+                                <i class="dw dw-padlock1"></i> Cambiar contraseña
+                            </div>
+                            <form method="POST" action="{% url 'profile_update' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="change_password">
+
+                                <div style="margin-bottom:16px;">
+                                    <label class="form-label-custom">Contraseña actual *</label>
+                                    <div class="input-icon-wrap">
+                                        <input type="password" name="old_password"
+                                               id="old-pass" class="form-control-custom"
+                                               placeholder="Tu contraseña actual" required>
+                                        <button type="button" class="toggle-pass"
+                                                onclick="togglePass('old-pass', this)">
+                                            <i class="dw dw-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom:16px;">
+                                    <label class="form-label-custom">Nueva contraseña *</label>
+                                    <div class="input-icon-wrap">
+                                        <input type="password" name="new_password1"
+                                               id="new-pass1" class="form-control-custom"
+                                               placeholder="Mínimo 8 caracteres"
+                                               oninput="checkStrength(this.value)"
+                                               required>
+                                        <button type="button" class="toggle-pass"
+                                                onclick="togglePass('new-pass1', this)">
+                                            <i class="dw dw-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="strength-bar">
+                                        <div class="strength-fill" id="strength-fill"></div>
+                                    </div>
+                                    <p class="pass-hint" id="strength-label">Escribe tu nueva contraseña</p>
+                                </div>
+
+                                <div style="margin-bottom:16px;">
+                                    <label class="form-label-custom">Confirmar nueva contraseña *</label>
+                                    <div class="input-icon-wrap">
+                                        <input type="password" name="new_password2"
+                                               id="new-pass2" class="form-control-custom"
+                                               placeholder="Repite la contraseña" required>
+                                        <button type="button" class="toggle-pass"
+                                                onclick="togglePass('new-pass2', this)">
+                                            <i class="dw dw-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="form-footer">
+                                    <button type="submit" class="btn-save"
+                                            style="background:linear-gradient(135deg,#dc2626,#ef4444);
+                                                   box-shadow:0 4px 14px rgba(220,38,38,.35);">
+                                        <i class="dw dw-padlock1" style="margin-right:6px;"></i>
+                                        Actualizar contraseña
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="pcard">
+                            <div class="pcard-title">
+                                <i class="dw dw-shield"></i> Consejos de seguridad
+                            </div>
+                            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;">
+                                <li style="display:flex;gap:10px;align-items:flex-start;">
+                                    <div style="width:28px;height:28px;border-radius:7px;background:#ede9fe;
+                                                display:flex;align-items:center;justify-content:center;
+                                                flex-shrink:0;">
+                                        <i class="dw dw-check" style="color:var(--violet);font-size:12px;"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:13px;font-weight:600;color:var(--navy);">
+                                            Usa al menos 8 caracteres
+                                        </div>
+                                        <div style="font-size:12px;color:var(--gray-400);">
+                                            Contraseñas más largas son más seguras.
+                                        </div>
+                                    </div>
+                                </li>
+                                <li style="display:flex;gap:10px;align-items:flex-start;">
+                                    <div style="width:28px;height:28px;border-radius:7px;background:#ede9fe;
+                                                display:flex;align-items:center;justify-content:center;
+                                                flex-shrink:0;">
+                                        <i class="dw dw-check" style="color:var(--violet);font-size:12px;"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:13px;font-weight:600;color:var(--navy);">
+                                            Mezcla letras, números y símbolos
+                                        </div>
+                                        <div style="font-size:12px;color:var(--gray-400);">
+                                            Ej: Mi$P4ssword!2024
+                                        </div>
+                                    </div>
+                                </li>
+                                <li style="display:flex;gap:10px;align-items:flex-start;">
+                                    <div style="width:28px;height:28px;border-radius:7px;background:#ede9fe;
+                                                display:flex;align-items:center;justify-content:center;
+                                                flex-shrink:0;">
+                                        <i class="dw dw-check" style="color:var(--violet);font-size:12px;"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:13px;font-weight:600;color:var(--navy);">
+                                            No reutilices contraseñas
+                                        </div>
+                                        <div style="font-size:12px;color:var(--gray-400);">
+                                            Cada cuenta debe tener su propia contraseña.
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════
+                 TAB 4: ACTIVIDAD RECIENTE
+            ══════════════════════════════════════ -->
+            <div class="tab-panel" id="tab-activity">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="pcard">
+                            <div class="pcard-title">
+                                <i class="dw dw-clock1"></i> Actividad reciente
+                            </div>
+                            <ul class="activity-list">
+                                <!-- Iteramos el historial de actividad si lo tienes -->
+                                {% if actividades %}
+                                    {% for act in actividades %}
+                                    <li class="activity-item">
+                                        <div class="activity-icon {{ act.tipo }}">
+                                            <i class="dw {{ act.icono }}"></i>
+                                        </div>
+                                        <div class="activity-text">
+                                            <strong>{{ act.descripcion }}</strong>
+                                            <p>{{ act.detalle|default:'' }}</p>
+                                        </div>
+                                        <div class="activity-time">{{ act.fecha|timesince }} ago</div>
+                                    </li>
+                                    {% endfor %}
+                                {% else %}
+                                    <!-- Ejemplos visuales cuando no hay datos reales -->
+                                    <li class="activity-item">
+                                        <div class="activity-icon login">
+                                            <i class="dw dw-user1"></i>
+                                        </div>
+                                        <div class="activity-text">
+                                            <strong>Inicio de sesión</strong>
+                                            <p>Acceso desde navegador web</p>
+                                        </div>
+                                        <div class="activity-time">
+                                            {{ request.user.last_login|timesince }} ago
+                                        </div>
+                                    </li>
+                                    <li class="activity-item">
+                                        <div class="activity-icon edit">
+                                            <i class="dw dw-edit2"></i>
+                                        </div>
+                                        <div class="activity-text">
+                                            <strong>Cuenta creada</strong>
+                                            <p>Registro inicial en el sistema</p>
+                                        </div>
+                                        <div class="activity-time">
+                                            {{ request.user.date_joined|timesince }} ago
+                                        </div>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="pcard">
+                            <div class="pcard-title">
+                                <i class="dw dw-analytics-21"></i> Resumen
+                            </div>
+                            <div style="display:flex;flex-direction:column;gap:12px;">
+                                <div style="display:flex;justify-content:space-between;padding:10px 14px;
+                                            background:var(--gray-50);border-radius:9px;">
+                                    <span style="font-size:13px;color:var(--gray-600);">
+                                        Miembro desde
+                                    </span>
+                                    <span style="font-size:13px;font-weight:600;color:var(--navy);">
+                                        {{ request.user.date_joined|date:"M Y" }}
+                                    </span>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;padding:10px 14px;
+                                            background:var(--gray-50);border-radius:9px;">
+                                    <span style="font-size:13px;color:var(--gray-600);">Último acceso</span>
+                                    <span style="font-size:13px;font-weight:600;color:var(--navy);">
+                                        {% if request.user.last_login %}
+                                            {{ request.user.last_login|date:"d/m/Y H:i" }}
+                                        {% else %}—{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /min-height -->
+    </div><!-- /pd-ltr-20 -->
+</div><!-- /main-container -->
+
+<!-- ══════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════ -->
+<script src="{% static 'private/vendors/scripts/core.js' %}"></script>
+<script src="{% static 'private/vendors/scripts/script.min.js' %}"></script>
+<script src="{% static 'private/vendors/scripts/process.js' %}"></script>
+<script src="{% static 'private/vendors/scripts/layout-settings.js' %}"></script>
+
+<script>
+/* ─────────────────────────────────────
+   TABS
+───────────────────────────────────── */
+function switchTab(tabId) {
+    document.querySelectorAll('.profile-tab').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
+    document.querySelectorAll('.tab-panel').forEach(function(panel) {
+        panel.classList.toggle('active', panel.id === 'tab-' + tabId);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.querySelectorAll('.profile-tab').forEach(function(btn) {
+    btn.addEventListener('click', function() { switchTab(this.dataset.tab); });
+});
+
+/* Abrir pestaña desde URL hash: perfil.html#edit */
+(function() {
+    var hash = window.location.hash.replace('#', '');
+    if (hash) switchTab(hash);
+})();
+
+/* ─────────────────────────────────────
+   PREVIEW FOTO
+───────────────────────────────────── */
+function previewFoto(input) {
+    if (!input.files || !input.files[0]) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var preview = document.getElementById('preview-foto');
+        if (preview.tagName === 'IMG') {
+            preview.src = e.target.result;
+        } else {
+            var img = document.createElement('img');
+            img.id = 'preview-foto';
+            img.src = e.target.result;
+            img.style.cssText = 'width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid var(--gray-200);';
+            preview.parentNode.replaceChild(img, preview);
+        }
+        /* También actualizar el hero */
+        var heroImg = document.getElementById('hero-img');
+        if (heroImg && heroImg.tagName === 'IMG') heroImg.src = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
+}
+
+/* Click en el ícono de cámara del hero también activa el input del form */
+document.getElementById('input-foto').addEventListener('change', function() {
+    var fotoInput = document.getElementById('foto-input');
+    if (fotoInput) {
+        /* Copiar el archivo al input del formulario */
+        var dataTransfer = new DataTransfer();
+        dataTransfer.items.add(this.files[0]);
+        fotoInput.files = dataTransfer.files;
+        previewFoto(fotoInput);
+    }
+    switchTab('edit');
+});
+
+/* ─────────────────────────────────────
+   MOSTRAR / OCULTAR CONTRASEÑA
+───────────────────────────────────── */
+function togglePass(inputId, btn) {
+    var input = document.getElementById(inputId);
+    var icon  = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'dw dw-eye-slash';
+    } else {
+        input.type = 'password';
+        icon.className = 'dw dw-eye';
+    }
+}
+
+/* ─────────────────────────────────────
+   INDICADOR DE FUERZA DE CONTRASEÑA
+───────────────────────────────────── */
+function checkStrength(value) {
+    var fill   = document.getElementById('strength-fill');
+    var label  = document.getElementById('strength-label');
+    var score  = 0;
+
+    if (value.length >= 8)  score++;
+    if (/[A-Z]/.test(value)) score++;
+    if (/[0-9]/.test(value)) score++;
+    if (/[^A-Za-z0-9]/.test(value)) score++;
+
+    var levels = [
+        { pct: '0%',   color: '#e2e8f0', text: 'Escribe tu nueva contraseña' },
+        { pct: '25%',  color: '#ef4444', text: 'Muy débil' },
+        { pct: '50%',  color: '#f97316', text: 'Débil' },
+        { pct: '75%',  color: '#eab308', text: 'Aceptable' },
+        { pct: '100%', color: '#22c55e', text: 'Fuerte ✓' }
+    ];
+
+    var lvl = value.length === 0 ? levels[0] : levels[score];
+    fill.style.width    = lvl.pct;
+    fill.style.background = lvl.color;
+    label.textContent   = lvl.text;
+    label.style.color   = lvl.color === '#e2e8f0' ? 'var(--gray-400)' : lvl.color;
+}
+</script>
+
+</body>
+</html>
