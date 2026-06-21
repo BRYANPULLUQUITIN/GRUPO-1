@@ -1,7 +1,6 @@
 {% load static %}
 {% include 'header.html' %}
 <!-- Hamburger -->
-
 <div class="hamburger_bar trans_400 d-flex flex-row align-items-center justify-content-start">
 	<div class="hamburger">
 		<div class="menu_toggle d-flex flex-row align-items-center justify-content-start">
@@ -17,48 +16,27 @@
 	</div>
 </div>
 
-<!-- Menu -->
-
-<div class="menu trans_800">
-	<div class="menu_content d-flex flex-column align-items-center justify-content-center text-center">
-		<ul>
-			<li><a href="index.html">home</a></li>
-			<li><a href="about.html">about us</a></li>
-			<li><a href="menu.html">menu</a></li>
-			<li><a href="blog.html">blog</a></li>
-			<li><a href="contact.html">contact</a></li>
-			<li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
-		</ul>
-	</div>
-</div>
-
 <!-- Home -->
 
-<div class="home">
-	<div class="parallax_background parallax-window"
-		data-parallax="scroll"
-		data-image-src="{% static 'public/images/home.jpg' %}"
-		data-speed="0.8">
-	</div>
-
-	<div class="home_container">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="home_content text-center">
-						<div class="home_subtitle page_subtitle">The Venue is</div>
-						<div class="home_title"><h1>An Extraordinery Experience</h1></div>
-						<div class="home_text ml-auto mr-auto">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+	<div class="home">
+		<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'public/images/home.jpg' %}" data-speed="0.8"></div>
+		<div class="home_container">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<div class="home_content text-center">
+							<div class="home_subtitle page_subtitle">The Venue is</div>
+							<div class="home_title"><h1>Una Experiencia Extraordinaria</h1></div>
+							<div class="home_text ml-auto mr-auto">
+								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<div class="scroll_icon"></div>
 	</div>
-
-	<div class="scroll_icon"></div>
-</div>
 
 <!-- Intro -->
 
@@ -67,8 +45,10 @@
 		<div class="row">
 			<div class="col">
 				<div class="intro_content">
-					<div class="intro_subtitle page_subtitle">Something new</div>
-					<div class="intro_title"><h2>An Extraordinery Experience</h2></div>
+					<div class="intro_subtitle page_subtitle">Algo Nuevo</div>
+					<div class="intro_title"><h2>LA MEJOR EXPERIENCIA PARA TU PALADAR</h2></div>
+					<p>Sistema desarrollado por el grupo 1</p>
+ 
 					<div class="intro_text">
 						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Ut non justo eleifend, facilisis nibh ut, interdum odio. Suspendisse potenti. Vivamus luctus diam eu neque rutrum, vitae aliquet dolor venenatis. Nulla consequat fringilla massa.</p>
 					</div>
@@ -83,7 +63,7 @@
 
 					<div class="col-xl-4 col-md-6 intro_col">
 						<div class="intro_image">
-							<img src="/static/public/images/intro_2.jpg" alt="">
+							<img src="{% static 'public/images/intro_2.jpg' %}" alt="Introduccion 2">
 						</div>
 					</div>
 				</div>
@@ -101,7 +81,9 @@
 	</div>
 
 	<div class="video_section_content d-flex flex-column align-items-center justify-content-center text-center">
-		<div class="video_section_title">Food for the soul</div>
+		<div class="video_section_title" style="color: blue; font-size: 40px;">
+VIDEO PROMOCIONAL
+</div>
 
 		<div class="video_section_icon">
 			<a class="vimeo video_button"
@@ -120,29 +102,36 @@
 			<div class="row">
 				<div class="col-lg-7">
 					<div class="sig_content">
-						<div class="sig_subtitle page_subtitle">Something new</div>
-						<div class="sig_title"><h1>Our Signature Dish</h1></div>
+						<div class="sig_subtitle page_subtitle" style="color: orange;">Especialidad de la Casa</div>
+
+						<div class="sig_title">
+<h1 style="color: darkred;">Plato Insignia de la Casa</h1>
+</div>
+
+						<h3 style="font-style: italic;">Plato Recomendado</h3>
 
 						<div class="rating_r sig_rating rating_r_5">
 							<i></i><i></i><i></i><i></i><i></i>
 						</div>
 
 						<div class="sig_name_container d-flex flex-row align-items-start justify-content-start">
-							<div class="sig_name">Pork Tenderloin marinated in Green Pepper</div>
-							<div class="sig_price ml-auto">$20</div>
+							<div class="sig_name">Lomo de Cerdo Marinado con Pimienta Verde</div>
+							<div class="sig_price ml-auto" style="color: green;">$25</div>
 						</div>
 
 						<div class="sig_content_list">
-							<ul class="d-flex flex-row align-items-center justify-content-start">
-								<li>Pork</li>
-								<li>Tenderloin</li>
-								<li>Green Pepper</li>
-								<li>Veggies</li>
-							</ul>
+							<ul>
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="about.html">Nosotros</a></li>
+    <li><a href="menu.html">Menú</a></li>
+    <li><a href="#">Delivery</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="contact.html">Contacto</a></li>
+</ul>
 						</div>
 
 						<div class="button sig_button trans_200">
-							<a href="#">Order Now</a>
+							<a href="#" style="font-weight: bold;">Ordena Ahora</a>
 						</div>
 
 					</div>
@@ -161,7 +150,7 @@
 							style="background-image:url('/static/public/images/sig.jpg')">
 						</div>
 
-						<img src="/static/public/images/sig.jpg" alt="">
+						<img src="{% static 'public/images/sig.jpg' %}" alt="Plato Insignia">
 
 					</div>
 				</div>
@@ -185,7 +174,13 @@
 			<div class="col">
 				<div class="reservations_content d-flex flex-column align-items-center justify-content-center">
 
-					<div class="res_stars page_subtitle">5 Stars</div>
+					<div class="res_stars page_subtitle">
+    <i class="fa fa-star" style="color: gold;"
+    <i class="fa fa-star" style="color: #cbd154;"></i>
+    <i class="fa fa-star" style="color: #cbd154;"></i>
+    <i class="fa fa-star" style="color: #cbd154;"></i>
+    <i class="fa fa-star" style="color: #cbd154;"></i>
+</div>
 					<div class="res_title">Make a Reservation</div>
 
 					<div class="res_form_container">
@@ -208,13 +203,12 @@
 									<option>4 person</option>
 									<option>5 person</option>
 									<option>6 person</option>
+									<option>Más de un trillon de personas</option>
 								</select>
 
 							</div>
 
-							<button class="res_button">
-								Make a Reservation
-							</button>
+							<button class="res_button" style="background-color: orange;">Hacer una Reservación</button>
 
 						</form>
 					</div>

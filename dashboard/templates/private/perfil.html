@@ -1,4 +1,5 @@
 {% load static %}
+{% include 'private/header.html' %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -1188,6 +1189,4 @@ function checkStrength(value) {
     label.style.color   = lvl.color === '#e2e8f0' ? 'var(--gray-400)' : lvl.color;
 }
 </script>
-
-</body>
-</html>
+{% include 'private/footer.html' %}

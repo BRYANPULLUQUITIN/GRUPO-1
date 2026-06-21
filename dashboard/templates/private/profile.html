@@ -1,0 +1,90 @@
+{% load static %}
+{% include 'private/header.html' %}
+
+<div class="main-container">
+    <div class="pd-ltr-20">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h4 class="font-20 weight-500">Perfil de Usuario</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card-box mb-30">
+                    <h5 class="pd-20 h5">Información Personal</h5>
+                    <form method="POST" class="pd-20">
+                        {% csrf_token %}
+                        
+                        <div class="form-group row">
+                            <label class="col-sm-12 col-md-2 col-form-label">Usuario</label>
+                            <div class="col-sm-12 col-md-10">
+                                <input type="text" class="form-control" value="{{ user.username }}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-12 col-md-2 col-form-label">Nombre</label>
+                            <div class="col-sm-12 col-md-10">
+                                <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}" placeholder="Nombre">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-12 col-md-2 col-form-label">Apellido</label>
+                            <div class="col-sm-12 col-md-10">
+                                <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}" placeholder="Apellido">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-12 col-md-2 col-form-label">Email</label>
+                            <div class="col-sm-12 col-md-10">
+                                <input type="email" class="form-control" name="email" value="{{ user.email }}" placeholder="Email">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-12 col-md-2 col-form-label">Fecha de Registro</label>
+                            <div class="col-sm-12 col-md-10">
+                                <input type="text" class="form-control" value="{{ user.date_joined }}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-sm-12 col-md-10 offset-md-2">
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                {% if messages %}
+                <div class="alert alert-info" role="alert">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card-box mb-30">
+                    <h5 class="pd-20 h5">Información de Cuenta</h5>
+                    <div class="pd-20">
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Usuario:</strong> {{ user.username }}</p>
+                        <p><strong>Activo:</strong> {% if user.is_active %}Sí{% else %}No{% endif %}</p>
+                        <p><strong>Último acceso:</strong> {{ user.last_login }}</p>
+                                <a href="{% url 'dashboard:settings' %}" class="btn btn-sm btn-primary">Cambiar Contraseña</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'private/footer.html' %}
