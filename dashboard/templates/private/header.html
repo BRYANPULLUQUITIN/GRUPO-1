@@ -19,7 +19,7 @@
 
     <style>
         /* Avatar con iniciales cuando no hay foto */
-        .avatar-initials {
+        .user-info-dropdown .avatar-initials {
             width: 52px;
             height: 52px;
             border-radius: 50%;
@@ -32,6 +32,23 @@
             color: white;
             text-transform: uppercase;
         }
+        /* Foto de usuario en el header — alineación correcta */
+        .user-info-dropdown .user-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+        }
+
+        .user-info-dropdown .user-icon img {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;         /* ← elimina el espacio inline fantasma */
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
 
         /* Badge numérico de notificaciones */
         .notif-count {
