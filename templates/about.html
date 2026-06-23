@@ -1,209 +1,146 @@
 {% load static %}
 {% include 'header.html' %}
-<!-- Hamburger -->
 
-<div class="hamburger_bar trans_400 d-flex flex-row align-items-center justify-content-start">
-	<div class="hamburger">
-		<div class="menu_toggle d-flex flex-row align-items-center justify-content-start">
-			<span>menu</span>
-			<div class="hamburger_container">
-				<div class="menu_hamburger">
-					<div class="line_1 hamburger_lines" style="transform: matrix(1, 0, 0, 1, 0, 0);"></div>
-					<div class="line_2 hamburger_lines" style="visibility: inherit; opacity: 1;"></div>
-					<div class="line_3 hamburger_lines" style="transform: matrix(1, 0, 0, 1, 0, 0);"></div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="w-100 position-fixed bg-dark" style="z-index: 9999; top: 0;"></div>
+
+<div class="home" style="height: 400px;">
+    <div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/supermercado.jpeg' %}" data-speed="0.8"></div>
+    <div class="home_container">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="home_content text-center">
+                        <div class="home_subtitle page_subtitle text-white text-shadow">Nuestra Granja</div>
+                        <div class="home_title"><h1 class="text-white text-shadow">Sobre Nosotros</h1></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Home -->
-
-<div class="home">
-	<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="/static/public/images/about.jpg" data-speed="0.8"></div>
-	<div class="home_container">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="home_content text-center">
-						<div class="home_subtitle page_subtitle">Granja Avícola</div>
-						<div class="home_title"><h1>Sobre Nosotros </h1></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="intro py-5">
+    <div class="container my-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="intro_content">
+                    <div class="intro_subtitle page_subtitle text-success font-weight-bold">Compromiso Avícola</div>
+                    <div class="intro_title"><h2 class="font-weight-bold text-dark">Calidad Natural</h2></div>
+                    <div class="intro_text mt-4">
+                        <p class="lead text-secondary">En nuestra granja, el bienestar animal es la prioridad. Producimos huevos y carne de ave bajo procesos certificados, asegurando que cada producto que llega a su hogar sea fresco, nutritivo y de origen responsable.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="intro_image">
+                    <img src="{% static 'images/gallinas.jpeg' %}" alt="Nuestra Granja" class="img-fluid rounded shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Intro -->
+<div class="team_section py-5" style="background-color: #f8f9fa;">
+    <div class="container my-5">
+        <div class="row mb-5">
+            <div class="col text-center">
+                <div class="section_title_container">
+                    <div class="section_subtitle page_subtitle text-muted">Expertos al cuidado</div>
+                    <div class="section_title"><h1 class="font-weight-bold" style="color: #4b3621;">Nuestro Equipo Técnico</h1></div>
+                </div>
+            </div>
+        </div>
+        <div class="row text-center">
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-sm rounded-lg p-4">
+                    <div class="card-body">
+                        <div class="display-4 text-warning mb-3"><i class="fa fa-user-md"></i></div>
+                        <h5 class="card-title font-weight-bold text-dark mb-1">Carlos Mendoza</h5>
+                        <p class="card-text text-uppercase small font-weight-bold text-muted">Veterinario Jefe</p>
+                    </div>
+                </div>
+            </div>
 
-<div class="intro">
-	<div class="container">
-		<div class="row">
-			<div class="col">
-				<div class="intro_content">
-					<div class="intro_subtitle page_subtitle">Something new</div>
-					<div class="intro_title"><h2>An Extraordinery Experience</h2></div>
-					<div class="intro_text">
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Ut non justo eleifend, facilisis nibh ut, interdum odio. Suspendisse potenti. Vivamus luctus diam eu neque rutrum, vitae aliquet dolor venenatis. Nulla consequat fringilla massa.</p>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-lg-8">
-						<div class="intro_image"><img src="/static/public/images/about_intro.jpg" alt="https://unsplash.com/@quanle2819"></div>
-					</div>
-				</div>
-			</div>	
-		</div>
-	</div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-sm rounded-lg p-4">
+                    <div class="card-body">
+                        <div class="display-4 text-success mb-3"><i class="fa fa-leaf"></i></div>
+                        <h5 class="card-title font-weight-bold text-dark mb-1">Andrés Silva</h5>
+                        <p class="card-text text-uppercase small font-weight-bold text-muted">Ing. Agrónomo</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-sm rounded-lg p-4">
+                    <div class="card-body">
+                        <div class="display-4 text-info mb-3"><i class="fa fa-check-square-o"></i></div>
+                        <h5 class="card-title font-weight-bold text-dark mb-1">Laura Benítez</h5>
+                        <p class="card-text text-uppercase small font-weight-bold text-muted">Control de Calidad</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-sm rounded-lg p-4">
+                    <div class="card-body">
+                        <div class="display-4 text-danger mb-3"><i class="fa fa-truck"></i></div>
+                        <h5 class="card-title font-weight-bold text-dark mb-1">Luis Ordóñez</h5>
+                        <p class="card-text text-uppercase small font-weight-bold text-muted">Logística</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 
-<!-- Chefs -->
-
-<div class="chefs">
-	<div class="container">
-		<div class="row">
-			<div class="col">
-				<div class="section_title_container">
-					<div class="section_subtitle page_subtitle">Something new</div>
-					<div class="section_title"><h1>Conoce a Nuestros Chefs</h1></div>
-				</div>
-			</div>
-		</div>
-		<div class="row chefs_text_row">
-			<div class="col-lg-6">
-				<div class="chefs_text">
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Ut non justo eleifend, facilisis nibh ut, interdum odio. Suspendisse potenti. Vivamus luctus diam eu neque rutrum, vitae aliquet dolor venenatis. Nulla consequat fringilla.</p>
-				</div>
-			</div>
-			<div class="col-lg-6">
-				<div class="chefs_text">
-					<p>Sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Ut non justo eleifend, facilisis nibh ut, interdum odio. Suspendisse potenti. Vivamus luctus diam eu neque rutrum, vitae aliquet dolor venenatis. Nulla consequat fringilla.</p>
-				</div>
-			</div>
-		</div>
-		<div class="row chefs_row row-eq-height">
-			
-			<!-- Chef -->
-			<div class="col-xl-3 col-md-6 chef_col d-flex flex-column align-items-center justify-content-end">
-				<div class="chef">
-					<div class="chef_image"><img src="/static/public/images/chef_1.jpg" alt=""></div>
-					<div class="chef_content text-center">
-						<div class="chef_name">Maria Smith</div>
-						<div class="chef_subtitle">Top Chef</div>
-						<div class="chef_button ml-auto mr-auto trans_400"><a href="#">see more</a></div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Chef -->
-			<div class="col-xl-3 col-md-6 chef_col d-flex flex-column align-items-center justify-content-end">
-				<div class="chef">
-					<div class="chef_image"><img src="/static/public/images/chef_2.jpg" alt=""></div>
-					<div class="chef_content text-center">
-						<div class="chef_name">William Jones</div>
-						<div class="chef_subtitle">Sauce Chef</div>
-						<div class="chef_button ml-auto mr-auto trans_400"><a href="#">see more</a></div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Chef -->
-			<div class="col-xl-3 col-md-6 chef_col d-flex flex-column align-items-center justify-content-end">
-				<div class="chef">
-					<div class="chef_image"><img src="/static/public/images/chef_3.jpg" alt=""></div>
-					<div class="chef_content text-center">
-						<div class="chef_name">Julien Williams</div>
-						<div class="chef_subtitle">Sushi Chef</div>
-						<div class="chef_button ml-auto mr-auto trans_400"><a href="#">see more</a></div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Chef -->
-			<div class="col-xl-3 col-md-6 chef_col d-flex flex-column align-items-center justify-content-end">
-				<div class="chef">
-					<div class="chef_image"><img src="/static/public/images/chef_4.jpg" alt=""></div>
-					<div class="chef_content text-center">
-						<div class="chef_name">Suzie James</div>
-						<div class="chef_subtitle">Sauce Chef</div>
-						<div class="chef_button ml-auto mr-auto trans_400"><a href="#">see more</a></div>
-					</div>
-				</div>
-			</div>
-
-		</div>
-	</div>
+<div class="testimonials py-5 position-relative">
+    <div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/supermercado.jpeg' %}" data-speed="0.8"></div>
+    <div class="container my-5">
+        <div class="row">
+            <div class="col text-center">
+                <div class="section_title_container">
+                    <h1 class="text-white font-weight-bold text-shadow">Lo que dicen nuestros aliados</h1>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-lg-8 offset-lg-2 text-center bg-white p-5 rounded shadow-lg">
+                <p class="blockquote font-italic text-muted" style="font-size: 1.25rem;">"La frescura de los huevos de esta granja es incomparable. Mis clientes siempre piden sus productos por su calidad y tamaño."</p>
+                <h5 class="font-weight-bold mt-4" style="color: #4b3621;">- Supermercados La Estancia</h5>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Testimonials -->
-
-<div class="testimonials">
-	<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="/static/public/images/testimonials.jpg" data-speed="0.8"></div>
-	<div class="container">
-		<div class="row">
-			<div class="col text-center">
-				<div class="section_title_container">
-					<div class="section_subtitle page_subtitle">What they say</div>
-					<div class="section_title"><h1>Testimonios</h1></div>
-				</div>
-			</div>
-		</div>
-		<div class="row testimonials_row">
-			<div class="col-lg-10 offset-lg-1">
-				
-				<!-- Testimonials Slider -->
-				<div class="test_slider_container">
-					<div class="owl-carousel owl-theme test_slider">
-						
-						<!-- Slide -->
-						<div class="owl-item text-center">
-							<div class="quote ml-auto mr-auto"><img src="/static/public/images/quote.png" alt=""></div>
-							<div class="test_text">
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, 
-                                    at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Ut non justo eleifend, 
-                                    facilisis nibh ut, interdum odio. Suspendisse potenti. Vivamus luctus diam eu neque rutrum, vitae aliquet 
-                                    dolor venenatis. Nulla consequat fringilla massa.</p>
-							</div>
-							<div class="test_info">James Smith, <span>Cliente</span></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-<!-- Reservations -->
-
-<div class="reservations text-center">
-	<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="/static/public/images/reservations.jpg" data-speed="0.8"></div>
-	<div class="container">
-		<div class="row">
-			<div class="col">
-				<div class="reservations_content d-flex flex-column align-items-center justify-content-center">
-					<div class="res_stars page_subtitle">5 Stars</div>
-					<div class="res_title">Make a Reservation</div>
-					<div class="res_form_container">
-						<form action="#" id="res_form" class="res_form">
-							<div class="d-flex flex-sm-row flex-column align-items-center justify-content-start">
-								<input type="text" id="datepicker" class="res_input" required="required">
-								<input type="text" class="res_input timepicker" required="required">
-								<select class="res_select">
-									<option disabled="" selected="">2 personas</option>
-									<option>3 personas</option>
-									<option>4 personas</option>
-									<option>5 personas</option>
-									<option>6 personas</option>
-								</select>
-							</div>
-							<button class="res_button">Make a Reservation</button>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>		
+<div class="reservations py-5">
+    <div class="container my-5 text-center">
+        <h2 class="font-weight-bold mb-5" style="color: #4b3621;">¿Deseas realizar un pedido al por mayor?</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <form action="#" class="res_form bg-white p-5 rounded shadow-sm">
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <input type="text" class="form-control form-control-lg border-secondary rounded" placeholder="Fecha deseada" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <input type="text" class="form-control form-control-lg border-secondary rounded" placeholder="Cantidad aproximada" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <select class="form-control form-control-lg border-secondary rounded">
+                                <option>Cubetas Tipo A</option>
+                                <option>Cubetas Tipo B</option>
+                                <option>Pollo Faenado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-lg btn-block text-white mt-4 font-weight-bold shadow-sm" style="background-color: #4b3621;">Solicitar Cotización</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% include 'footer.html' %}
