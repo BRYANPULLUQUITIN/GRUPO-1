@@ -1,0 +1,619 @@
+{% load static %}
+{% include 'private/header.html' %}
+
+<style>
+    :root {
+        --pink:      #c2185b;
+        --navy:      #2a3f54;
+        --violet:    #7c3aed;
+        --violet-lt: #ede9fe;
+        --green:     #059669;
+        --red:       #dc2626;
+        --gray-50:   #f8fafc;
+        --gray-100:  #f1f5f9;
+        --gray-200:  #e2e8f0;
+        --gray-400:  #94a3b8;
+        --gray-600:  #475569;
+        --gray-900:  #0f172a;
+        --radius:    14px;
+        --shadow:    0 4px 24px rgba(0,0,0,.08);
+    }
+
+    /* ── PAGE HEADER ── */
+    .users-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    .users-header h3 {
+        font-size: 20px; font-weight: 800;
+        color: var(--navy); margin: 0;
+    }
+    .users-header p {
+        font-size: 13px; color: var(--gray-400); margin: 2px 0 0;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    .stat-card {
+        background: #fff;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 20px 22px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    .stat-card .stat-icon {
+        width: 44px; height: 44px;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 20px; flex-shrink: 0;
+    }
+    .stat-card .stat-icon.total   { background: var(--violet-lt); color: var(--violet); }
+    .stat-card .stat-icon.active  { background: #dcfce7; color: var(--green); }
+    .stat-card .stat-icon.admin   { background: #fce7f3; color: var(--pink); }
+    .stat-card .stat-icon.new     { background: #dbeafe; color: #2563eb; }
+    .stat-card .stat-num  { font-size: 22px; font-weight: 800; color: var(--navy); line-height: 1; }
+    .stat-card .stat-lbl  { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: .6px; margin-top: 2px; }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+        background: #fff;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+    .search-box {
+        flex: 1; min-width: 200px;
+        position: relative;
+    }
+    .search-box i {
+        position: absolute; left: 12px; top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-400); font-size: 15px;
+    }
+    .search-box input {
+        width: 100%;
+        padding: 9px 12px 9px 36px;
+        border: 1.5px solid var(--gray-200);
+        border-radius: 8px;
+        font-size: 13px; font-family: 'Inter', sans-serif;
+        outline: none; background: var(--gray-50);
+        transition: border-color .2s;
+    }
+    .search-box input:focus { border-color: var(--violet); background: #fff; }
+
+    .filter-select {
+        padding: 9px 32px 9px 12px;
+        border: 1.5px solid var(--gray-200);
+        border-radius: 8px;
+        font-size: 13px; font-family: 'Inter', sans-serif;
+        outline: none; background: var(--gray-50);
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--violet), #9333ea);
+        color: #fff; border: none;
+        padding: 9px 20px; border-radius: 8px;
+        font-size: 13px; font-weight: 700;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer; white-space: nowrap;
+        display: flex; align-items: center; gap: 6px;
+        box-shadow: 0 4px 14px rgba(124,58,237,.3);
+        transition: transform .15s, box-shadow .15s;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(124,58,237,.4); }
+
+    /* ── TABLE CARD ── */
+    .table-card {
+        background: #fff;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+    .table-card table {
+        width: 100%; border-collapse: collapse;
+    }
+    .table-card thead th {
+        padding: 14px 16px;
+        font-size: 11px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: .7px;
+        color: var(--gray-400);
+        background: var(--gray-50);
+        border-bottom: 1px solid var(--gray-200);
+        white-space: nowrap;
+    }
+    .table-card tbody tr {
+        border-bottom: 1px solid var(--gray-100);
+        transition: background .15s;
+    }
+    .table-card tbody tr:last-child { border-bottom: none; }
+    .table-card tbody tr:hover { background: var(--gray-50); }
+    .table-card tbody td { padding: 14px 16px; font-size: 13px; color: var(--gray-900); vertical-align: middle; }
+
+    /* Avatar en tabla */
+    .user-cell { display: flex; align-items: center; gap: 10px; }
+    .av {
+        width: 36px; height: 36px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--pink), #f06292);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 12px; font-weight: 700; color: #fff;
+        text-transform: uppercase; flex-shrink: 0;
+        object-fit: cover;
+    }
+    img.av { object-fit: cover; }
+    .user-cell .u-name  { font-size: 13px; font-weight: 600; color: var(--navy); }
+    .user-cell .u-email { font-size: 11px; color: var(--gray-400); }
+
+    /* Badges */
+    .badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 3px 10px; border-radius: 20px;
+        font-size: 11px; font-weight: 600;
+    }
+    .badge-active   { background: #dcfce7; color: var(--green); }
+    .badge-inactive { background: #fee2e2; color: var(--red); }
+    .badge-admin    { background: #fce7f3; color: var(--pink); }
+    .badge-user     { background: var(--violet-lt); color: var(--violet); }
+    .badge .dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+
+    /* Acciones */
+    .actions { display: flex; gap: 6px; align-items: center; }
+    .btn-icon {
+        width: 30px; height: 30px; border-radius: 7px;
+        display: flex; align-items: center; justify-content: center;
+        border: none; cursor: pointer; font-size: 13px;
+        transition: background .15s, transform .1s;
+    }
+    .btn-icon:hover { transform: scale(1.1); }
+    .btn-icon.edit   { background: var(--violet-lt); color: var(--violet); }
+    .btn-icon.toggle-on  { background: #dcfce7; color: var(--green); }
+    .btn-icon.toggle-off { background: #fee2e2; color: var(--red); }
+    .btn-icon.del    { background: #fee2e2; color: var(--red); }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center; padding: 60px 20px;
+        color: var(--gray-400);
+    }
+    .empty-state i { font-size: 48px; margin-bottom: 12px; display: block; }
+    .empty-state p { font-size: 14px; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,.45); z-index: 2000;
+        align-items: center; justify-content: center;
+        padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+        background: #fff; border-radius: var(--radius);
+        width: 100%; max-width: 560px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.2);
+        animation: modalIn .25s ease;
+        max-height: 90vh; overflow-y: auto;
+    }
+    @keyframes modalIn {
+        from { opacity:0; transform:translateY(-16px); }
+        to   { opacity:1; transform:translateY(0); }
+    }
+    .modal-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 20px 24px 16px;
+        border-bottom: 1px solid var(--gray-100);
+    }
+    .modal-header h5 { font-size: 16px; font-weight: 700; color: var(--navy); margin:0; }
+    .modal-close {
+        width:28px; height:28px; border-radius:7px;
+        background: var(--gray-100); border: none; cursor: pointer;
+        display:flex; align-items:center; justify-content:center;
+        font-size:14px; color:var(--gray-600);
+    }
+    .modal-close:hover { background: var(--gray-200); }
+    .modal-body  { padding: 20px 24px; }
+    .modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid var(--gray-100);
+        display: flex; gap: 10px; justify-content: flex-end;
+    }
+
+    /* Form del modal */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .form-row.full { grid-template-columns: 1fr; }
+    .form-group label {
+        display: block; font-size: 12px; font-weight: 600;
+        color: var(--gray-600); margin-bottom: 5px;
+    }
+    .form-group input,
+    .form-group select {
+        width: 100%; padding: 9px 12px;
+        border: 1.5px solid var(--gray-200); border-radius: 8px;
+        font-size: 13px; font-family:'Inter',sans-serif;
+        color: var(--gray-900); background: var(--gray-50);
+        outline: none; transition: border-color .2s;
+        box-sizing: border-box;
+    }
+    .form-group input:focus,
+    .form-group select:focus { border-color: var(--violet); background:#fff; }
+
+    .checkbox-row {
+        display: flex; align-items: center; gap: 8px;
+        margin-bottom: 14px;
+    }
+    .checkbox-row input[type=checkbox] {
+        width: 15px; height: 15px; accent-color: var(--violet); cursor:pointer;
+    }
+    .checkbox-row label { font-size:13px; color:var(--gray-600); cursor:pointer; margin:0; }
+
+    .btn-cancel-modal {
+        background: var(--gray-100); color: var(--gray-600);
+        border: none; padding: 9px 20px; border-radius: 8px;
+        font-size: 13px; font-weight: 600;
+        font-family:'Inter',sans-serif; cursor:pointer;
+    }
+    .btn-cancel-modal:hover { background: var(--gray-200); }
+
+    /* Alertas */
+    .alert-msg {
+        display:flex; align-items:center; gap:8px;
+        padding:10px 16px; border-radius:8px;
+        font-size:13px; font-weight:500; margin-bottom:16px;
+    }
+    .alert-msg.success { background:#ecfdf5; color:var(--green); border:1px solid #a7f3d0; }
+    .alert-msg.error   { background:#fef2f2; color:var(--red);   border:1px solid #fecaca; }
+
+    /* Responsive */
+    @media (max-width:768px) {
+        .stats-bar { grid-template-columns: 1fr 1fr; }
+        .table-card { overflow-x: auto; }
+        .form-row   { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="mobile-menu-overlay"></div>
+<div class="main-container">
+<div class="pd-ltr-20 xs-pd-20-10">
+<div class="min-height-200px">
+
+    <!-- Breadcrumb -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <div class="title"><h4>Gestión de Usuarios</h4></div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Inicio</a></li>
+                        <li class="breadcrumb-item active">Usuarios</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes Django -->
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert-msg {% if msg.tags == 'error' %}error{% else %}success{% endif %}">
+                <i class="dw {% if msg.tags == 'error' %}dw-warning{% else %}dw-check{% endif %}"></i>
+                {{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Stats -->
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="stat-icon total"><i class="dw dw-user1"></i></div>
+            <div>
+                <div class="stat-num">{{ usuarios.count }}</div>
+                <div class="stat-lbl">Total</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon active"><i class="dw dw-check"></i></div>
+            <div>
+                <div class="stat-num">{{ usuarios|length }}</div>
+                <div class="stat-lbl">Activos</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon admin"><i class="dw dw-shield"></i></div>
+            <div>
+                <div class="stat-num">
+                    {% with admins=0 %}
+                        {{ usuarios|dictsort:"is_staff"|length }}
+                    {% endwith %}
+                </div>
+                <div class="stat-lbl">Admins</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon new"><i class="dw dw-calendar1"></i></div>
+            <div>
+                <div class="stat-num">—</div>
+                <div class="stat-lbl">Este mes</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="search-box">
+            <i class="dw dw-search2"></i>
+            <input type="text" id="search-input" placeholder="Buscar por nombre, email...">
+        </div>
+        <select class="filter-select" id="filter-role">
+            <option value="">Todos los roles</option>
+            <option value="admin">Administrador</option>
+            <option value="user">Usuario</option>
+        </select>
+        <select class="filter-select" id="filter-status">
+            <option value="">Todos los estados</option>
+            <option value="active">Activo</option>
+            <option value="inactive">Inactivo</option>
+        </select>
+        <button class="btn-primary" onclick="openModal()">
+            <i class="dw dw-add"></i> Nuevo usuario
+        </button>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-card">
+        <table id="users-table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Cargo / Depto.</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Miembro desde</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios %}
+                <tr data-name="{{ u.get_full_name|lower }} {{ u.email|lower }}"
+                    data-role="{% if u.is_staff %}admin{% else %}user{% endif %}"
+                    data-status="{% if u.is_active %}active{% else %}inactive{% endif %}">
+
+                    <td>
+                        <div class="user-cell">
+                            {% if u.profile.foto %}
+                                <img src="{{ u.profile.foto.url }}" class="av" alt="">
+                            {% else %}
+                                <div class="av">
+                                    {{ u.first_name|first|upper }}{{ u.last_name|first|upper }}
+                                </div>
+                            {% endif %}
+                            <div>
+                                <div class="u-name">
+                                    {{ u.get_full_name|default:u.username }}
+                                    {% if u == request.user %}
+                                        <span style="font-size:10px;color:var(--violet);
+                                                     background:var(--violet-lt);padding:1px 6px;
+                                                     border-radius:10px;margin-left:4px;">Tú</span>
+                                    {% endif %}
+                                </div>
+                                <div class="u-email">{{ u.email }}</div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td>
+                        <div style="font-size:13px;font-weight:500;color:var(--navy);">
+                            {{ u.profile.cargo|default:"—" }}
+                        </div>
+                        <div style="font-size:11px;color:var(--gray-400);">
+                            {{ u.profile.departamento|default:"Sin departamento" }}
+                        </div>
+                    </td>
+
+                    <td>
+                        {% if u.is_superuser %}
+                            <span class="badge badge-admin"><span class="dot"></span>Superadmin</span>
+                        {% elif u.is_staff %}
+                            <span class="badge badge-admin"><span class="dot"></span>Admin</span>
+                        {% else %}
+                            <span class="badge badge-user"><span class="dot"></span>Usuario</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if u.is_active %}
+                            <span class="badge badge-active"><span class="dot"></span>Activo</span>
+                        {% else %}
+                            <span class="badge badge-inactive"><span class="dot"></span>Inactivo</span>
+                        {% endif %}
+                    </td>
+
+                    <td style="color:var(--gray-600);">
+                        {{ u.date_joined|date:"d/m/Y" }}
+                    </td>
+
+                    <td>
+                        <div class="actions">
+                            <!-- Toggle activo/inactivo -->
+                            {% if u != request.user %}
+                            <form method="POST" action="{% url 'usuario_toggle' u.pk %}"
+                                  style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="btn-icon {% if u.is_active %}toggle-on{% else %}toggle-off{% endif %}"
+                                        title="{% if u.is_active %}Desactivar{% else %}Activar{% endif %}">
+                                    <i class="dw {% if u.is_active %}dw-check{% else %}dw-close{% endif %}"></i>
+                                </button>
+                            </form>
+
+                            <!-- Eliminar -->
+                            <form method="POST" action="{% url 'usuario_eliminar' u.pk %}"
+                                  style="display:inline;"
+                                  onsubmit="return confirm('¿Eliminar a {{ u.get_full_name }}? Esta acción no se puede deshacer.')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-icon del" title="Eliminar">
+                                    <i class="dw dw-delete-3"></i>
+                                </button>
+                            </form>
+                            {% else %}
+                                <span style="font-size:11px;color:var(--gray-400);">—</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <i class="dw dw-user1"></i>
+                            <p>No hay usuarios registrados todavía.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODAL — CREAR USUARIO
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-crear" onclick="closeModalOutside(event)">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5><i class="dw dw-add" style="color:var(--violet);margin-right:6px;"></i>Nuevo usuario</h5>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+
+        <form method="POST" action="{% url 'usuario_crear' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal-body">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre *</label>
+                        <input type="text" name="first_name" placeholder="Ej: Juan" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Apellido *</label>
+                        <input type="text" name="last_name" placeholder="Ej: Pérez" required>
+                    </div>
+                </div>
+
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label>Correo electrónico *</label>
+                        <input type="email" name="email" placeholder="correo@ejemplo.com" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Contraseña *</label>
+                        <input type="password" name="password" placeholder="Mínimo 8 caracteres" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Cargo</label>
+                        <input type="text" name="cargo" placeholder="Ej: Desarrollador">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Departamento</label>
+                        <select name="departamento">
+                            <option value="">Seleccionar...</option>
+                            {% for dept in departamentos %}
+                                <option value="{{ dept }}">{{ dept }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Foto de perfil</label>
+                        <input type="file" name="foto" accept="image/*"
+                               style="padding:6px 12px;font-size:12px;">
+                    </div>
+                </div>
+
+                <div class="checkbox-row">
+                    <input type="checkbox" name="is_staff" id="is_staff">
+                    <label for="is_staff">Otorgar permisos de administrador</label>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-modal" onclick="closeModal()">Cancelar</button>
+                <button type="submit" class="btn-primary">
+                    <i class="dw dw-check"></i> Crear usuario
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    /* ── Modal ── */
+    function openModal() {
+        document.getElementById('modal-crear').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        document.getElementById('modal-crear').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    function closeModalOutside(e) {
+        if (e.target === document.getElementById('modal-crear')) closeModal();
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    
+
+    /* ── Búsqueda y filtros ── */
+    function filterTable() {
+        var search = document.getElementById('search-input').value.toLowerCase();
+        var role   = document.getElementById('filter-role').value;
+        var status = document.getElementById('filter-status').value;
+
+        document.querySelectorAll('#users-table tbody tr').forEach(function(row) {
+            var name   = (row.dataset.name   || '').toLowerCase();
+            var rRole  = row.dataset.role   || '';
+            var rStatus= row.dataset.status || '';
+
+            var matchSearch = !search || name.includes(search);
+            var matchRole   = !role   || rRole === role;
+            var matchStatus = !status || rStatus === status;
+
+            row.style.display = (matchSearch && matchRole && matchStatus) ? '' : 'none';
+        });
+    }
+
+    document.getElementById('search-input').addEventListener('input', filterTable);
+    document.getElementById('filter-role').addEventListener('change', filterTable);
+    document.getElementById('filter-status').addEventListener('change', filterTable);
+</script>
+
+{% include 'private/footer.html' %}
