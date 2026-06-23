@@ -162,3 +162,6 @@ def usuario_toggle(request, user_id):
         except User.DoesNotExist:
             messages.error(request, 'Usuario no encontrado.')
     return redirect('usuarios')
+
+def calendario(request):
+    return render(request, 'private/calendario.html')

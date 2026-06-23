@@ -12,4 +12,5 @@ urlpatterns = [
     path('usuarios/crear/', views.usuario_crear, name='usuario_crear'),
     path('usuarios/<int:user_id>/eliminar/', views.usuario_eliminar, name='usuario_eliminar'),
     path('usuarios/<int:user_id>/toggle/', views.usuario_toggle, name='usuario_toggle'),
+    path('calendario/', views.calendario, name='calendario'),
 ]
