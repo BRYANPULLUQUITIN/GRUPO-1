@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Django', 
+        'NAME': 'djangoquindo_db', 
         'USER': 'postgres',
         'PASSWORD': 'root', 
         'HOST': '127.0.0.1',
@@ -122,12 +122,17 @@ USE_TZ = True
 
 
 # ── Static files ─────────────────────────────────────────────
-STATIC_URL = 'static/'
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
-    BASE_DIR / 'inicio' / 'static',
-    BASE_DIR / 'dashboard' / 'static',
+    BASE_DIR / "static",
 ]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TEMPLATES[0]['DIRS'] = [BASE_DIR / 'templates']
@@ -140,5 +145,5 @@ LOGOUT_REDIRECT_URL = '/login/'       # redirige tras logout
 # settings.py
 import os
 
-MEDIA_URL  = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
