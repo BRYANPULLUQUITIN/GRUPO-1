@@ -476,6 +476,10 @@
                             {% else %}
                                 <span style="font-size:11px;color:var(--gray-400);">—</span>
                             {% endif %}
+
+                            <!-- Editar -->
+                            <a href="{% url 'usuario_editar' u.pk %}" class="btn-icon edit" title="Editar">
+                                <i class="dw dw-edit2"></i>
                         </div>
                     </td>
                 </tr>

@@ -165,3 +165,113 @@ def usuario_toggle(request, user_id):
 
 def calendario(request):
     return render(request, 'private/calendario.html')
+
+def usuario_editar(request, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        messages.error(request, 'Usuario no encontrado.')
+        return redirect('usuarios')
+
+    if request.method == 'POST':
+        user.first_name = request.POST.get('first_name', '').strip()
+        user.last_name  = request.POST.get('last_name', '').strip()
+        user.email      = request.POST.get('email', '').strip()
+        user.is_staff   = request.POST.get('is_staff') == 'on'
+        user.save()
+
+        profile = user.profile
+        profile.cargo        = request.POST.get('cargo', '')
+        profile.departamento = request.POST.get('departamento', '')
+        if 'foto' in request.FILES:
+            profile.foto = request.FILES['foto']
+        profile.save()
+
+        messages.success(request, f'Usuario {user.get_full_name()} actualizado correctamente.')
+        return redirect('usuarios')
+
+    departamentos = [
+        'Tecnología', 'Recursos Humanos', 'Finanzas',
+        'Marketing', 'Operaciones', 'Ventas', 'Legal',
+    ]
+    return render(request, 'private/usuario_editar.html', {
+        'usuario': user,
+        'departamentos': departamentos,
+    })
+
+import json
+from django.http import JsonResponse
+from dashboard.models import Evento
+
+# ── Calendario ────────────────────────────────────────────────
+@login_required
+def calendario_view(request):
+    eventos = Evento.objects.all()
+    return render(request, 'private/calendario.html', {
+        'eventos': eventos,
+    })
+
+@login_required
+def evento_crear(request):
+    if request.method == 'POST':
+        titulo      = request.POST.get('titulo', '').strip()
+        tipo        = request.POST.get('tipo', 'otro')
+        descripcion = request.POST.get('descripcion', '')
+        fecha       = request.POST.get('fecha', '')
+        hora        = request.POST.get('hora') or None
+        cantidad    = request.POST.get('cantidad') or None
+        unidad      = request.POST.get('unidad', '')
+
+        if titulo and fecha:
+            Evento.objects.create(
+                titulo=titulo, tipo=tipo,
+                descripcion=descripcion, fecha=fecha,
+                hora=hora, cantidad=cantidad,
+                unidad=unidad, creado_por=request.user,
+            )
+            messages.success(request, f'Evento "{titulo}" creado correctamente.')
+        else:
+            messages.error(request, 'El título y la fecha son obligatorios.')
+
+    return redirect('calendario')
+
+@login_required
+def evento_eliminar(request, evento_id):
+    if request.method == 'POST':
+        try:
+            evento = Evento.objects.get(pk=evento_id)
+            titulo = evento.titulo
+            evento.delete()
+            messages.success(request, f'Evento "{titulo}" eliminado.')
+        except Evento.DoesNotExist:
+            messages.error(request, 'Evento no encontrado.')
+    return redirect('calendario')
+
+@login_required
+def eventos_json(request):
+    eventos = Evento.objects.all()
+    data = []
+    colores = {
+        'vacuna':      '#7c3aed',
+        'veterinario': '#2563eb',
+        'entrada':     '#059669',
+        'salida':      '#dc2626',
+        'observacion': '#d97706',
+        'otro':        '#64748b',
+    }
+    for e in eventos:
+        data.append({
+            'id':    e.pk,
+            'title': e.titulo,
+            'start': str(e.fecha),
+            'color': colores.get(e.tipo, '#64748b'),
+            'extendedProps': {
+                'tipo':        e.tipo,
+                'descripcion': e.descripcion or '',
+                'hora':        str(e.hora) if e.hora else '',
+                'cantidad':    str(e.cantidad) if e.cantidad else '',
+                'unidad':      e.unidad or '',
+                'creado_por':  e.creado_por.get_full_name() if e.creado_por else '',
+            }
+        })
+    return JsonResponse(data, safe=False)

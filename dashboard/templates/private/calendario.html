@@ -1,4 +1,654 @@
 {% load static %}
 {% include 'private/header.html' %}
+{% load static %}
+{% include 'private/header.html' %}
 
+<style>
+    :root {
+        --navy:      #2a3f54;
+        --violet:    #7c3aed;
+        --violet-lt: #ede9fe;
+        --pink:      #c2185b;
+        --gray-50:   #f8fafc;
+        --gray-100:  #f1f5f9;
+        --gray-200:  #e2e8f0;
+        --gray-400:  #94a3b8;
+        --gray-600:  #475569;
+        --gray-900:  #0f172a;
+        --radius:    14px;
+        --shadow:    0 4px 24px rgba(0,0,0,.08);
+
+        /* Colores por tipo */
+        --c-vacuna:      #7c3aed;
+        --c-veterinario: #2563eb;
+        --c-entrada:     #059669;
+        --c-salida:      #dc2626;
+        --c-observacion: #d97706;
+        --c-otro:        #64748b;
+    }
+
+    /* ── LAYOUT ── */
+    .cal-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 20px;
+        align-items: start;
+    }
+    @media (max-width: 992px) {
+        .cal-layout { grid-template-columns: 1fr; }
+    }
+
+    /* ── SIDEBAR IZQUIERDO ── */
+    .cal-sidebar {}
+
+    .pcard {
+        background: #fff;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 22px;
+        margin-bottom: 20px;
+    }
+    .pcard-title {
+        font-size: 14px; font-weight: 700; color: var(--navy);
+        margin-bottom: 16px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .pcard-title i { color: var(--violet); }
+
+    /* Leyenda */
+    .legend-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    .legend-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--gray-600); cursor: pointer; }
+    .legend-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .legend-item.faded { opacity: .35; }
+
+    /* Próximos eventos */
+    .upcoming-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+    .upcoming-item {
+        display: flex; gap: 10px; align-items: flex-start;
+        padding: 10px; border-radius: 9px;
+        background: var(--gray-50); cursor: pointer;
+        transition: background .15s;
+    }
+    .upcoming-item:hover { background: var(--gray-100); }
+    .upcoming-dot {
+        width: 8px; height: 8px; border-radius: 50%;
+        flex-shrink: 0; margin-top: 5px;
+    }
+    .upcoming-title { font-size: 13px; font-weight: 600; color: var(--navy); }
+    .upcoming-date  { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+
+    /* Botón nuevo evento */
+    .btn-nuevo {
+        width: 100%;
+        background: linear-gradient(135deg, var(--violet), #9333ea);
+        color: #fff; border: none;
+        padding: 11px; border-radius: 9px;
+        font-size: 14px; font-weight: 700;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        box-shadow: 0 4px 14px rgba(124,58,237,.3);
+        transition: transform .15s, box-shadow .15s;
+        margin-bottom: 20px;
+    }
+    .btn-nuevo:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(124,58,237,.4); }
+
+    /* ── CALENDARIO ── */
+    .cal-main {
+        background: #fff;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 24px;
+    }
+
+    /* FullCalendar overrides */
+    .fc .fc-toolbar-title { font-size: 18px !important; font-weight: 800 !important; color: var(--navy) !important; }
+    .fc .fc-button {
+        background: var(--violet) !important;
+        border-color: var(--violet) !important;
+        border-radius: 7px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        padding: 5px 12px !important;
+        box-shadow: none !important;
+    }
+    .fc .fc-button:hover { opacity: .85 !important; }
+    .fc .fc-button-active { background: #5b21b6 !important; border-color: #5b21b6 !important; }
+    .fc .fc-daygrid-day-number { color: var(--gray-600) !important; font-size: 13px !important; font-weight: 500; }
+    .fc .fc-col-header-cell-cushion { color: var(--gray-400) !important; font-size: 12px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: .5px; }
+    .fc .fc-day-today { background: var(--violet-lt) !important; }
+    .fc-event { border-radius: 6px !important; font-size: 11px !important; font-weight: 600 !important; border: none !important; padding: 2px 6px !important; cursor: pointer; }
+    .fc-event:hover { opacity: .85; }
+    .fc .fc-daygrid-day:hover { background: var(--gray-50) !important; cursor: pointer; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,.45); z-index: 2000;
+        align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+        background: #fff; border-radius: var(--radius);
+        width: 100%; max-width: 520px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.2);
+        animation: modalIn .25s ease;
+        max-height: 90vh; overflow-y: auto;
+    }
+    @keyframes modalIn {
+        from { opacity:0; transform:translateY(-14px); }
+        to   { opacity:1; transform:translateY(0); }
+    }
+    .modal-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 18px 22px 14px;
+        border-bottom: 1px solid var(--gray-100);
+    }
+    .modal-header h5 { font-size: 15px; font-weight: 700; color: var(--navy); margin:0; }
+    .modal-close {
+        width:28px; height:28px; border-radius:7px;
+        background:var(--gray-100); border:none; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
+        font-size:14px; color:var(--gray-600);
+    }
+    .modal-close:hover { background: var(--gray-200); }
+    .modal-body   { padding: 18px 22px; }
+    .modal-footer {
+        padding: 14px 22px;
+        border-top: 1px solid var(--gray-100);
+        display: flex; gap: 10px; justify-content: flex-end;
+    }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--gray-600); margin-bottom:5px; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%; padding: 9px 12px;
+        border: 1.5px solid var(--gray-200); border-radius: 8px;
+        font-size: 13px; font-family:'Inter',sans-serif;
+        color: var(--gray-900); background: var(--gray-50);
+        outline: none; transition: border-color .2s; box-sizing: border-box;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--violet); background:#fff; }
+    .form-group textarea { resize: vertical; min-height: 70px; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* Selector de tipo con color */
+    .tipo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+    .tipo-btn {
+        padding: 8px 6px; border-radius: 8px;
+        border: 1.5px solid var(--gray-200);
+        background: var(--gray-50);
+        font-size: 11px; font-weight: 600;
+        color: var(--gray-600); cursor: pointer;
+        text-align: center; transition: all .15s;
+        display: flex; flex-direction: column;
+        align-items: center; gap: 4px;
+    }
+    .tipo-btn .emoji { font-size: 18px; }
+    .tipo-btn:hover { border-color: var(--violet); background: var(--violet-lt); color: var(--violet); }
+    .tipo-btn.selected { border-color: var(--violet); background: var(--violet-lt); color: var(--violet); }
+
+    .btn-save {
+        background: linear-gradient(135deg, var(--violet), #9333ea);
+        color: #fff; border: none;
+        padding: 9px 22px; border-radius: 8px;
+        font-size: 13px; font-weight: 700;
+        font-family:'Inter',sans-serif; cursor:pointer;
+        box-shadow: 0 4px 14px rgba(124,58,237,.3);
+        display:flex; align-items:center; gap:6px;
+    }
+    .btn-save:hover { opacity:.9; }
+    .btn-cancel {
+        background: var(--gray-100); color:var(--gray-600);
+        border:none; padding:9px 18px; border-radius:8px;
+        font-size:13px; font-weight:600;
+        font-family:'Inter',sans-serif; cursor:pointer;
+    }
+    .btn-cancel:hover { background:var(--gray-200); }
+
+    /* Modal de detalle */
+    .detail-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--gray-100); font-size:13px; }
+    .detail-row:last-child { border-bottom:none; }
+    .detail-row .dl { color:var(--gray-400); font-weight:500; }
+    .detail-row .dv { color:var(--navy); font-weight:600; text-align:right; }
+
+    .tipo-badge {
+        display:inline-flex; align-items:center; gap:5px;
+        padding:3px 12px; border-radius:20px;
+        font-size:12px; font-weight:600; margin-bottom:14px;
+    }
+
+    /* Alertas */
+    .alert-msg {
+        display:flex; align-items:center; gap:8px;
+        padding:10px 16px; border-radius:8px;
+        font-size:13px; font-weight:500; margin-bottom:16px;
+    }
+    .alert-msg.success { background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; }
+    .alert-msg.error   { background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
+</style>
+
+<!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+
+<div class="mobile-menu-overlay"></div>
+<div class="main-container">
+<div class="pd-ltr-20 xs-pd-20-10">
+<div class="min-height-200px">
+
+    <!-- Breadcrumb -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <div class="title"><h4>Calendario</h4></div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Inicio</a></li>
+                        <li class="breadcrumb-item active">Calendario</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes Django -->
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert-msg {% if msg.tags == 'error' %}error{% else %}success{% endif %}">
+                <i class="dw {% if msg.tags == 'error' %}dw-warning{% else %}dw-check{% endif %}"></i>
+                {{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="cal-layout">
+
+        <!-- ── SIDEBAR ── -->
+        <div class="cal-sidebar">
+
+            <button class="btn-nuevo" onclick="openModal('crear')">
+                <i class="dw dw-add"></i> Nuevo evento
+            </button>
+
+            <!-- Leyenda -->
+            <div class="pcard">
+                <div class="pcard-title"><i class="dw dw-filter"></i> Tipos de evento</div>
+                <ul class="legend-list" id="legend-list">
+                    <li class="legend-item" data-tipo="vacuna" onclick="toggleFilter('vacuna')">
+                        <span class="legend-dot" style="background:var(--c-vacuna)"></span>
+                        💉 Vacuna
+                    </li>
+                    <li class="legend-item" data-tipo="veterinario" onclick="toggleFilter('veterinario')">
+                        <span class="legend-dot" style="background:var(--c-veterinario)"></span>
+                        🩺 Veterinario
+                    </li>
+                    <li class="legend-item" data-tipo="entrada" onclick="toggleFilter('entrada')">
+                        <span class="legend-dot" style="background:var(--c-entrada)"></span>
+                        📦 Entrada de alimentos
+                    </li>
+                    <li class="legend-item" data-tipo="salida" onclick="toggleFilter('salida')">
+                        <span class="legend-dot" style="background:var(--c-salida)"></span>
+                        🚚 Salida de alimentos
+                    </li>
+                    <li class="legend-item" data-tipo="observacion" onclick="toggleFilter('observacion')">
+                        <span class="legend-dot" style="background:var(--c-observacion)"></span>
+                        📝 Observación
+                    </li>
+                    <li class="legend-item" data-tipo="otro" onclick="toggleFilter('otro')">
+                        <span class="legend-dot" style="background:var(--c-otro)"></span>
+                        📌 Otro
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Próximos eventos -->
+            <div class="pcard">
+                <div class="pcard-title"><i class="dw dw-clock1"></i> Próximos eventos</div>
+                <ul class="upcoming-list" id="upcoming-list">
+                    <li style="text-align:center;padding:20px;color:var(--gray-400);font-size:13px;">
+                        Cargando...
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- ── CALENDARIO PRINCIPAL ── -->
+        <div class="cal-main">
+            <div id="calendar"></div>
+        </div>
+
+    </div>
+
+</div>
+</div>
+</div>
+
+<!-- ══ MODAL CREAR EVENTO ══ -->
+<div class="modal-overlay" id="modal-crear" onclick="closeModalOutside(event,'modal-crear')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5>📅 Nuevo evento</h5>
+            <button class="modal-close" onclick="closeModal('modal-crear')">✕</button>
+        </div>
+        <form method="POST" action="{% url 'evento_crear' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label>Título *</label>
+                    <input type="text" name="titulo" id="input-titulo"
+                           placeholder="Ej: Vacunación contra Newcastle" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de evento *</label>
+                    <div class="tipo-grid">
+                        <button type="button" class="tipo-btn" data-tipo="vacuna"
+                                onclick="selectTipo('vacuna')">
+                            <span class="emoji">💉</span>Vacuna
+                        </button>
+                        <button type="button" class="tipo-btn" data-tipo="veterinario"
+                                onclick="selectTipo('veterinario')">
+                            <span class="emoji">🩺</span>Veterinario
+                        </button>
+                        <button type="button" class="tipo-btn" data-tipo="entrada"
+                                onclick="selectTipo('entrada')">
+                            <span class="emoji">📦</span>Entrada alim.
+                        </button>
+                        <button type="button" class="tipo-btn" data-tipo="salida"
+                                onclick="selectTipo('salida')">
+                            <span class="emoji">🚚</span>Salida alim.
+                        </button>
+                        <button type="button" class="tipo-btn" data-tipo="observacion"
+                                onclick="selectTipo('observacion')">
+                            <span class="emoji">📝</span>Observación
+                        </button>
+                        <button type="button" class="tipo-btn selected" data-tipo="otro"
+                                onclick="selectTipo('otro')">
+                            <span class="emoji">📌</span>Otro
+                        </button>
+                    </div>
+                    <input type="hidden" name="tipo" id="input-tipo" value="otro">
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>Fecha *</label>
+                        <input type="date" name="fecha" id="input-fecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hora</label>
+                        <input type="time" name="hora">
+                    </div>
+                </div>
+
+                <!-- Campos para entrada/salida de alimentos -->
+                <div id="campos-cantidad" style="display:none;">
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input type="number" name="cantidad" step="0.01" min="0"
+                                   placeholder="Ej: 50">
+                        </div>
+                        <div class="form-group">
+                            <label>Unidad</label>
+                            <select name="unidad">
+                                <option value="">Seleccionar...</option>
+                                <option value="kg">Kilogramos (kg)</option>
+                                <option value="g">Gramos (g)</option>
+                                <option value="lb">Libras (lb)</option>
+                                <option value="sacos">Sacos</option>
+                                <option value="litros">Litros</option>
+                                <option value="unidades">Unidades</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Descripción / Observaciones</label>
+                    <textarea name="descripcion"
+                              placeholder="Detalles del evento, dosis, proveedor, notas..."></textarea>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeModal('modal-crear')">Cancelar</button>
+                <button type="submit" class="btn-save">
+                    <i class="dw dw-check"></i> Guardar evento
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ══ MODAL DETALLE / ELIMINAR ══ -->
+<div class="modal-overlay" id="modal-detalle" onclick="closeModalOutside(event,'modal-detalle')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5 id="det-titulo">Detalle del evento</h5>
+            <button class="modal-close" onclick="closeModal('modal-detalle')">✕</button>
+        </div>
+        <div class="modal-body">
+            <span class="tipo-badge" id="det-badge"></span>
+            <div id="det-rows"></div>
+        </div>
+        <div class="modal-footer">
+            <form method="POST" id="form-eliminar" action="">
+                {% csrf_token %}
+                <button type="submit" class="btn-cancel"
+                        style="background:#fee2e2;color:#dc2626;"
+                        onclick="return confirm('¿Eliminar este evento?')">
+                    <i class="dw dw-delete-3" style="margin-right:4px;"></i>Eliminar
+                </button>
+            </form>
+            <button type="button" class="btn-save" onclick="closeModal('modal-detalle')">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+<script>
+var calendar;
+var todosEventos = [];
+var filtrosOcultos = {};
+
+var COLORES = {
+    vacuna:      '#7c3aed',
+    veterinario: '#2563eb',
+    entrada:     '#059669',
+    salida:      '#dc2626',
+    observacion: '#d97706',
+    otro:        '#64748b',
+};
+
+var EMOJIS = {
+    vacuna:      '💉',
+    veterinario: '🩺',
+    entrada:     '📦',
+    salida:      '🚚',
+    observacion: '📝',
+    otro:        '📌',
+};
+
+var LABELS = {
+    vacuna:      'Vacuna',
+    veterinario: 'Veterinario',
+    entrada:     'Entrada de alimentos',
+    salida:      'Salida de alimentos',
+    observacion: 'Observación',
+    otro:        'Otro',
+};
+
+/* ── Inicializar FullCalendar ── */
+document.addEventListener('DOMContentLoaded', function() {
+    var calEl = document.getElementById('calendar');
+    calendar = new FullCalendar.Calendar(calEl, {
+        locale: 'es',
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left:   'prev,next today',
+            center: 'title',
+            right:  'dayGridMonth,timeGridWeek,listWeek'
+        },
+        buttonText: {
+            today: 'Hoy',
+            month: 'Mes',
+            week:  'Semana',
+            list:  'Lista',
+        },
+        height: 'auto',
+        events: function(info, successCallback, failureCallback) {
+            fetch('{% url "eventos_json" %}')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    todosEventos = data;
+                    renderUpcoming(data);
+                    var visibles = data.filter(function(e) {
+                        return !filtrosOcultos[e.extendedProps.tipo];
+                    });
+                    successCallback(visibles);
+                })
+                .catch(failureCallback);
+        },
+        eventClick: function(info) {
+            openDetalle(info.event);
+        },
+        dateClick: function(info) {
+            document.getElementById('input-fecha').value = info.dateStr;
+            openModal('modal-crear');
+        },
+        eventMouseEnter: function(info) {
+            info.el.style.transform = 'scale(1.03)';
+            info.el.style.zIndex    = '10';
+        },
+        eventMouseLeave: function(info) {
+            info.el.style.transform = '';
+            info.el.style.zIndex    = '';
+        },
+    });
+    calendar.render();
+});
+
+/* ── Próximos eventos ── */
+function renderUpcoming(eventos) {
+    var hoy = new Date();
+    hoy.setHours(0,0,0,0);
+    var proximos = eventos
+        .filter(function(e) { return new Date(e.start + 'T00:00:00') >= hoy; })
+        .sort(function(a,b) { return new Date(a.start) - new Date(b.start); })
+        .slice(0, 6);
+
+    var ul = document.getElementById('upcoming-list');
+    if (proximos.length === 0) {
+        ul.innerHTML = '<li style="text-align:center;padding:20px;color:var(--gray-400);font-size:13px;">Sin eventos próximos</li>';
+        return;
+    }
+    ul.innerHTML = proximos.map(function(e) {
+        var d = new Date(e.start + 'T00:00:00');
+        var fecha = d.toLocaleDateString('es-EC', { day:'2-digit', month:'short', year:'numeric' });
+        return '<li class="upcoming-item" onclick="calendar.gotoDate(\'' + e.start + '\')">' +
+            '<span class="upcoming-dot" style="background:' + e.color + '"></span>' +
+            '<div>' +
+                '<div class="upcoming-title">' + EMOJIS[e.extendedProps.tipo] + ' ' + e.title + '</div>' +
+                '<div class="upcoming-date">' + fecha + '</div>' +
+            '</div>' +
+        '</li>';
+    }).join('');
+}
+
+/* ── Filtros por tipo ── */
+function toggleFilter(tipo) {
+    filtrosOcultos[tipo] = !filtrosOcultos[tipo];
+    var li = document.querySelector('[data-tipo="' + tipo + '"]');
+    li.classList.toggle('faded', !!filtrosOcultos[tipo]);
+    calendar.refetchEvents();
+}
+
+/* ── Selector de tipo ── */
+function selectTipo(tipo) {
+    document.querySelectorAll('.tipo-btn').forEach(function(b) { b.classList.remove('selected'); });
+    document.querySelector('[data-tipo="' + tipo + '"]').classList.add('selected');
+    document.getElementById('input-tipo').value = tipo;
+
+    var campos = document.getElementById('campos-cantidad');
+    campos.style.display = (tipo === 'entrada' || tipo === 'salida') ? 'block' : 'none';
+}
+
+/* ── Modal crear ── */
+function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Fecha de hoy por defecto
+    if (!document.getElementById('input-fecha').value) {
+        document.getElementById('input-fecha').value = new Date().toISOString().split('T')[0];
+    }
+}
+function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+}
+function closeModalOutside(e, id) {
+    if (e.target === document.getElementById(id)) closeModal(id);
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal('modal-crear');
+        closeModal('modal-detalle');
+    }
+});
+
+/* ── Modal detalle ── */
+function openDetalle(event) {
+    var p = event.extendedProps;
+    var tipo = p.tipo || 'otro';
+    var color = COLORES[tipo] || '#64748b';
+
+    document.getElementById('det-titulo').textContent = event.title;
+
+    var badge = document.getElementById('det-badge');
+    badge.textContent = EMOJIS[tipo] + ' ' + LABELS[tipo];
+    badge.style.background = color + '18';
+    badge.style.color       = color;
+    badge.style.border      = '1px solid ' + color + '44';
+
+    var rows = [
+        ['Fecha',       event.startStr],
+        ['Hora',        p.hora        || '—'],
+        ['Descripción', p.descripcion || '—'],
+        ['Cantidad',    p.cantidad ? p.cantidad + ' ' + (p.unidad || '') : '—'],
+        ['Registrado por', p.creado_por || '—'],
+    ];
+
+    document.getElementById('det-rows').innerHTML = rows.map(function(r) {
+        return '<div class="detail-row">' +
+            '<span class="dl">' + r[0] + '</span>' +
+            '<span class="dv">' + r[1] + '</span>' +
+        '</div>';
+    }).join('');
+
+    document.getElementById('form-eliminar').action =
+        '/dashboard/calendario/' + event.id + '/eliminar/';
+
+    document.getElementById('modal-detalle').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+</script>
+
+{% include 'private/footer.html' %}
 {% static 'private/footer.html' %}
