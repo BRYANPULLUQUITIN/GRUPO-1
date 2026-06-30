@@ -275,3 +275,93 @@ def eventos_json(request):
             }
         })
     return JsonResponse(data, safe=False)
+
+from dashboard.models import Evento, Cliente, Pedido
+
+# ── Pedidos ───────────────────────────────────────────────────
+@login_required
+def pedidos_view(request):
+    pedidos  = Pedido.objects.select_related('cliente', 'creado_por').all()
+    clientes = Cliente.objects.all()
+    return render(request, 'private/pedidos.html', {
+        'pedidos':  pedidos,
+        'clientes': clientes,
+    })
+
+@login_required
+def pedido_crear(request):
+    if request.method == 'POST':
+        cliente_id  = request.POST.get('cliente')
+        fecha       = request.POST.get('fecha', '')
+        estado      = request.POST.get('estado', 'pendiente')
+        total       = request.POST.get('total', '0')
+        descripcion = request.POST.get('descripcion', '')
+
+        if cliente_id and fecha and total:
+            try:
+                cliente = Cliente.objects.get(pk=cliente_id)
+                Pedido.objects.create(
+                    cliente=cliente, fecha=fecha,
+                    estado=estado, total=total,
+                    descripcion=descripcion,
+                    creado_por=request.user,
+                )
+                messages.success(request, 'Pedido registrado correctamente.')
+            except Cliente.DoesNotExist:
+                messages.error(request, 'El cliente seleccionado no existe.')
+        else:
+            messages.error(request, 'Cliente, fecha y total son obligatorios.')
+
+    return redirect('pedidos')
+
+@login_required
+def pedido_editar(request, pedido_id):
+    if request.method == 'POST':
+        try:
+            pedido = Pedido.objects.get(pk=pedido_id)
+            cliente_id = request.POST.get('cliente')
+
+            pedido.cliente     = Cliente.objects.get(pk=cliente_id)
+            pedido.fecha       = request.POST.get('fecha', pedido.fecha)
+            pedido.estado      = request.POST.get('estado', pedido.estado)
+            pedido.total       = request.POST.get('total', pedido.total)
+            pedido.descripcion = request.POST.get('descripcion', '')
+            pedido.save()
+
+            messages.success(request, f'Pedido #{pedido.pk} actualizado correctamente.')
+        except Pedido.DoesNotExist:
+            messages.error(request, 'Pedido no encontrado.')
+        except Cliente.DoesNotExist:
+            messages.error(request, 'Cliente no válido.')
+
+    return redirect('pedidos')
+
+@login_required
+def pedido_eliminar(request, pedido_id):
+    if request.method == 'POST':
+        try:
+            pedido = Pedido.objects.get(pk=pedido_id)
+            pedido.delete()
+            messages.success(request, f'Pedido #{pedido_id} eliminado.')
+        except Pedido.DoesNotExist:
+            messages.error(request, 'Pedido no encontrado.')
+    return redirect('pedidos')
+
+@login_required
+def cliente_crear(request):
+    if request.method == 'POST':
+        nombre    = request.POST.get('nombre', '').strip()
+        telefono  = request.POST.get('telefono', '')
+        email     = request.POST.get('email', '')
+        direccion = request.POST.get('direccion', '')
+
+        if nombre:
+            Cliente.objects.create(
+                nombre=nombre, telefono=telefono,
+                email=email, direccion=direccion,
+            )
+            messages.success(request, f'Cliente "{nombre}" creado correctamente.')
+        else:
+            messages.error(request, 'El nombre del cliente es obligatorio.')
+
+    return redirect('pedidos')

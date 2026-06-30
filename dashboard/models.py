@@ -29,19 +29,6 @@ def guardar_perfil(sender, instance, **kwargs):
     if hasattr(instance, 'profile'):
         instance.profile.save()
 
-# Crear perfil de calendario
-class Profile(models.Model):
-    user             = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    foto             = models.ImageField(upload_to='profiles/', blank=True, null=True)
-    telefono         = models.CharField(max_length=20, blank=True, null=True)
-    bio              = models.TextField(blank=True, null=True)
-    cargo            = models.CharField(max_length=100, blank=True, null=True)
-    departamento     = models.CharField(max_length=100, blank=True, null=True)
-    fecha_nacimiento = models.DateField(blank=True, null=True)
-
-    def __str__(self):
-        return f'Perfil de {self.user.username}'
-
 
 class Evento(models.Model):
     TIPOS = [
@@ -68,3 +55,45 @@ class Evento(models.Model):
 
     def __str__(self):
         return f'{self.titulo} — {self.fecha}'
+
+
+# ── Cliente ──────────────────────────────────────────────────
+class Cliente(models.Model):
+    nombre    = models.CharField(max_length=150)
+    telefono  = models.CharField(max_length=20, blank=True, null=True)
+    email     = models.EmailField(blank=True, null=True)
+    direccion = models.CharField(max_length=255, blank=True, null=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['nombre']
+
+    def __str__(self):
+        return self.nombre
+
+
+# ── Pedido ───────────────────────────────────────────────────
+class Pedido(models.Model):
+    ESTADOS = [
+        ('pendiente',  '🕒 Pendiente'),
+        ('proceso',    '⚙️ En proceso'),
+        ('enviado',    '🚚 Enviado'),
+        ('entregado',  '✅ Entregado'),
+        ('cancelado',  '❌ Cancelado'),
+    ]
+
+    cliente     = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='pedidos')
+    fecha       = models.DateField()
+    estado      = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
+    total       = models.DecimalField(max_digits=10, decimal_places=2)
+    descripcion = models.TextField(blank=True, null=True)
+    creado_por  = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='pedidos')
+    creado_en   = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-fecha', '-creado_en']
+
+    def __str__(self):
+        return f'Pedido #{self.pk} — {self.cliente.nombre}'
+    
