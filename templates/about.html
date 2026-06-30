@@ -120,7 +120,8 @@
         <h2 class="font-weight-bold mb-5" style="color: #4b3621;">¿Deseas realizar un pedido al por mayor?</h2>
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <form action="#" class="res_form bg-white p-5 rounded shadow-sm">
+                <form action="{% url 'contact' %}" method="POST" class="res_form bg-white p-5 rounded shadow-sm">
+                    {% csrf_token %}
                     <div class="form-row">
                         <div class="form-group col-md-4">
                             <input type="text" class="form-control form-control-lg border-secondary rounded" placeholder="Fecha deseada" required>
@@ -136,7 +137,9 @@
                             </select>
                         </div>
                     </div>
-                    <button class="btn btn-lg btn-block text-white mt-4 font-weight-bold shadow-sm" style="background-color: #4b3621;">Solicitar Cotización</button>
+                    <button type="submit" class="btn btn-lg btn-block text-white mt-4 font-weight-bold shadow-sm" style="background-color: #4b3621;">
+                        Solicitar Cotización
+                    </button>
                 </form>
             </div>
         </div>
