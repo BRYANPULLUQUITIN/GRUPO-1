@@ -1,4 +1,338 @@
-{%load static%}
+{% load static %}
 {% include 'private/header.html' %}
 
-{%include 'private/footer.html'%}
+<div class="page-wrapper">
+    <div class="page-content">
+        <div class="container-fluid">
+
+        <!-- Encabezado de página -->
+        <div class="page-header">
+            <h2 class="pd-text-primary">Pedidos</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Casa</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Pedidos</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Mensajes -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Acciones -->
+        <div class="row mb-20">
+            <div class="col-md-12 text-right">
+                <button type="button" class="btn btn-primary mr-10" data-toggle="modal" data-target="#modalCrearCliente">
+                    <i class="dw dw-user1"></i> Nuevo cliente
+                </button>
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalCrearPedido">
+                    <i class="dw dw-add"></i> Nuevo pedido
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabla de pedidos -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-box">
+                    <div class="table-responsive">
+                        <table id="tablaPedidos" class="table display data-table" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Total</th>
+                                    <th>Creado por</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pedido in pedidos %}
+                                <tr>
+                                    <td>{{ pedido.pk }}</td>
+                                    <td>{{ pedido.cliente.nombre }}</td>
+                                    <td>{{ pedido.fecha|date:"d/m/Y" }}</td>
+                                    <td>
+                                        <span class="badge
+                                            {% if pedido.estado == 'pendiente' %}badge-warning
+                                            {% elif pedido.estado == 'proceso' %}badge-info
+                                            {% elif pedido.estado == 'enviado' %}badge-primary
+                                            {% elif pedido.estado == 'entregado' %}badge-success
+                                            {% elif pedido.estado == 'cancelado' %}badge-danger
+                                            {% endif %}">
+                                            {{ pedido.get_estado_display }}
+                                        </span>
+                                    </td>
+                                    <td>${{ pedido.total }}</td>
+                                    <td>{{ pedido.creado_por.get_full_name|default:pedido.creado_por.username|default:"—" }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-primary btn-editar-pedido"
+                                                data-toggle="modal" data-target="#modalEditarPedido"
+                                                data-id="{{ pedido.pk }}"
+                                                data-cliente="{{ pedido.cliente.pk }}"
+                                                data-fecha="{{ pedido.fecha|date:'Y-m-d' }}"
+                                                data-estado="{{ pedido.estado }}"
+                                                data-total="{{ pedido.total }}"
+                                                data-descripcion="{{ pedido.descripcion|default:'' }}"
+                                                title="Editar">
+                                            <i class="dw dw-edit2"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar-pedido"
+                                                data-toggle="modal" data-target="#modalEliminarPedido"
+                                                data-id="{{ pedido.pk }}"
+                                                data-nombre="{{ pedido.cliente.nombre }}"
+                                                title="Eliminar">
+                                            <i class="dw dw-delete-3"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No hay pedidos registrados.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+<!-- ══════════════════════════════════════
+     MODAL: Crear pedido
+══════════════════════════════════════ -->
+<div class="modal fade" id="modalCrearPedido" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="POST" action="{% url 'pedido_crear' %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nuevo pedido</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <select name="cliente" class="form-control select2" required>
+                            <option value="">Seleccione un cliente...</option>
+                            {% for cliente in clientes %}
+                                <option value="{{ cliente.pk }}">{{ cliente.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <input type="date" name="fecha" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select name="estado" class="form-control">
+                            <option value="pendiente">🕒 Pendiente</option>
+                            <option value="proceso">⚙️ En proceso</option>
+                            <option value="enviado">🚚 Enviado</option>
+                            <option value="entregado">✅ Entregado</option>
+                            <option value="cancelado">❌ Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Total</label>
+                        <input type="number" step="0.01" min="0" name="total" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea name="descripcion" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar pedido</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     MODAL: Editar pedido
+══════════════════════════════════════ -->
+<div class="modal fade" id="modalEditarPedido" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="POST" id="formEditarPedido" action="">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar pedido</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <select name="cliente" id="editCliente" class="form-control select2" required>
+                            {% for cliente in clientes %}
+                                <option value="{{ cliente.pk }}">{{ cliente.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <input type="date" name="fecha" id="editFecha" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select name="estado" id="editEstado" class="form-control">
+                            <option value="pendiente">🕒 Pendiente</option>
+                            <option value="proceso">⚙️ En proceso</option>
+                            <option value="enviado">🚚 Enviado</option>
+                            <option value="entregado">✅ Entregado</option>
+                            <option value="cancelado">❌ Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Total</label>
+                        <input type="number" step="0.01" min="0" name="total" id="editTotal" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea name="descripcion" id="editDescripcion" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar pedido</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     MODAL: Eliminar pedido
+══════════════════════════════════════ -->
+<div class="modal fade" id="modalEliminarPedido" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="POST" id="formEliminarPedido" action="">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar pedido</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Seguro que deseas eliminar el pedido de <strong id="eliminarNombreCliente"></strong>? Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     MODAL: Crear cliente
+══════════════════════════════════════ -->
+<div class="modal fade" id="modalCrearCliente" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="POST" action="{% url 'cliente_crear' %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nuevo cliente</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" name="nombre" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" name="telefono" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Dirección</label>
+                        <input type="text" name="direccion" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar cliente</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Rellenar modal de edición con los datos del pedido seleccionado
+    document.querySelectorAll('.btn-editar-pedido').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var id = this.dataset.id;
+            document.getElementById('formEditarPedido').action =
+                '/pedidos/' + id + '/editar/';
+            document.getElementById('editCliente').value = this.dataset.cliente;
+            document.getElementById('editFecha').value = this.dataset.fecha;
+            document.getElementById('editEstado').value = this.dataset.estado;
+            document.getElementById('editTotal').value = this.dataset.total;
+            document.getElementById('editDescripcion').value = this.dataset.descripcion;
+        });
+    });
+
+    // Rellenar modal de eliminación
+    document.querySelectorAll('.btn-eliminar-pedido').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var id = this.dataset.id;
+            document.getElementById('formEliminarPedido').action =
+                '/pedidos/' + id + '/eliminar/';
+            document.getElementById('eliminarNombreCliente').textContent = this.dataset.nombre;
+        });
+    });
+
+    // Inicializar DataTable si está disponible
+    if (window.jQuery && jQuery.fn.DataTable) {
+        jQuery('#tablaPedidos').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            }
+        });
+    }
+
+    // Inicializar select2 si está disponible
+    if (window.jQuery && jQuery.fn.select2) {
+        jQuery('.select2').select2({ width: '100%' });
+    }
+});
+</script>
+
+{% include 'private/footer.html' %}
