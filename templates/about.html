@@ -20,7 +20,7 @@
 </div>
 
 <div class="intro py-5">
-    <div class="container my-5">
+    <div class="container My-5">
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <div class="intro_content">
@@ -128,13 +128,13 @@
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="form-group col-md-4">
-                            <input type="text" class="form-control form-control-lg border-secondary rounded" placeholder="Fecha deseada" required>
+                            <input type="text" name="fecha_pedido" class="form-control form-control-lg border-secondary rounded" placeholder="Fecha deseada" required>
                         </div>
                         <div class="form-group col-md-4">
-                            <input type="text" class="form-control form-control-lg border-secondary rounded" placeholder="Cantidad aproximada" required>
+                            <input type="text" name="cantidad_pedido" class="form-control form-control-lg border-secondary rounded" placeholder="Cantidad aproximada" required>
                         </div>
                         <div class="form-group col-md-4">
-                            <select class="form-control form-control-lg border-secondary rounded">
+                            <select name="tipo_producto" class="form-control form-control-lg border-secondary rounded">
                                 <option>Cubetas Tipo A</option>
                                 <option>Cubetas Tipo B</option>
                                 <option>Cubetas Tipo AA (Especiales)</option>
