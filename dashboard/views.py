@@ -369,3 +369,247 @@ def clientes_json(request):
         [{'id': c.pk, 'nombre': c.get_full_name()} for c in clientes],
         safe=False
     )
+
+# ═══════════════════════════════════════════════════════════════
+# AGREGAR ESTE BLOQUE A dashboard/views.py
+# (usa los mismos imports que ya tienes: render, redirect, messages,
+#  login_required, User, JsonResponse — solo agrega los modelos)
+# ═══════════════════════════════════════════════════════════════
+from dashboard.models import Galpon, Ave, Alimento, Alimentacion  # sumar a tu import existente
+
+
+# ── Galpones ──────────────────────────────────────────────────
+@login_required
+def galpones_view(request):
+    galpones = Galpon.objects.all().order_by('nombre')
+    return render(request, 'private/galpones.html', {'galpones': galpones})
+
+
+@login_required
+def galpon_crear(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre', '').strip()
+        if nombre:
+            Galpon.objects.create(
+                nombre=nombre,
+                capacidad=request.POST.get('capacidad') or 0,
+                ubicacion=request.POST.get('ubicacion', ''),
+                descripcion=request.POST.get('descripcion', ''),
+            )
+            messages.success(request, f'Galpón "{nombre}" creado correctamente.')
+        else:
+            messages.error(request, 'El nombre es obligatorio.')
+    return redirect('galpones')
+
+
+@login_required
+def galpon_editar(request, galpon_id):
+    try:
+        galpon = Galpon.objects.get(pk=galpon_id)
+    except Galpon.DoesNotExist:
+        messages.error(request, 'Galpón no encontrado.')
+        return redirect('galpones')
+
+    if request.method == 'POST':
+        galpon.nombre = request.POST.get('nombre', '').strip()
+        galpon.capacidad = request.POST.get('capacidad') or 0
+        galpon.ubicacion = request.POST.get('ubicacion', '')
+        galpon.descripcion = request.POST.get('descripcion', '')
+        galpon.save()
+        messages.success(request, f'Galpón "{galpon.nombre}" actualizado.')
+    return redirect('galpones')
+
+
+@login_required
+def galpon_eliminar(request, galpon_id):
+    if request.method == 'POST':
+        try:
+            galpon = Galpon.objects.get(pk=galpon_id)
+            nombre = galpon.nombre
+            galpon.delete()
+            messages.success(request, f'Galpón "{nombre}" eliminado.')
+        except Galpon.DoesNotExist:
+            messages.error(request, 'Galpón no encontrado.')
+    return redirect('galpones')
+
+
+# ── Aves ──────────────────────────────────────────────────────
+@login_required
+def aves_view(request):
+    aves = Ave.objects.select_related('galpon').all().order_by('-fecha_ingreso')
+    galpones = Galpon.objects.all().order_by('nombre')
+    return render(request, 'private/aves.html', {
+        'aves': aves,
+        'galpones': galpones,
+    })
+
+
+@login_required
+def ave_crear(request):
+    if request.method == 'POST':
+        raza = request.POST.get('raza', '').strip()
+        if raza:
+            Ave.objects.create(
+                raza=raza,
+                cantidad=request.POST.get('cantidad') or 0,
+                fecha_ingreso=request.POST.get('fecha_ingreso'),
+                estado=request.POST.get('estado', 'activo'),
+                galpon_id=request.POST.get('galpon') or None,
+            )
+            messages.success(request, f'Registro de aves "{raza}" creado correctamente.')
+        else:
+            messages.error(request, 'La raza es obligatoria.')
+    return redirect('aves')
+
+
+@login_required
+def ave_editar(request, ave_id):
+    try:
+        ave = Ave.objects.get(pk=ave_id)
+    except Ave.DoesNotExist:
+        messages.error(request, 'Registro de aves no encontrado.')
+        return redirect('aves')
+
+    if request.method == 'POST':
+        ave.raza = request.POST.get('raza', '').strip()
+        ave.cantidad = request.POST.get('cantidad') or 0
+        ave.fecha_ingreso = request.POST.get('fecha_ingreso')
+        ave.estado = request.POST.get('estado', 'activo')
+        ave.galpon_id = request.POST.get('galpon') or None
+        ave.save()
+        messages.success(request, f'Registro de aves "{ave.raza}" actualizado.')
+    return redirect('aves')
+
+
+@login_required
+def ave_eliminar(request, ave_id):
+    if request.method == 'POST':
+        try:
+            ave = Ave.objects.get(pk=ave_id)
+            raza = ave.raza
+            ave.delete()
+            messages.success(request, f'Registro de aves "{raza}" eliminado.')
+        except Ave.DoesNotExist:
+            messages.error(request, 'Registro de aves no encontrado.')
+    return redirect('aves')
+
+
+# ── Alimentos ─────────────────────────────────────────────────
+@login_required
+def alimentos_view(request):
+    alimentos = Alimento.objects.all().order_by('nombre')
+    return render(request, 'private/alimentos.html', {'alimentos': alimentos})
+
+
+@login_required
+def alimento_crear(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre', '').strip()
+        if nombre:
+            Alimento.objects.create(
+                nombre=nombre,
+                tipo=request.POST.get('tipo', 'otro'),
+                unidad_medida=request.POST.get('unidad_medida', 'kg'),
+                stock=request.POST.get('stock') or 0,
+                descripcion=request.POST.get('descripcion', ''),
+            )
+            messages.success(request, f'Alimento "{nombre}" creado correctamente.')
+        else:
+            messages.error(request, 'El nombre es obligatorio.')
+    return redirect('alimentos')
+
+
+@login_required
+def alimento_editar(request, alimento_id):
+    try:
+        alimento = Alimento.objects.get(pk=alimento_id)
+    except Alimento.DoesNotExist:
+        messages.error(request, 'Alimento no encontrado.')
+        return redirect('alimentos')
+
+    if request.method == 'POST':
+        alimento.nombre = request.POST.get('nombre', '').strip()
+        alimento.tipo = request.POST.get('tipo', 'otro')
+        alimento.unidad_medida = request.POST.get('unidad_medida', 'kg')
+        alimento.stock = request.POST.get('stock') or 0
+        alimento.descripcion = request.POST.get('descripcion', '')
+        alimento.save()
+        messages.success(request, f'Alimento "{alimento.nombre}" actualizado.')
+    return redirect('alimentos')
+
+
+@login_required
+def alimento_eliminar(request, alimento_id):
+    if request.method == 'POST':
+        try:
+            alimento = Alimento.objects.get(pk=alimento_id)
+            nombre = alimento.nombre
+            alimento.delete()
+            messages.success(request, f'Alimento "{nombre}" eliminado.')
+        except Alimento.DoesNotExist:
+            messages.error(request, 'Alimento no encontrado.')
+    return redirect('alimentos')
+
+
+# ── Alimentación (registro de porciones) ───────────────────────
+@login_required
+def alimentacion_view(request):
+    registros = Alimentacion.objects.select_related('alimento', 'galpon', 'usuario').order_by('-fecha')
+    alimentos = Alimento.objects.all().order_by('nombre')
+    galpones = Galpon.objects.all().order_by('nombre')
+    usuarios = User.objects.filter(is_active=True).order_by('first_name')
+    return render(request, 'private/alimentacion.html', {
+        'registros': registros,
+        'alimentos': alimentos,
+        'galpones': galpones,
+        'usuarios': usuarios,
+    })
+
+
+@login_required
+def alimentacion_crear(request):
+    if request.method == 'POST':
+        try:
+            Alimentacion.objects.create(
+                fecha=request.POST.get('fecha'),
+                porcion=request.POST.get('porcion') or 0,
+                observacion=request.POST.get('observacion', ''),
+                alimento_id=request.POST.get('alimento') or None,
+                galpon_id=request.POST.get('galpon') or None,
+                usuario_id=request.POST.get('usuario') or request.user.pk,
+            )
+            messages.success(request, 'Registro de alimentación creado correctamente.')
+        except Exception as e:
+            messages.error(request, f'Error al crear el registro: {e}')
+    return redirect('alimentacion')
+
+
+@login_required
+def alimentacion_editar(request, registro_id):
+    try:
+        registro = Alimentacion.objects.get(pk=registro_id)
+    except Alimentacion.DoesNotExist:
+        messages.error(request, 'Registro no encontrado.')
+        return redirect('alimentacion')
+
+    if request.method == 'POST':
+        registro.fecha = request.POST.get('fecha')
+        registro.porcion = request.POST.get('porcion') or 0
+        registro.observacion = request.POST.get('observacion', '')
+        registro.alimento_id = request.POST.get('alimento') or None
+        registro.galpon_id = request.POST.get('galpon') or None
+        registro.usuario_id = request.POST.get('usuario') or request.user.pk
+        registro.save()
+        messages.success(request, 'Registro de alimentación actualizado.')
+    return redirect('alimentacion')
+
+
+@login_required
+def alimentacion_eliminar(request, registro_id):
+    if request.method == 'POST':
+        try:
+            Alimentacion.objects.get(pk=registro_id).delete()
+            messages.success(request, 'Registro de alimentación eliminado.')
+        except Alimentacion.DoesNotExist:
+            messages.error(request, 'Registro no encontrado.')
+    return redirect('alimentacion')

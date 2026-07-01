@@ -1,0 +1,253 @@
+{% load static %}
+{% include 'private/header.html' %}
+
+<style>
+    :root {
+        --pink: #c2185b; --navy: #2a3f54; --violet: #7c3aed; --violet-lt: #ede9fe;
+        --green: #059669; --red: #dc2626; --amber: #d97706; --amber-lt: #fef3c7;
+        --gray-50: #f8fafc; --gray-100: #f1f5f9; --gray-200: #e2e8f0;
+        --gray-400: #94a3b8; --gray-600: #475569; --gray-900: #0f172a;
+        --radius: 14px; --shadow: 0 4px 24px rgba(0,0,0,.08);
+    }
+    .stats-bar { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 22px; display: flex; align-items: center; gap: 14px; }
+    .stat-card .stat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .stat-icon.total { background: var(--violet-lt); color: var(--violet); }
+    .stat-icon.cap   { background: #dbeafe; color: #2563eb; }
+    .stat-icon.aves  { background: #dcfce7; color: var(--green); }
+    .stat-num { font-size: 22px; font-weight: 800; color: var(--navy); line-height: 1; }
+    .stat-lbl { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: .6px; margin-top: 2px; }
+
+    .toolbar { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+    .search-box { flex: 1; min-width: 200px; position: relative; }
+    .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 15px; }
+    .search-box input { width: 100%; padding: 9px 12px 9px 36px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; background: var(--gray-50); }
+    .search-box input:focus { border-color: var(--violet); background: #fff; }
+    .btn-primary { background: linear-gradient(135deg, var(--violet), #9333ea); color: #fff; border: none; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(124,58,237,.3); }
+    .btn-primary:hover { transform: translateY(-1px); }
+
+    .table-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .table-card table { width: 100%; border-collapse: collapse; }
+    .table-card thead th { padding: 14px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--gray-400); background: var(--gray-50); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+    .table-card tbody tr { border-bottom: 1px solid var(--gray-100); }
+    .table-card tbody tr:last-child { border-bottom: none; }
+    .table-card tbody tr:hover { background: var(--gray-50); }
+    .table-card tbody td { padding: 14px 16px; font-size: 13px; color: var(--gray-900); vertical-align: middle; }
+
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .badge-ok  { background: #dcfce7; color: var(--green); }
+    .badge-low { background: var(--amber-lt); color: var(--amber); }
+    .badge .dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+
+    .actions { display: flex; gap: 6px; align-items: center; }
+    .btn-icon { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; font-size: 13px; }
+    .btn-icon:hover { transform: scale(1.1); }
+    .btn-icon.edit { background: var(--violet-lt); color: var(--violet); }
+    .btn-icon.del  { background: #fee2e2; color: var(--red); }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--gray-400); }
+    .empty-state i { font-size: 48px; margin-bottom: 12px; display: block; }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: var(--radius); width: 100%; max-width: 560px; box-shadow: 0 20px 60px rgba(0,0,0,.2); max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid var(--gray-100); }
+    .modal-header h5 { font-size: 16px; font-weight: 700; color: var(--navy); margin:0; }
+    .modal-close { width:28px; height:28px; border-radius:7px; background: var(--gray-100); border: none; cursor: pointer; display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--gray-600); }
+    .modal-body { padding: 20px 24px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-100); display: flex; gap: 10px; justify-content: flex-end; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .form-row.full { grid-template-columns: 1fr; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--gray-600); margin-bottom: 5px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 9px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family:'Inter',sans-serif; color: var(--gray-900); background: var(--gray-50); outline: none; box-sizing: border-box; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--violet); background:#fff; }
+    .btn-cancel-modal { background: var(--gray-100); color: var(--gray-600); border: none; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; font-family:'Inter',sans-serif; cursor:pointer; }
+    .btn-cancel-modal:hover { background: var(--gray-200); }
+    .alert-msg { display:flex; align-items:center; gap:8px; padding:10px 16px; border-radius:8px; font-size:13px; font-weight:500; margin-bottom:16px; }
+    .alert-msg.success { background:#ecfdf5; color:var(--green); border:1px solid #a7f3d0; }
+    .alert-msg.error   { background:#fef2f2; color:var(--red);   border:1px solid #fecaca; }
+
+    @media (max-width:768px) { .stats-bar { grid-template-columns: 1fr 1fr; } .table-card { overflow-x: auto; } .form-row { grid-template-columns: 1fr; } }
+</style>
+
+<div class="mobile-menu-overlay"></div>
+<div class="main-container">
+<div class="pd-ltr-20 xs-pd-20-10">
+<div class="min-height-200px">
+
+    <div class="page-header">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <div class="title"><h4>Gestión de Galpones</h4></div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Inicio</a></li>
+                        <li class="breadcrumb-item active">Galpones</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert-msg {% if msg.tags == 'error' %}error{% else %}success{% endif %}">
+                <i class="dw {% if msg.tags == 'error' %}dw-warning{% else %}dw-check{% endif %}"></i>
+                {{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="stat-icon total"><i class="dw dw-library"></i></div>
+            <div><div class="stat-num">{{ galpones|length }}</div><div class="stat-lbl">Total galpones</div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon cap"><i class="dw dw-house-1"></i></div>
+            <div><div class="stat-num">{{ total_capacidad }}</div><div class="stat-lbl">Capacidad total</div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon aves"><i class="dw dw-check"></i></div>
+            <div><div class="stat-num">{{ total_aves }}</div><div class="stat-lbl">Aves alojadas</div></div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-box">
+            <i class="dw dw-search2"></i>
+            <input type="text" id="search-input" placeholder="Buscar por nombre o ubicación...">
+        </div>
+        <button class="btn-primary" onclick="openModal('modal-crear')">
+            <i class="dw dw-add"></i> Nuevo galpón
+        </button>
+    </div>
+
+    <div class="table-card">
+        <table id="galpones-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th><th>Capacidad</th><th>Ubicación</th><th>Descripción</th><th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for g in galpones %}
+                <tr data-name="{{ g.nombre|lower }} {{ g.ubicacion|lower }}">
+                    <td style="font-weight:600;color:var(--navy);">{{ g.nombre }}</td>
+                    <td>{{ g.capacidad }}</td>
+                    <td>{{ g.ubicacion|default:"—" }}</td>
+                    <td>{{ g.descripcion|truncatechars:50|default:"—" }}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn-icon edit" title="Editar"
+                                onclick="openEditGalpon(
+                                    '{% url 'galpon_editar' g.pk %}',
+                                    '{{ g.nombre|escapejs }}',
+                                    {{ g.capacidad }},
+                                    '{{ g.ubicacion|default:''|escapejs }}',
+                                    '{{ g.descripcion|default:''|escapejs }}'
+                                )">
+                                <i class="dw dw-edit2"></i>
+                            </button>
+                            <form method="POST" action="{% url 'galpon_eliminar' g.pk %}" style="display:inline;"
+                                  onsubmit="return confirm('¿Eliminar el galpón {{ g.nombre|escapejs }}? Esta acción no se puede deshacer.')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-icon del" title="Eliminar"><i class="dw dw-delete-3"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5"><div class="empty-state"><i class="dw dw-library"></i><p>No hay galpones registrados todavía.</p></div></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</div>
+</div>
+
+<!-- MODAL CREAR -->
+<div class="modal-overlay" id="modal-crear" onclick="closeModalOutside(event,'modal-crear')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5><i class="dw dw-add" style="color:var(--violet);margin-right:6px;"></i>Nuevo galpón</h5>
+            <button class="modal-close" onclick="closeModal('modal-crear')">✕</button>
+        </div>
+        <form method="POST" action="{% url 'galpon_crear' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-row full">
+                    <div class="form-group"><label>Nombre *</label><input type="text" name="nombre" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Capacidad</label><input type="number" name="capacidad" value="0"></div>
+                    <div class="form-group"><label>Ubicación</label><input type="text" name="ubicacion"></div>
+                </div>
+                <div class="form-row full">
+                    <div class="form-group"><label>Descripción</label><textarea name="descripcion" rows="3"></textarea></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-modal" onclick="closeModal('modal-crear')">Cancelar</button>
+                <button type="submit" class="btn-primary"><i class="dw dw-check"></i> Crear galpón</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="modal-overlay" id="modal-editar" onclick="closeModalOutside(event,'modal-editar')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5><i class="dw dw-edit2" style="color:var(--violet);margin-right:6px;"></i>Editar galpón</h5>
+            <button class="modal-close" onclick="closeModal('modal-editar')">✕</button>
+        </div>
+        <form method="POST" id="form-editar-galpon">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-row full">
+                    <div class="form-group"><label>Nombre *</label><input type="text" name="nombre" id="edit-nombre" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Capacidad</label><input type="number" name="capacidad" id="edit-capacidad"></div>
+                    <div class="form-group"><label>Ubicación</label><input type="text" name="ubicacion" id="edit-ubicacion"></div>
+                </div>
+                <div class="form-row full">
+                    <div class="form-group"><label>Descripción</label><textarea name="descripcion" id="edit-descripcion" rows="3"></textarea></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-modal" onclick="closeModal('modal-editar')">Cancelar</button>
+                <button type="submit" class="btn-primary"><i class="dw dw-check"></i> Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+    function closeModalOutside(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal('modal-crear'); closeModal('modal-editar'); } });
+
+    function openEditGalpon(url, nombre, capacidad, ubicacion, descripcion) {
+        document.getElementById('form-editar-galpon').action = url;
+        document.getElementById('edit-nombre').value = nombre;
+        document.getElementById('edit-capacidad').value = capacidad;
+        document.getElementById('edit-ubicacion').value = ubicacion;
+        document.getElementById('edit-descripcion').value = descripcion;
+        openModal('modal-editar');
+    }
+
+    document.getElementById('search-input').addEventListener('input', function() {
+        var q = this.value.toLowerCase();
+        document.querySelectorAll('#galpones-table tbody tr').forEach(function(row) {
+            var name = row.dataset.name || '';
+            row.style.display = (!q || name.includes(q)) ? '' : 'none';
+        });
+    });
+</script>
+
+{% include 'private/footer.html' %}

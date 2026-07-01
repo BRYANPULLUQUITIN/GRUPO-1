@@ -288,11 +288,13 @@
                 </li>
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
-                        <span class="micon dw dw-library"></span><span class="mtext">Productos</span>
+                        <span class="micon dw dw-library"></span><span class="mtext">Gestión de galpones</span>
                     </a>
                     <ul class="submenu">
-                        <li><a href="{% url 'listar_productos' %}">Productos de salida</a></li>
-                        <li><a href="#">Productos de entrada</a></li>
+                        <li><a href="{% url 'galpones' %}">Galpones</a></li>
+                        <li><a href="#">Aves</a></li>
+                        <li><a href="#">Alimentos</a></li>
+                        <li><a href="#">Alimentación</a></li>
                     </ul>
                 </li>
                 <li>
@@ -306,8 +308,8 @@
                         <span class="micon dw dw-right-arrow1"></span><span class="mtext">Paginas adicionales</span>
                     </a>
                     <ul class="submenu">
-                        <li><a href="{% url 'login' %}">Login</a></li>
-                        <li><a href="forgot-password">Forgot Password</a></li>
+                        <li><a href="#">Produccion</a></li>
+                        <li><a href="#">Alertas</a></li>
                     </ul>
                 </li>
                 <li>
@@ -320,21 +322,12 @@
     </div>
 </div>
 
-
-<!-- ══════════════════════════════════════
-     SCRIPTS
-══════════════════════════════════════ -->
 <script src="{% static 'private/vendors/scripts/core.js' %}"></script>
 <script src="{% static 'private/vendors/scripts/script.min.js' %}"></script>
 <script src="{% static 'private/vendors/scripts/process.js' %}"></script>
 <script src="{% static 'private/vendors/scripts/layout-settings.js' %}"></script>
 
 <script>
-/* ─────────────────────────────────────────────────────
-   CORRECCIÓN 1: Right Sidebar (rueda de configuración)
-   El data-toggle original no funciona si el JS del
-   template no está inicializado. Lo manejamos aquí.
-───────────────────────────────────────────────────── */
 (function () {
     var toggleBtn = document.getElementById('btn-right-sidebar');
     var sidebar   = document.getElementById('right-sidebar');
@@ -394,12 +387,6 @@
     }
 })();
 
-
-/* ─────────────────────────────────────────────────────
-   CORRECCIÓN 2: Marcar notificaciones como leídas
-   al abrir el dropdown (llama a tu endpoint Django).
-   Ajusta la URL '/notifications/mark-read/' según tus urls.py
-───────────────────────────────────────────────────── */
 (function () {
     var notifToggle = document.querySelector('.user-notification .dropdown-toggle');
     if (!notifToggle) return;
@@ -422,10 +409,6 @@
     });
 })();
 
-
-/* ─────────────────────────────────────────────────────
-   UTILIDAD: leer cookie CSRF de Django
-───────────────────────────────────────────────────── */
 function getCookie(name) {
     var value = null;
     if (document.cookie && document.cookie !== '') {
