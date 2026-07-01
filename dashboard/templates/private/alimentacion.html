@@ -1,196 +1,822 @@
 {% load static %}
 {% include 'private/header.html' %}
-{% block content %}
-<div class="page-content">
-    <div class="page-header d-flex justify-content-between align-items-center">
-        <h2 class="pageheader-title">Alimentación</h2>
-        <button class="btn btn-primary" data-toggle="modal" data-target="#modalCrearAlimentacion">
+
+<style>
+    :root {
+        --navy:      #2a3f54;
+        --violet:    #7c3aed;
+        --violet-lt: #ede9fe;
+        --pink:      #c2185b;
+        --green:     #059669;
+        --red:       #dc2626;
+        --amber:     #d97706;
+        --blue:      #2563eb;
+        --gray-50:   #f8fafc;
+        --gray-100:  #f1f5f9;
+        --gray-200:  #e2e8f0;
+        --gray-400:  #94a3b8;
+        --gray-600:  #475569;
+        --gray-900:  #0f172a;
+        --radius:    14px;
+        --shadow:    0 4px 24px rgba(0,0,0,.08);
+    }
+
+    /* ── STATS ── */
+    .stats-grid {
+        display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+        gap:16px; margin-bottom:24px;
+    }
+    .stat-card {
+        background:#fff; border-radius:var(--radius);
+        box-shadow:var(--shadow); padding:20px;
+        display:flex; align-items:center; gap:14px;
+    }
+    .stat-icon {
+        width:46px; height:46px; border-radius:12px;
+        display:flex; align-items:center; justify-content:center;
+        font-size:20px; flex-shrink:0;
+    }
+    .si-total   { background:#ede9fe; color:var(--violet); }
+    .si-hoy     { background:#dcfce7; color:var(--green); }
+    .si-galpon  { background:#dbeafe; color:var(--blue); }
+    .si-porcion { background:#fef9c3; color:var(--amber); }
+    .stat-num { font-size:22px; font-weight:800; color:var(--navy); line-height:1; }
+    .stat-lbl { font-size:11px; color:var(--gray-400); text-transform:uppercase; letter-spacing:.6px; margin-top:2px; }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+        background:#fff; border-radius:var(--radius);
+        box-shadow:var(--shadow); padding:14px 18px;
+        display:flex; align-items:center; gap:10px;
+        flex-wrap:wrap; margin-bottom:20px;
+    }
+    .search-box { flex:1; min-width:200px; position:relative; }
+    .search-box i { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--gray-400); }
+    .search-box input {
+        width:100%; padding:8px 10px 8px 32px;
+        border:1.5px solid var(--gray-200); border-radius:8px;
+        font-size:13px; outline:none; background:var(--gray-50);
+        font-family:'Inter',sans-serif; transition:border-color .2s;
+    }
+    .search-box input:focus { border-color:var(--violet); background:#fff; }
+    .filter-sel {
+        padding:8px 28px 8px 10px;
+        border:1.5px solid var(--gray-200); border-radius:8px;
+        font-size:13px; outline:none; background:var(--gray-50);
+        appearance:none;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat:no-repeat; background-position:right 8px center;
+        font-family:'Inter',sans-serif; cursor:pointer;
+    }
+    .btn-primary {
+        background:linear-gradient(135deg,var(--violet),#9333ea);
+        color:#fff; border:none; padding:9px 18px; border-radius:8px;
+        font-size:13px; font-weight:700; font-family:'Inter',sans-serif;
+        cursor:pointer; white-space:nowrap;
+        display:flex; align-items:center; gap:6px;
+        box-shadow:0 4px 14px rgba(124,58,237,.3);
+        transition:transform .15s;
+    }
+    .btn-primary:hover { transform:translateY(-1px); }
+
+    /* ── TABLE ── */
+    .table-card {
+        background:#fff; border-radius:var(--radius);
+        box-shadow:var(--shadow); overflow:hidden;
+    }
+    .table-card table { width:100%; border-collapse:collapse; }
+    .table-card thead th {
+        padding:13px 16px; font-size:11px; font-weight:700;
+        text-transform:uppercase; letter-spacing:.7px;
+        color:var(--gray-400); background:var(--gray-50);
+        border-bottom:1px solid var(--gray-200); white-space:nowrap;
+    }
+    .table-card tbody tr {
+        border-bottom:1px solid var(--gray-100); transition:background .12s;
+    }
+    .table-card tbody tr:last-child { border-bottom:none; }
+    .table-card tbody tr:hover { background:var(--gray-50); }
+    .table-card tbody td {
+        padding:13px 16px; font-size:13px;
+        color:var(--gray-900); vertical-align:middle;
+    }
+
+    /* Células especiales */
+    .galpon-cell { display:flex; align-items:center; gap:8px; }
+    .galpon-icon {
+        width:32px; height:32px; border-radius:8px;
+        background:var(--violet-lt); color:var(--violet);
+        display:flex; align-items:center; justify-content:center;
+        font-size:14px; flex-shrink:0;
+    }
+    .galpon-name  { font-size:13px; font-weight:600; color:var(--navy); }
+
+    .alimento-pill {
+        display:inline-flex; align-items:center; gap:5px;
+        padding:3px 10px; border-radius:20px;
+        font-size:11px; font-weight:600;
+        background:#fef9c3; color:var(--amber);
+    }
+
+    .porcion-val { font-size:15px; font-weight:800; color:var(--navy); }
+    .porcion-unit { font-size:11px; color:var(--gray-400); margin-left:2px; }
+
+    .user-mini { display:flex; align-items:center; gap:7px; }
+    .av-mini {
+        width:28px; height:28px; border-radius:50%;
+        background:linear-gradient(135deg,var(--pink),#f06292);
+        display:flex; align-items:center; justify-content:center;
+        font-size:10px; font-weight:700; color:#fff;
+        text-transform:uppercase; flex-shrink:0;
+    }
+
+    /* Acciones */
+    .actions { display:flex; gap:5px; }
+    .btn-icon {
+        width:30px; height:30px; border-radius:7px;
+        display:flex; align-items:center; justify-content:center;
+        border:none; cursor:pointer; font-size:13px;
+        transition:background .12s, transform .1s;
+    }
+    .btn-icon:hover { transform:scale(1.1); }
+    .btn-icon.edit { background:var(--violet-lt); color:var(--violet); }
+    .btn-icon.del  { background:#fee2e2; color:var(--red); }
+    .btn-icon.view { background:#dbeafe; color:var(--blue); }
+
+    /* Pagination info */
+    .table-footer {
+        display:flex; align-items:center; justify-content:space-between;
+        padding:12px 18px; border-top:1px solid var(--gray-100);
+        font-size:13px; color:var(--gray-600); flex-wrap:wrap; gap:8px;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+        display:none; position:fixed; inset:0;
+        background:rgba(0,0,0,.45); z-index:2000;
+        align-items:center; justify-content:center; padding:20px;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal-box {
+        background:#fff; border-radius:var(--radius);
+        width:100%; max-width:540px;
+        box-shadow:0 20px 60px rgba(0,0,0,.2);
+        animation:modalIn .25s ease; max-height:92vh; overflow-y:auto;
+    }
+    @keyframes modalIn {
+        from { opacity:0; transform:translateY(-14px); }
+        to   { opacity:1; transform:translateY(0); }
+    }
+    .modal-header {
+        display:flex; align-items:center; justify-content:space-between;
+        padding:18px 22px 14px; border-bottom:1px solid var(--gray-100);
+        position:sticky; top:0; background:#fff; z-index:1;
+    }
+    .modal-header h5 { font-size:15px; font-weight:700; color:var(--navy); margin:0; }
+    .modal-close {
+        width:28px; height:28px; border-radius:7px;
+        background:var(--gray-100); border:none; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
+        font-size:14px; color:var(--gray-600);
+    }
+    .modal-close:hover { background:var(--gray-200); }
+    .modal-body   { padding:18px 22px; }
+    .modal-footer {
+        padding:14px 22px; border-top:1px solid var(--gray-100);
+        display:flex; gap:10px; justify-content:flex-end;
+        position:sticky; bottom:0; background:#fff;
+    }
+
+    .form-section {
+        font-size:11px; font-weight:700; text-transform:uppercase;
+        letter-spacing:.8px; color:var(--violet);
+        margin:16px 0 10px; padding-bottom:5px;
+        border-bottom:2px solid var(--violet-lt);
+    }
+    .form-section:first-child { margin-top:0; }
+    .form-row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .form-group { margin-bottom:12px; }
+    .form-group label {
+        display:block; font-size:12px; font-weight:600;
+        color:var(--gray-600); margin-bottom:4px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width:100%; padding:9px 12px;
+        border:1.5px solid var(--gray-200); border-radius:8px;
+        font-size:13px; font-family:'Inter',sans-serif;
+        color:var(--gray-900); background:var(--gray-50);
+        outline:none; transition:border-color .2s; box-sizing:border-box;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color:var(--violet); background:#fff; }
+    .form-group textarea { resize:vertical; min-height:70px; }
+
+    /* Hint de stock disponible */
+    .stock-hint {
+        font-size:11px; color:var(--green); margin-top:4px;
+        display:none; font-weight:600;
+    }
+
+    .btn-save {
+        background:linear-gradient(135deg,var(--violet),#9333ea);
+        color:#fff; border:none; padding:9px 22px; border-radius:8px;
+        font-size:13px; font-weight:700; font-family:'Inter',sans-serif;
+        cursor:pointer; box-shadow:0 4px 14px rgba(124,58,237,.3);
+        display:flex; align-items:center; gap:6px;
+    }
+    .btn-save:hover { opacity:.9; }
+    .btn-cancel-m {
+        background:var(--gray-100); color:var(--gray-600);
+        border:none; padding:9px 18px; border-radius:8px;
+        font-size:13px; font-weight:600;
+        font-family:'Inter',sans-serif; cursor:pointer;
+    }
+    .btn-cancel-m:hover { background:var(--gray-200); }
+
+    /* Detalle modal */
+    .det-hero {
+        background:linear-gradient(135deg,var(--navy) 0%,#1e3a5f 60%,#2d1b69 100%);
+        border-radius:10px; padding:18px 20px; margin-bottom:16px;
+        display:flex; justify-content:space-between; align-items:center;
+        flex-wrap:wrap; gap:12px;
+    }
+    .det-left .det-date { font-size:22px; font-weight:800; color:#fff; }
+    .det-left .det-galpon { font-size:12px; color:rgba(255,255,255,.6); margin-top:3px; }
+    .det-porcion { font-size:28px; font-weight:800; color:#fff; text-align:right; }
+    .det-porcion-lbl { font-size:11px; color:rgba(255,255,255,.5); text-align:right; }
+
+    .info-row {
+        display:flex; justify-content:space-between; padding:9px 0;
+        border-bottom:1px solid var(--gray-100); font-size:13px;
+    }
+    .info-row:last-child { border-bottom:none; }
+    .info-row .il { color:var(--gray-400); font-weight:500; }
+    .info-row .iv { color:var(--navy); font-weight:600; max-width:60%; text-align:right; }
+
+    /* Alert */
+    .alert-msg {
+        display:flex; align-items:center; gap:8px;
+        padding:10px 16px; border-radius:8px;
+        font-size:13px; font-weight:500; margin-bottom:16px;
+    }
+    .alert-msg.success { background:#ecfdf5; color:var(--green); border:1px solid #a7f3d0; }
+    .alert-msg.error   { background:#fef2f2; color:var(--red);   border:1px solid #fecaca; }
+
+    /* Empty */
+    .empty-state { text-align:center; padding:60px 20px; color:var(--gray-400); }
+    .empty-state i { font-size:48px; display:block; margin-bottom:12px; }
+
+    @media (max-width:768px) {
+        .stats-grid { grid-template-columns:1fr 1fr; }
+        .form-row2  { grid-template-columns:1fr; }
+        .table-card { overflow-x:auto; }
+    }
+</style>
+
+<div class="mobile-menu-overlay"></div>
+<div class="main-container">
+<div class="pd-ltr-20 xs-pd-20-10">
+<div class="min-height-200px">
+
+    <!-- Breadcrumb -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <div class="title"><h4>Registro de Alimentación</h4></div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Inicio</a></li>
+                        <li class="breadcrumb-item active">Alimentación</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas -->
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert-msg {% if msg.tags == 'error' %}error{% else %}success{% endif %}">
+                <i class="dw {% if msg.tags == 'error' %}dw-warning{% else %}dw-check{% endif %}"></i>
+                {{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon si-total"><i class="dw dw-layers"></i></div>
+            <div>
+                <div class="stat-num">{{ registros.count }}</div>
+                <div class="stat-lbl">Total registros</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon si-hoy"><i class="dw dw-calendar1"></i></div>
+            <div>
+                <div class="stat-num" id="cnt-hoy">—</div>
+                <div class="stat-lbl">Hoy</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon si-galpon"><i class="dw dw-home"></i></div>
+            <div>
+                <div class="stat-num">{{ galpones.count }}</div>
+                <div class="stat-lbl">Galpones</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon si-porcion"><i class="dw dw-analytics-21"></i></div>
+            <div>
+                <div class="stat-num" id="total-porcion">—</div>
+                <div class="stat-lbl">Total porción hoy</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="search-box">
+            <i class="dw dw-search2"></i>
+            <input type="text" id="search-input"
+                   placeholder="Buscar por galpón, alimento, usuario...">
+        </div>
+        <select class="filter-sel" id="filter-galpon">
+            <option value="">Todos los galpones</option>
+            {% for g in galpones %}
+                <option value="{{ g.nombre|lower }}">{{ g.nombre }}</option>
+            {% endfor %}
+        </select>
+        <select class="filter-sel" id="filter-alimento">
+            <option value="">Todos los alimentos</option>
+            {% for a in alimentos %}
+                <option value="{{ a.nombre|lower }}">{{ a.nombre }}</option>
+            {% endfor %}
+        </select>
+        <input type="date" class="filter-sel" id="filter-fecha"
+               style="padding:8px 12px;" title="Filtrar por fecha">
+        <button class="btn-primary" onclick="openModal('modal-crear')">
             <i class="dw dw-add"></i> Nuevo registro
         </button>
     </div>
 
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Alimento</th>
-                            <th>Galpón</th>
-                            <th>Porción</th>
-                            <th>Registrado por</th>
-                            <th class="text-right">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for registro in registros %}
-                        <tr>
-                            <td>{{ registro.fecha|date:"d/m/Y" }}</td>
-                            <td>{{ registro.alimento.nombre|default:"—" }}</td>
-                            <td>{{ registro.galpon.nombre|default:"—" }}</td>
-                            <td>{{ registro.porcion }} {{ registro.alimento.unidad_medida|default:"" }}</td>
-                            <td>{{ registro.usuario.get_full_name|default:registro.usuario.username|default:"—" }}</td>
-                            <td class="text-right">
-                                <button class="btn btn-sm btn-outline-primary" data-toggle="modal"
-                                        data-target="#modalEditarAlimentacion{{ registro.pk }}">
-                                    <i class="dw dw-edit2"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" data-toggle="modal"
-                                        data-target="#modalEliminarAlimentacion{{ registro.pk }}">
+    <!-- Tabla -->
+    <div class="table-card">
+        <table id="alim-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Galpón</th>
+                    <th>Alimento</th>
+                    <th>Porción</th>
+                    <th>Registrado por</th>
+                    <th>Observación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in registros %}
+                <tr data-search="{{ r.galpon.nombre|lower }} {{ r.alimento.nombre|lower }} {{ r.usuario.get_full_name|lower }}"
+                    data-galpon="{{ r.galpon.nombre|lower }}"
+                    data-alimento="{{ r.alimento.nombre|lower }}"
+                    data-fecha="{{ r.fecha|date:'Y-m-d' }}">
+
+                    <td style="color:var(--gray-400);font-size:12px;">{{ forloop.counter }}</td>
+
+                    <td>
+                        <div style="font-weight:600;color:var(--navy);">
+                            {{ r.fecha|date:"d/m/Y" }}
+                        </div>
+                        <div style="font-size:11px;color:var(--gray-400);">
+                            {{ r.fecha|date:"l" }}
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="galpon-cell">
+                            <div class="galpon-icon"><i class="dw dw-home"></i></div>
+                            <div class="galpon-name">{{ r.galpon.nombre|default:"—" }}</div>
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="alimento-pill">
+                            🌾 {{ r.alimento.nombre|default:"—" }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="porcion-val">{{ r.porcion }}</span>
+                        <span class="porcion-unit">{{ r.alimento.unidad_medida|default:"kg" }}</span>
+                    </td>
+
+                    <td>
+                        <div class="user-mini">
+                            <div class="av-mini">
+                                {{ r.usuario.first_name|first|upper }}{{ r.usuario.last_name|first|upper }}
+                            </div>
+                            <span style="font-size:13px;font-weight:500;color:var(--navy);">
+                                {{ r.usuario.get_full_name|default:r.usuario.username }}
+                            </span>
+                        </div>
+                    </td>
+
+                    <td style="max-width:180px;color:var(--gray-600);font-size:12px;">
+                        {{ r.observacion|default:"—"|truncatechars:50 }}
+                    </td>
+
+                    <td>
+                        <div class="actions">
+                            <button class="btn-icon view" title="Ver detalle"
+                                    onclick="verDetalle(
+                                        '{{ r.fecha|date:'d/m/Y' }}',
+                                        '{{ r.galpon.nombre|default:'' }}',
+                                        '{{ r.alimento.nombre|default:'' }}',
+                                        '{{ r.porcion }}',
+                                        '{{ r.alimento.unidad_medida|default:'kg' }}',
+                                        '{{ r.usuario.get_full_name|default:r.usuario.username }}',
+                                        '{{ r.observacion|default:''|escapejs }}'
+                                    )">
+                                <i class="dw dw-eye"></i>
+                            </button>
+                            <button class="btn-icon edit" title="Editar"
+                                    onclick="abrirEditar(
+                                        {{ r.pk }},
+                                        '{{ r.fecha|date:'Y-m-d' }}',
+                                        '{{ r.galpon.pk|default:'' }}',
+                                        '{{ r.alimento.pk|default:'' }}',
+                                        '{{ r.porcion }}',
+                                        '{{ r.usuario.pk|default:'' }}',
+                                        '{{ r.observacion|default:''|escapejs }}'
+                                    )">
+                                <i class="dw dw-edit2"></i>
+                            </button>
+                            <form method="POST"
+                                  action="{% url 'alimentacion_eliminar' r.pk %}"
+                                  style="display:inline;"
+                                  onsubmit="return confirm('¿Eliminar este registro de alimentación?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-icon del" title="Eliminar">
                                     <i class="dw dw-delete-3"></i>
                                 </button>
-                            </td>
-                        </tr>
-
-                        <!-- Modal editar -->
-                        <div class="modal fade" id="modalEditarAlimentacion{{ registro.pk }}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form method="post" action="{% url 'alimentacion_editar' registro.pk %}">
-                                        {% csrf_token %}
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Editar registro de alimentación</h5>
-                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="form-group">
-                                                <label>Fecha</label>
-                                                <input type="date" name="fecha" class="form-control"
-                                                       value="{{ registro.fecha|date:'Y-m-d' }}" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Alimento</label>
-                                                <select name="alimento" class="form-control">
-                                                    <option value="">— Ninguno —</option>
-                                                    {% for a in alimentos %}
-                                                    <option value="{{ a.pk }}" {% if registro.alimento_id == a.pk %}selected{% endif %}>{{ a.nombre }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Galpón</label>
-                                                <select name="galpon" class="form-control">
-                                                    <option value="">— Ninguno —</option>
-                                                    {% for g in galpones %}
-                                                    <option value="{{ g.pk }}" {% if registro.galpon_id == g.pk %}selected{% endif %}>{{ g.nombre }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Porción</label>
-                                                <input type="number" step="0.01" name="porcion" class="form-control"
-                                                       value="{{ registro.porcion }}" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Usuario responsable</label>
-                                                <select name="usuario" class="form-control">
-                                                    {% for u in usuarios %}
-                                                    <option value="{{ u.pk }}" {% if registro.usuario_id == u.pk %}selected{% endif %}>{{ u.get_full_name|default:u.username }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Observación</label>
-                                                <textarea name="observacion" class="form-control" rows="3">{{ registro.observacion|default:'' }}</textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+                            </form>
                         </div>
-
-                        <!-- Modal eliminar -->
-                        <div class="modal fade" id="modalEliminarAlimentacion{{ registro.pk }}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form method="post" action="{% url 'alimentacion_eliminar' registro.pk %}">
-                                        {% csrf_token %}
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Eliminar registro</h5>
-                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        </div>
-                                        <div class="modal-body">
-                                            ¿Seguro que deseas eliminar este registro de alimentación del {{ registro.fecha|date:"d/m/Y" }}?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                            <button type="submit" class="btn btn-danger">Eliminar</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">
+                        <div class="empty-state">
+                            <i class="dw dw-layers"></i>
+                            <p>No hay registros de alimentación todavía.</p>
                         </div>
-                        {% empty %}
-                        <tr><td colspan="6" class="text-center text-muted">No hay registros de alimentación.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="table-footer">
+            <span id="showing-text">Mostrando todos los registros</span>
         </div>
     </div>
+
+</div>
+</div>
 </div>
 
-<!-- Modal crear -->
-<div class="modal fade" id="modalCrearAlimentacion" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" action="{% url 'alimentacion_crear' %}">
-                {% csrf_token %}
-                <div class="modal-header">
-                    <h5 class="modal-title">Nuevo registro de alimentación</h5>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+<!-- ══ MODAL CREAR ══ -->
+<div class="modal-overlay" id="modal-crear" onclick="closeOut(event,'modal-crear')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5>🌾 Nuevo registro de alimentación</h5>
+            <button class="modal-close" onclick="closeModal('modal-crear')">✕</button>
+        </div>
+        <form method="POST" action="{% url 'alimentacion_crear' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+
+                <div class="form-section">Información principal</div>
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label>Fecha *</label>
+                        <input type="date" name="fecha" id="crear-fecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Porción *</label>
+                        <input type="number" name="porcion" step="0.01" min="0"
+                               placeholder="Ej: 25.5" required>
+                    </div>
                 </div>
-                <div class="modal-body">
+
+                <div class="form-section">Galpón y Alimento</div>
+                <div class="form-row2">
                     <div class="form-group">
-                        <label>Fecha</label>
-                        <input type="date" name="fecha" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Alimento</label>
-                        <select name="alimento" class="form-control">
-                            <option value="">— Ninguno —</option>
-                            {% for a in alimentos %}
-                            <option value="{{ a.pk }}">{{ a.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Galpón</label>
-                        <select name="galpon" class="form-control">
-                            <option value="">— Ninguno —</option>
+                        <label>Galpón *</label>
+                        <select name="galpon" required>
+                            <option value="">Seleccionar...</option>
                             {% for g in galpones %}
-                            <option value="{{ g.pk }}">{{ g.nombre }}</option>
+                                <option value="{{ g.pk }}">{{ g.nombre }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Porción</label>
-                        <input type="number" step="0.01" name="porcion" class="form-control" required>
+                        <label>Alimento *</label>
+                        <select name="alimento" id="crear-alimento"
+                                onchange="mostrarStock(this,'crear-stock-hint')" required>
+                            <option value="">Seleccionar...</option>
+                            {% for a in alimentos %}
+                                <option value="{{ a.pk }}"
+                                        data-stock="{{ a.stock }}"
+                                        data-unidad="{{ a.unidad_medida }}">
+                                    {{ a.nombre }} ({{ a.stock }} {{ a.unidad_medida }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="stock-hint" id="crear-stock-hint"></div>
+                    </div>
+                </div>
+
+                <div class="form-section">Usuario y Observación</div>
+                <div class="form-group">
+                    <label>Registrado por</label>
+                    <select name="usuario">
+                        {% for u in usuarios %}
+                            <option value="{{ u.pk }}"
+                                {% if u == request.user %}selected{% endif %}>
+                                {{ u.get_full_name|default:u.username }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Observación</label>
+                    <textarea name="observacion"
+                              placeholder="Notas sobre la alimentación, comportamiento del lote..."></textarea>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-m" onclick="closeModal('modal-crear')">Cancelar</button>
+                <button type="submit" class="btn-save">
+                    <i class="dw dw-check"></i> Guardar registro
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ══ MODAL EDITAR ══ -->
+<div class="modal-overlay" id="modal-editar" onclick="closeOut(event,'modal-editar')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5>✏️ Editar registro de alimentación</h5>
+            <button class="modal-close" onclick="closeModal('modal-editar')">✕</button>
+        </div>
+        <form method="POST" id="form-editar" action="">
+            {% csrf_token %}
+            <div class="modal-body">
+
+                <div class="form-section">Información principal</div>
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label>Fecha *</label>
+                        <input type="date" name="fecha" id="edit-fecha" required>
                     </div>
                     <div class="form-group">
-                        <label>Usuario responsable</label>
-                        <select name="usuario" class="form-control">
-                            {% for u in usuarios %}
-                            <option value="{{ u.pk }}" {% if u.pk == request.user.pk %}selected{% endif %}>{{ u.get_full_name|default:u.username }}</option>
+                        <label>Porción *</label>
+                        <input type="number" name="porcion" id="edit-porcion"
+                               step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-section">Galpón y Alimento</div>
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label>Galpón *</label>
+                        <select name="galpon" id="edit-galpon" required>
+                            <option value="">Seleccionar...</option>
+                            {% for g in galpones %}
+                                <option value="{{ g.pk }}">{{ g.nombre }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Observación</label>
-                        <textarea name="observacion" class="form-control" rows="3"></textarea>
+                        <label>Alimento *</label>
+                        <select name="alimento" id="edit-alimento"
+                                onchange="mostrarStock(this,'edit-stock-hint')" required>
+                            <option value="">Seleccionar...</option>
+                            {% for a in alimentos %}
+                                <option value="{{ a.pk }}"
+                                        data-stock="{{ a.stock }}"
+                                        data-unidad="{{ a.unidad_medida }}">
+                                    {{ a.nombre }} ({{ a.stock }} {{ a.unidad_medida }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="stock-hint" id="edit-stock-hint"></div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Crear registro</button>
+
+                <div class="form-section">Usuario y Observación</div>
+                <div class="form-group">
+                    <label>Registrado por</label>
+                    <select name="usuario" id="edit-usuario">
+                        {% for u in usuarios %}
+                            <option value="{{ u.pk }}">
+                                {{ u.get_full_name|default:u.username }}
+                            </option>
+                        {% endfor %}
+                    </select>
                 </div>
-            </form>
+                <div class="form-group">
+                    <label>Observación</label>
+                    <textarea name="observacion" id="edit-obs"
+                              placeholder="Notas sobre la alimentación..."></textarea>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-m" onclick="closeModal('modal-editar')">Cancelar</button>
+                <button type="submit" class="btn-save">
+                    <i class="dw dw-check"></i> Guardar cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ══ MODAL DETALLE ══ -->
+<div class="modal-overlay" id="modal-detalle" onclick="closeOut(event,'modal-detalle')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5>🔍 Detalle del registro</h5>
+            <button class="modal-close" onclick="closeModal('modal-detalle')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="det-hero">
+                <div class="det-left">
+                    <div class="det-date" id="det-fecha">—</div>
+                    <div class="det-galpon" id="det-galpon">—</div>
+                </div>
+                <div>
+                    <div class="det-porcion" id="det-porcion">—</div>
+                    <div class="det-porcion-lbl">Porción</div>
+                </div>
+            </div>
+            <div id="det-rows"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel-m" onclick="closeModal('modal-detalle')">Cerrar</button>
         </div>
     </div>
 </div>
-{% endblock %}
+
+<script>
+    /* ── Modales ── */
+    function openModal(id) {
+        document.getElementById(id).classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    function closeOut(e, id) {
+        if (e.target === document.getElementById(id)) closeModal(id);
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            ['modal-crear','modal-editar','modal-detalle'].forEach(closeModal);
+        }
+    });
+
+    /* Fecha de hoy por defecto */
+    document.addEventListener('DOMContentLoaded', function() {
+        var hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('crear-fecha').value = hoy;
+        document.getElementById('filter-fecha').value = '';
+        calcStats();
+    });
+
+    /* ── Stock hint al seleccionar alimento ── */
+    function mostrarStock(sel, hintId) {
+        var opt   = sel.options[sel.selectedIndex];
+        var hint  = document.getElementById(hintId);
+        if (!opt || !opt.dataset.stock) { hint.style.display = 'none'; return; }
+        var stock = parseFloat(opt.dataset.stock);
+        var unidad = opt.dataset.unidad || 'kg';
+        hint.textContent = '✅ Stock disponible: ' + stock + ' ' + unidad;
+        hint.style.display = 'block';
+        hint.style.color   = stock <= 20 ? '#d97706' : '#059669';
+    }
+
+    /* ── Editar ── */
+    function abrirEditar(id, fecha, galponId, alimentoId, porcion, usuarioId, obs) {
+        document.getElementById('form-editar').action =
+            '/dashboard/alimentacion/' + id + '/editar/';
+        document.getElementById('edit-fecha').value   = fecha;
+        document.getElementById('edit-porcion').value = porcion;
+        document.getElementById('edit-obs').value     = obs;
+
+        setSelectVal('edit-galpon',   galponId);
+        setSelectVal('edit-alimento', alimentoId);
+        setSelectVal('edit-usuario',  usuarioId);
+
+        /* Mostrar hint de stock */
+        var selAlim = document.getElementById('edit-alimento');
+        mostrarStock(selAlim, 'edit-stock-hint');
+
+        openModal('modal-editar');
+    }
+
+    function setSelectVal(selId, val) {
+        var sel = document.getElementById(selId);
+        for (var i = 0; i < sel.options.length; i++) {
+            if (sel.options[i].value == val) { sel.selectedIndex = i; break; }
+        }
+    }
+
+    /* ── Ver detalle ── */
+    function verDetalle(fecha, galpon, alimento, porcion, unidad, usuario, obs) {
+        document.getElementById('det-fecha').textContent  = fecha;
+        document.getElementById('det-galpon').textContent = '🏠 ' + (galpon || '—');
+        document.getElementById('det-porcion').textContent = porcion + ' ' + unidad;
+
+        var rows = [
+            ['Alimento',      '🌾 ' + (alimento || '—')],
+            ['Porción',       porcion + ' ' + unidad],
+            ['Registrado por', usuario],
+            ['Observación',   obs || '—'],
+        ];
+
+        document.getElementById('det-rows').innerHTML = rows.map(function(r) {
+            return '<div class="info-row">' +
+                '<span class="il">' + r[0] + '</span>' +
+                '<span class="iv">' + r[1] + '</span>' +
+            '</div>';
+        }).join('');
+
+        openModal('modal-detalle');
+    }
+
+    /* ── Stats dinámicas ── */
+    function calcStats() {
+        var hoy    = new Date().toISOString().split('T')[0];
+        var rows   = document.querySelectorAll('#alim-table tbody tr[data-fecha]');
+        var cntHoy = 0;
+        var totalHoy = 0;
+
+        rows.forEach(function(r) {
+            if (r.dataset.fecha === hoy) {
+                cntHoy++;
+                /* Extraer porción del texto */
+                var td = r.querySelectorAll('td')[4];
+                if (td) {
+                    var val = parseFloat(td.querySelector('.porcion-val')?.textContent || 0);
+                    if (!isNaN(val)) totalHoy += val;
+                }
+            }
+        });
+
+        document.getElementById('cnt-hoy').textContent      = cntHoy;
+        document.getElementById('total-porcion').textContent = totalHoy > 0
+            ? totalHoy.toFixed(1) : '0';
+    }
+
+    /* ── Filtros ── */
+    function filterTable() {
+        var search  = document.getElementById('search-input').value.toLowerCase();
+        var galpon  = document.getElementById('filter-galpon').value;
+        var alim    = document.getElementById('filter-alimento').value;
+        var fecha   = document.getElementById('filter-fecha').value;
+        var rows    = document.querySelectorAll('#alim-table tbody tr[data-search]');
+        var visible = 0;
+
+        rows.forEach(function(row) {
+            var mSearch = !search  || (row.dataset.search || '').includes(search);
+            var mGalpon = !galpon  || (row.dataset.galpon || '') === galpon;
+            var mAlim   = !alim    || (row.dataset.alimento || '') === alim;
+            var mFecha  = !fecha   || row.dataset.fecha === fecha;
+            var show    = mSearch && mGalpon && mAlim && mFecha;
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+
+        document.getElementById('showing-text').textContent =
+            'Mostrando ' + visible + ' de ' + rows.length + ' registros';
+    }
+
+    document.getElementById('search-input').addEventListener('input', filterTable);
+    document.getElementById('filter-galpon').addEventListener('change', filterTable);
+    document.getElementById('filter-alimento').addEventListener('change', filterTable);
+    document.getElementById('filter-fecha').addEventListener('change', filterTable);
+</script>
+
+{% include 'private/footer.html' %}
