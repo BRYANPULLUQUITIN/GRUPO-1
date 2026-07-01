@@ -1,456 +1,461 @@
 {% load static %}
 {% include 'header.html' %}
-<!-- Hamburger -->
 
+<!-- Hamburger Menu -->
 <div class="hamburger_bar trans_400 d-flex flex-row align-items-center justify-content-start">
-	<div class="hamburger">
-		<div class="menu_toggle d-flex flex-row align-items-center justify-content-start">
-			<span>menu</span>
-			<div class="hamburger_container">
-				<div class="menu_hamburger">
-					<div class="line_1 hamburger_lines" style="transform: matrix(1, 0, 0, 1, 0, 0);"></div>
-					<div class="line_2 hamburger_lines" style="visibility: inherit; opacity: 1;"></div>
-					<div class="line_3 hamburger_lines" style="transform: matrix(1, 0, 0, 1, 0, 0);"></div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="hamburger">
+        <div class="menu_toggle d-flex flex-row align-items-center justify-content-start">
+            <span>Menú</span>
+            <div class="hamburger_container">
+                <div class="menu_hamburger">
+                    <div class="line_1 hamburger_lines"></div>
+                    <div class="line_2 hamburger_lines"></div>
+                    <div class="line_3 hamburger_lines"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Home -->
-
+<!-- Hero Section -->
 <div class="home">
-	<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="/static/public/images/menu.jpg" data-speed="0.8"></div>
-	<div class="home_container">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="home_content text-center">
-						<div class="home_subtitle page_subtitle">Producción Avícola</div>
-						<div class="home_title"><h1>Granja Avícola El Progreso</h1></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="parallax_background parallax-window" 
+         data-parallax="scroll" 
+         data-image-src="/static/public/images/menu.jpg" 
+         style="background-image: url('/static/public/images/menu.jpg'); background-size: cover; background-position: center; min-height: 350px;" 
+         data-speed="0.8">
+    </div>
+    <div class="home_container">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="home_content text-center" style="padding: 50px 0; background: rgba(0,0,0,0.4); border-radius: 12px;">
+                        <div class="home_title">
+                            <h1 style="color: #fff; font-size: 65px; font-weight: 700; text-shadow: 15px 15px 15px rgba(0,0,0,0.5);">
+                                Granja Avícola El Progreso
+                            </h1>
+                        </div>
+                        <div class="home_description" style="color: #fff; font-size: 18px; max-width: 600px; margin: 15px auto 0;">
+                            <p>Calidad y frescura directa desde nuestra granja a tu mesa</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- The Menu -->
+<!-- Product Catalog -->
+<div class="themenu" style="padding: 60px 0; background: #f8f9fa;">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="section_title_container text-center">
+                    <div class="section_title">
+                        <h1 style="font-size: 38px; font-weight: 700; color: #1B3A2D;">Nuestro Catálogo</h1>
+                    </div>
+                    <div style="width: 60px; height: 3px; background: #2E7D32; margin: 15px auto;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row themenu_text_row" style="margin: 30px 0;">
+            <div class="col-lg-6">
+                <div class="themenu_text">
+                    <p style="font-size: 16px; line-height: 1.8; color: #555;">
+                        En <strong>Granja Avícola El Progreso</strong> ofrecemos productos avícolas frescos y de excelente calidad, 
+                        obtenidos mediante procesos responsables que garantizan higiene, seguridad alimentaria y el mejor sabor 
+                        para nuestros clientes. Nuestro compromiso es brindar alimentos nutritivos y saludables para el consumo diario.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="themenu_text">
+                    <p style="font-size: 16px; line-height: 1.8; color: #555;">
+                        Contamos con una amplia variedad de <strong>huevos frescos</strong>, <strong>pollos de engorde</strong> y 
+                        <strong>productos derivados</strong>, cuidadosamente seleccionados para satisfacer las necesidades de hogares, 
+                        comercios y restaurantes. Trabajamos con dedicación para ofrecer siempre frescura, calidad y confianza en cada producto.
+                    </p>
+                </div>
+            </div>
+        </div>
 
-<div class="themenu">
-	<div class="container">
-		<div class="row">
-			<div class="col">
-				<div class="section_title_container text-center">
-					<div class="section_subtitle page_subtitle">Productos Frescos</div>
-					<div class="section_title"><h1>Catalogo de productos</h1></div>
-				</div>
-			</div>
-		</div>
-		<div class="row themenu_text_row">
-			<div class="col-lg-6">
-				<div class="themenu_text">
-					<p>En Granja Avícola El Progreso ofrecemos productos avícolas frescos y de excelente calidad, obtenidos mediante procesos responsables que garantizan higiene, seguridad alimentaria y el mejor sabor para nuestros clientes. Nuestro compromiso es brindar alimentos nutritivos y saludables para el consumo diario.</p>
-				</div>
-			</div>
-			<div class="col-lg-6">
-				<div class="themenu_text">
-					<p>Contamos con una amplia variedad de huevos frescos, pollos de engorde y productos derivados, cuidadosamente seleccionados para satisfacer las necesidades de hogares, comercios y restaurantes. Trabajamos con dedicación para ofrecer siempre frescura, calidad y confianza en cada producto.</p>
-				</div>
-			</div>
-		</div>
-		<div class="row themenu_row">
-			
-			<!-- Starters -->
-			<div class="col-lg-4 themenu_column">
-				<div class="themenu_image"><img src="/static/public/images/starters.jpg" alt="Starters"></div>
-				<div class="themenu_col trans_400">
-					<div class="themenu_col_title">Huevos de campo</div>
-					<div class="dish_list">
+        <div class="row themenu_row">
+            
+            <!-- Categoría 1: Huevos de Campo -->
+            <div class="col-lg-4 themenu_column" style="margin-bottom: 30px;">
+                <div class="themenu_image" style="border-radius: 12px 12px 0 0; overflow: hidden;">
+                    <img src="/static/public/images/starters.jpg" alt="Huevos de Campo" style="width: 100%; height: 200px; object-fit: cover;">
+                </div>
+                <div class="themenu_col trans_400" style="background: #fff; border-radius: 0 0 12px 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.06);">
+                    <div class="themenu_col_title" style="font-size: 22px; font-weight: 700; color: #1B3A2D; margin-bottom: 20px; border-bottom: 2px solid #2E7D32; padding-bottom: 10px;">
+                        🥚 Huevos de Campo
+                    </div>
+                    <div class="dish_list">
 
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Huevos Blancos</div>
-								<div class="dish_price">$5</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordenar Ahora</a></div>
-						</div>
+                        <!-- Producto -->
+                        <div class="dish" style="margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid #eee;">
+                            <div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
+                                <div class="dish_title" style="font-weight: 600; color: #333;">Huevos Blancos</div>
+                                <div class="dish_price" style="color: #2E7D32; font-weight: 700;">$5.00</div>
+                            </div>
+                            <div class="dish_contents" style="font-size: 13px; color: #888; margin: 5px 0;">
+                                <ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
+                                    <li style="margin-right: 10px;">🥚 Frescos</li>
+                                    <li style="margin-right: 10px;">📦 30 unidades</li>
+                                    <li>🌿 Campo</li>
+                                </ul>
+                            </div>
+                            <div class="dish_order" style="margin-top: 8px;">
+                                <a href="#" style="background: #2E7D32; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 13px; text-decoration: none; display: inline-block; transition: all 0.3s;">
+                                    🛒 Ordenar Ahora
+                                </a>
+                            </div>
+                        </div>
 
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Huevos Criollos</div>
-								<div class="dish_price">$3.50</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Comprar ahora</a></div>
-						</div>
+                        <!-- Producto -->
+                        <div class="dish" style="margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid #eee;">
+                            <div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
+                                <div class="dish_title" style="font-weight: 600; color: #333;">Huevos Criollos</div>
+                                <div class="dish_price" style="color: #2E7D32; font-weight: 700;">$3.50</div>
+                            </div>
+                            <div class="dish_contents" style="font-size: 13px; color: #888; margin: 5px 0;">
+                                <ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
+                                    <li style="margin-right: 10px;">🥚 Criollos</li>
+                                    <li style="margin-right: 10px;">📦 30 unidades</li>
+                                    <li>🌿 Orgánicos</li>
+                                </ul>
+                            </div>
+                            <div class="dish_order" style="margin-top: 8px;">
+                                <a href="#" style="background: #2E7D32; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 13px; text-decoration: none; display: inline-block; transition: all 0.3s;">
+                                    🛒 Comprar ahora
+                                </a>
+                            </div>
+                        </div>
 
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Pollo Entero</div>
-								<div class="dish_price">$9</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ver Producto</a></div>
-						</div>
+                        <!-- Producto -->
+                        <div class="dish" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
+                            <div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
+                                <div class="dish_title" style="font-weight: 600; color: #333;">Pollo Entero</div>
+                                <div class="dish_price" style="color: #2E7D32; font-weight: 700;">$9.00</div>
+                            </div>
+                            <div class="dish_contents" style="font-size: 13px; color: #888; margin: 5px 0;">
+                                <ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
+                                    <li style="margin-right: 10px;">🐔 Entero</li>
+                                    <li style="margin-right: 10px;">⚖️ 2.5 kg</li>
+                                    <li>🌿 Campo</li>
+                                </ul>
+                            </div>
+                            <div class="dish_order" style="margin-top: 8px;">
+                                <a href="#" style="background: #2E7D32; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 13px; text-decoration: none; display: inline-block; transition: all 0.3s;">
+                                    👁️ Ver Producto
+                                </a>
+                            </div>
+                        </div>
 
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Biceras de Pollo</div>
-								<div class="dish_price">$4.00</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordenar Ahora</a></div>
-						</div>
+                    </div>
+                </div>
+            </div>
 
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Alas de pollo</div>
-								<div class="dish_price">$2</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordenar Ahora</a></div>
-						</div>
+            <!-- Categoría 2: Huevos de Gallina -->
+            <div class="col-lg-4 themenu_column" style="margin-bottom: 30px;">
+                <div class="themenu_image" style="border-radius: 12px 12px 0 0; overflow: hidden;">
+                    <img src="/static/public/images/main.jpg" alt="Huevos de Gallina" style="width: 100%; height: 200px; object-fit: cover;">
+                </div>
+                <div class="themenu_col trans_400" style="background: #fff; border-radius: 0 0 12px 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.06);">
+                    <div class="themenu_col_title" style="font-size: 22px; font-weight: 700; color: #1B3A2D; margin-bottom: 20px; border-bottom: 2px solid #2E7D32; padding-bottom: 10px;">
+                        🐔 Huevos de Gallina
+                    </div>
+                    <div class="dish_list">
 
-					</div>
-				</div>
-			</div>
+                        <!-- Producto -->
+                        <div class="dish" style="margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid #eee;">
+                            <div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
+                                <div class="dish_title" style="font-weight: 600; color: #333;">Pollo Entero de Campo</div>
+                                <div class="dish_price" style="color: #2E7D32; font-weight: 700;">$10.00</div>
+                            </div>
+                            <div class="dish_contents" style="font-size: 13px; color: #888; margin: 5px 0;">
+                                <ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
+                                    <li style="margin-right: 10px;">🐔 Entero</li>
+                                    <li style="margin-right: 10px;">⚖️ 3 kg</li>
+                                    <li>🌿 Campo</li>
+                                </ul>
+                            </div>
+                            <div class="dish_order" style="margin-top: 8px;">
+                                <a href="#" style="background: #2E7D32; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 13px; text-decoration: none; display: inline-block; transition: all 0.3s;">
+                                    🛒 Ordenar ahora
+                                </a>
+                            </div>
+                        </div>
 
-			<!-- Main -->
-			<div class="col-lg-4 themenu_column">
-				<div class="themenu_image"><img src="/static/public/images/main.jpg" alt="Main"></div>
-				<div class="themenu_col trans_400">
-					<div class="themenu_col_title">Huevos de Gallina</div>
-					<div class="dish_list">
-						
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Pollo Entero de campo</div>
-								<div class="dish_price">$ 10</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordenar ahora</a></div>
-						</div>
+                        <!-- Producto -->
+                        <div class="dish" style="margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid #eee;">
+                            <div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
+                                <div class="dish_title" style="font-weight: 600; color: #333;">Huevos de Pato</div>
+                                <div class="dish_price" style="color: #2E7D32; font-weight: 700;">$1.50</div>
+                            </div>
+                            <div class="dish_contents" style="font-size: 13px; color: #888; margin: 5px 0;">
+                                <ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
+                                    <li style="margin-right: 10px;">🦆 Pato</li>
+                                    <li style="margin-right: 10px;">📦 6 unidades</li>
+                                    <li>🌿 Orgánicos</li>
+                                </ul>
+                            </div>
+                            <div class="dish_order" style="margin-top: 8px;">
+                                <a href="#" style="background: #2E7D32; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 13px; text-decoration: none; display: inline-block; transition: all 0.3s;">
+                                    🛒 Ordenar Ahora
+                                </a>
+                            </div>
+                        </div>
 
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Huevos de Pato</div>
-								<div class="dish_price">1.50</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordenar Ahora</a></div>
-						</div>
+                        <!-- Producto -->
+                        <div class="dish" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
+                            <div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
+                                <div class="dish_title" style="font-weight: 600; color: #333;">Gallina de Balanceado</div>
+                                <div class="dish_price" style="color: #2E7D32; font-weight: 700;">$17.00</div>
+                            </div>
+                            <div class="dish_contents" style="font-size: 13px; color: #888; margin: 5px 0;">
+                                <ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
+                                    <li style="margin-right: 10px;">🐔 Gallina</li>
+                                    <li style="margin-right: 10px;">⚖️ 3.5 kg</li>
+                                    <li>🌾 Balanceado</li>
+                                </ul>
+                            </div>
+                            <div class="dish_order" style="margin-top: 8px;">
+                                <a href="#" style="background: #2E7D32; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 13px; text-decoration: none; display: inline-block; transition: all 0.3s;">
+                                    🛒 Molleja de Pollo
+                                </a>
+                            </div>
+                        </div>
 
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Gallina de balanceado</div>
-								<div class="dish_price">$17</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Molleja de Pollo</a></div>
-						</div>
+                    </div>
+                </div>
+            </div>
 
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Leche en funda</div>
-								<div class="dish_price">$1.00</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordenar Ahora</a></div>
-						</div>
+            <!-- Categoría 3: Productos Derivados -->
+            <div class="col-lg-4 themenu_column" style="margin-bottom: 30px;">
+                <div class="themenu_image" style="border-radius: 12px 12px 0 0; overflow: hidden;">
+                    <img src="/static/public/images/deserts.jpg" alt="Productos Derivados" style="width: 100%; height: 200px; object-fit: cover;">
+                </div>
+                <div class="themenu_col trans_400" style="background: #fff; border-radius: 0 0 12px 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.06);">
+                    <div class="themenu_col_title" style="font-size: 22px; font-weight: 700; color: #1B3A2D; margin-bottom: 20px; border-bottom: 2px solid #2E7D32; padding-bottom: 10px;">
+                        🍗 Productos Derivados
+                    </div>
+                    <div class="dish_list">
 
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Caja dePollos Pequeños</div>
-								<div class="dish_price">$60</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordenar Ahora</a></div>
-						</div>
+                        <!-- Producto -->
+                        <div class="dish" style="margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid #eee;">
+                            <div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
+                                <div class="dish_title" style="font-weight: 600; color: #333;">Lava Cake</div>
+                                <div class="dish_price" style="color: #2E7D32; font-weight: 700;">$20.00</div>
+                            </div>
+                            <div class="dish_contents" style="font-size: 13px; color: #888; margin: 5px 0;">
+                                <ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
+                                    <li style="margin-right: 10px;">🎂 Postre</li>
+                                    <li style="margin-right: 10px;">🍫 Chocolate</li>
+                                    <li>🔥 Caliente</li>
+                                </ul>
+                            </div>
+                            <div class="dish_order" style="margin-top: 8px;">
+                                <a href="#" style="background: #2E7D32; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 13px; text-decoration: none; display: inline-block; transition: all 0.3s;">
+                                    🛒 Ordenar Ahora
+                                </a>
+                            </div>
+                        </div>
 
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Huevo de Ganzo</div>
-								<div class="dish_price">$17</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordenar Ahora</a></div>
-						</div>
+                        <!-- Producto -->
+                        <div class="dish" style="margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid #eee;">
+                            <div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
+                                <div class="dish_title" style="font-weight: 600; color: #333;">Presas de Pollo</div>
+                                <div class="dish_price" style="color: #2E7D32; font-weight: 700;">Desde $5</div>
+                            </div>
+                            <div class="dish_contents" style="font-size: 13px; color: #888; margin: 5px 0;">
+                                <ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
+                                    <li style="margin-right: 10px;">🍗 Presas</li>
+                                    <li style="margin-right: 10px;">🐔 Pollo</li>
+                                    <li>⚖️ 1 kg</li>
+                                </ul>
+                            </div>
+                            <div class="dish_order" style="margin-top: 8px;">
+                                <a href="#" style="background: #2E7D32; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 13px; text-decoration: none; display: inline-block; transition: all 0.3s;">
+                                    🛒 Ordenar Ahora
+                                </a>
+                            </div>
+                        </div>
 
-					</div>
-				</div>
-			</div>
+                        <!-- Producto -->
+                        <div class="dish" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
+                            <div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
+                                <div class="dish_title" style="font-weight: 600; color: #333;">Huevo de Codorniz</div>
+                                <div class="dish_price" style="color: #2E7D32; font-weight: 700;">$4.00</div>
+                            </div>
+                            <div class="dish_contents" style="font-size: 13px; color: #888; margin: 5px 0;">
+                                <ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
+                                    <li style="margin-right: 10px;">🥚 Codorniz</li>
+                                    <li style="margin-right: 10px;">📦 12 unidades</li>
+                                    <li>🌟 Gourmet</li>
+                                </ul>
+                            </div>
+                            <div class="dish_order" style="margin-top: 8px;">
+                                <a href="#" style="background: #2E7D32; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 13px; text-decoration: none; display: inline-block; transition: all 0.3s;">
+                                    🛒 Ordenar ahora
+                                </a>
+                            </div>
+                        </div>
 
-			<!-- Deserts -->
-			<div class="col-lg-4 themenu_column">
-				<div class="themenu_image"><img src="/static/public/images/deserts.jpg" alt="Deserts"></div>
-				<div class="themenu_col trans_400">
-					<div class="themenu_col_title">Productos Derivados</div>
-					<div class="dish_list">
+                    </div>
+                </div>
+            </div>
 
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Lava Cake</div>
-								<div class="dish_price">$20</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordenar Ahora</a></div>
-						</div>
-
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Presas de Pollo</div>
-								<div class="dish_price">Desde 5 Dolares</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordenar Ahora</a></div>
-						</div>
-
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Huevo de codorniz</div>
-								<div class="dish_price">4.00</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordenar ahora</a></div>
-						</div>
-
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Huevos Cafes de campo</div>
-								<div class="dish_price">4.50</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordenar ahora</a></div>
-						</div>
-
-						<!-- Dish -->
-						<div class="dish">
-							<div class="dish_title_container d-flex flex-xl-row flex-column align-items-start justify-content-start">
-								<div class="dish_title">Huevis Blancos</div>
-								<div class="dish_price">$17</div>
-							</div>
-							<div class="dish_contents">
-								<ul class="d-flex flex-row align-items-start justify-content-start flex-wrap">
-									<li>Pork</li>
-									<li>Tenderloin</li>
-									<li>Green Pepper</li>
-								</ul>
-							</div>
-							<div class="dish_order"><a href="#">Ordena ahora</a></div>
-						</div>
-
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
-<!-- Signature Dishes -->
+<!-- Productos Destacados -->
+<div class="sig" style="padding: 60px 0; background: #fff;">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="section_title_container text-center">
+                    <div class="section_subtitle page_subtitle" style="color: #2E7D32; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">
+                        ⭐ Nuevos productos
+                    </div>
+                    <div class="section_title">
+                        <h1 style="font-size: 38px; font-weight: 700; color: #1B3A2D;">Productos Destacados</h1>
+                    </div>
+                    <div style="width: 60px; height: 3px; background: #2E7D32; margin: 15px auto;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row sig_row">
+            <div class="col">
+                
+                <!-- Producto Destacado 1 -->
+                <div class="sig_dish" style="margin-bottom: 30px; background: #f8f9fa; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 15px rgba(0,0,0,0.06);">
+                    <div class="row row-eq-height">
+                        <div class="col-lg-6 sig_col d-flex flex-column align-items-start justify-content-center" style="padding: 30px;">
+                            <div class="sig_content">
+                                <div class="rating_r sig_rating rating_r_5" style="margin-bottom: 10px;">
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                </div>
+                                <div class="sig_name_container d-flex flex-row align-items-start justify-content-start" style="margin-bottom: 10px;">
+                                    <div class="sig_name" style="font-size: 24px; font-weight: 700; color: #1B3A2D;">Huevos Frescos de Campo</div>
+                                    <div class="sig_price ml-auto" style="font-size: 24px; font-weight: 700; color: #2E7D32;">$3.50</div>
+                                </div>
+                                <div class="sig_content_list" style="margin-bottom: 15px;">
+                                    <ul class="d-flex flex-row align-items-center justify-content-start" style="gap: 15px; font-size: 14px; color: #666;">
+                                        <li>🥚 Frescos</li>
+                                        <li>🌿 Orgánicos</li>
+                                        <li>📦 30 unidades</li>
+                                    </ul>
+                                </div>
+                                <p style="color: #666; font-size: 14px; margin-bottom: 15px; line-height: 1.6;">
+                                    Huevos frescos recolectados directamente de nuestras gallinas de campo, alimentadas con una dieta natural y balanceada.
+                                </p>
+                                <div class="button sig_button trans_200">
+                                    <a href="#" style="background: #2E7D32; color: #fff; padding: 12px 30px; border-radius: 30px; text-decoration: none; display: inline-block; font-weight: 600; transition: all 0.3s;">
+                                        🛒 Ordenar Ahora
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 sig_col" style="padding: 0;">
+                            <div class="sig_image" style="height: 100%; min-height: 300px;">
+                                <img src="/static/public/images/sig_1.jpg" alt="Huevos Frescos" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<div class="sig">
-	<div class="container">
-		<div class="row">
-			<div class="col">
-				<div class="section_title_container">
-					<div class="section_subtitle page_subtitle">Nuevos productos</div>
-					<div class="section_title"><h1>Productos Destacados</h1></div>
-				</div>
-			</div>
-		</div>
-		<div class="row sig_row">
-			<div class="col">
-				
-				<!-- Signature Dish -->
-				<div class="sig_dish">
-					<div class="row row-eq-height">
-						<div class="col-lg-6 sig_col d-flex flex-column align-items-start justify-content-center">
-							<div class="sig_content">
-								<div class="rating_r sig_rating rating_r_5"><i></i><i></i><i></i><i></i><i></i></div>
-								<div class="sig_name_container d-flex flex-row align-items-start justify-content-start">
-									<div class="sig_name">Huevos Frescos de Campo</div>
-									<div class="sig_price ml-auto">$3.50</div>
-								</div>
-								<div class="sig_content_list">
-									<ul class="d-flex flex-row align-items-center justify-content-start">
-										<li>Pork</li>
-										<li>Tenderloin</li>
-										<li>Green Pepper</li>
-										<li>Veggies</li>
-									</ul>
-								</div>
-								<div class="button sig_button trans_200"><a href="#">Order Ahora</a></div>
-							</div>
-						</div>
-						<div class="col-lg-6 sig_col">
-							<div class="sig_image"><img src="/static/public/images/sig_1.jpg" alt="Signature Dish"></div>
-						</div>
-					</div>
-				</div>
+                <!-- Producto Destacado 2 -->
+                <div class="sig_dish" style="margin-bottom: 30px; background: #f8f9fa; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 15px rgba(0,0,0,0.06);">
+                    <div class="row row-eq-height">
+                        <div class="col-lg-6 sig_col d-flex flex-column align-items-start justify-content-center" style="padding: 30px;">
+                            <div class="sig_content">
+                                <div class="rating_r sig_rating rating_r_5" style="margin-bottom: 10px;">
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                </div>
+                                <div class="sig_name_container d-flex flex-row align-items-start justify-content-start" style="margin-bottom: 10px;">
+                                    <div class="sig_name" style="font-size: 24px; font-weight: 700; color: #1B3A2D;">Pollo Entero Fresco</div>
+                                    <div class="sig_price ml-auto" style="font-size: 24px; font-weight: 700; color: #2E7D32;">$23.00</div>
+                                </div>
+                                <div class="sig_content_list" style="margin-bottom: 15px;">
+                                    <ul class="d-flex flex-row align-items-center justify-content-start" style="gap: 15px; font-size: 14px; color: #666;">
+                                        <li>🐔 Entero</li>
+                                        <li>⚖️ 3-4 kg</li>
+                                        <li>🌿 Campo</li>
+                                    </ul>
+                                </div>
+                                <p style="color: #666; font-size: 14px; margin-bottom: 15px; line-height: 1.6;">
+                                    Pollo entero de primera calidad, criado en libertad con alimentación natural. Ideal para asados y preparaciones especiales.
+                                </p>
+                                <div class="button sig_button trans_200">
+                                    <a href="#" style="background: #2E7D32; color: #fff; padding: 12px 30px; border-radius: 30px; text-decoration: none; display: inline-block; font-weight: 600; transition: all 0.3s;">
+                                        🛒 Ordenar Ahora
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 sig_col" style="padding: 0;">
+                            <div class="sig_image" style="height: 100%; min-height: 300px;">
+                                <img src="/static/public/images/sig_2.jpg" alt="Pollo Entero" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-				<!-- Signature Dish -->
-				<div class="sig_dish">
-					<div class="row row-eq-height">
-						<div class="col-lg-6 sig_col d-flex flex-column align-items-start justify-content-center">
-							<div class="sig_content">
-								<div class="rating_r sig_rating rating_r_5"><i></i><i></i><i></i><i></i><i></i></div>
-								<div class="sig_name_container d-flex flex-row align-items-start justify-content-start">
-									<div class="sig_name">Pollo Entero Fresco</div>
-									<div class="sig_price ml-auto">$23</div>
-								</div>
-								<div class="sig_content_list">
-									<ul class="d-flex flex-row align-items-center justify-content-start">
-										<li>Pork</li>
-										<li>Tenderloin</li>
-										<li>Green Pepper</li>
-										<li>Veggies</li>
-									</ul>
-								</div>
-								<div class="button sig_button trans_200"><a href="#">Order Ahora</a></div>
-							</div>
-						</div>
-						<div class="col-lg-6 sig_col">
-							<div class="sig_image"><img src="/static/public/images/sig_2.jpg" alt="Signature Dish"></div>
-						</div>
-					</div>
-				</div>
+                <!-- Producto Destacado 3 -->
+                <div class="sig_dish" style="margin-bottom: 0; background: #f8f9fa; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 15px rgba(0,0,0,0.06);">
+                    <div class="row row-eq-height">
+                        <div class="col-lg-6 sig_col d-flex flex-column align-items-start justify-content-center" style="padding: 30px;">
+                            <div class="sig_content">
+                                <div class="rating_r sig_rating rating_r_5" style="margin-bottom: 10px;">
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                    <i class="fa fa-star" style="color: #FFD700;"></i>
+                                </div>
+                                <div class="sig_name_container d-flex flex-row align-items-start justify-content-start" style="margin-bottom: 10px;">
+                                    <div class="sig_name" style="font-size: 24px; font-weight: 700; color: #1B3A2D;">Pechuga de Pollo</div>
+                                    <div class="sig_price ml-auto" style="font-size: 24px; font-weight: 700; color: #2E7D32;">$20.00</div>
+                                </div>
+                                <div class="sig_content_list" style="margin-bottom: 15px;">
+                                    <ul class="d-flex flex-row align-items-center justify-content-start" style="gap: 15px; font-size: 14px; color: #666;">
+                                        <li>🍗 Pechuga</li>
+                                        <li>⚖️ 1 kg</li>
+                                        <li>🌿 Sin hormonas</li>
+                                    </ul>
+                                </div>
+                                <p style="color: #666; font-size: 14px; margin-bottom: 15px; line-height: 1.6;">
+                                    Pechuga de pollo tierna y jugosa, perfecta para preparaciones saludables. Libre de hormonas y criada con el mejor cuidado.
+                                </p>
+                                <div class="button sig_button trans_200">
+                                    <a href="#" style="background: #2E7D32; color: #fff; padding: 12px 30px; border-radius: 30px; text-decoration: none; display: inline-block; font-weight: 600; transition: all 0.3s;">
+                                        🛒 Ordenar Ahora
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 sig_col" style="padding: 0;">
+                            <div class="sig_image" style="height: 100%; min-height: 300px;">
+                                <img src="/static/public/images/sig_3.jpg" alt="Pechuga de Pollo" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-				<!-- Signature Dish -->
-				<div class="sig_dish">
-					<div class="row row-eq-height">
-						<div class="col-lg-6 sig_col d-flex flex-column align-items-start justify-content-center">
-							<div class="sig_content">
-								<div class="rating_r sig_rating rating_r_5"><i></i><i></i><i></i><i></i><i></i></div>
-								<div class="sig_name_container d-flex flex-row align-items-start justify-content-start">
-									<div class="sig_name">Pechuga de Pollo</div>
-									<div class="sig_price ml-auto">$20</div>
-								</div>
-								<div class="sig_content_list">
-									<ul class="d-flex flex-row align-items-center justify-content-start">
-										<li>Pollo</li>
-										<li>Pechuga</li>
-										<li>patitas de pollo</li>
-										<li>Huevos masters</li>
-									</ul>
-								</div>
-								<div class="button sig_button trans_200"><a href="#">Ordenar Ahora</a></div>
-							</div>
-						</div>
-						<div class="col-lg-6 sig_col">
-							<div class="sig_image"><img src="/static/public/images/sig_3.jpg" alt="Signature Dish"></div>
-						</div>
-					</div>
-				</div>
-
-			</div>
-		</div>
-	</div>
+            </div>
+        </div>
+    </div>
 </div>
-    {% include 'footer.html' %}
+
+{% include 'footer.html' %}
