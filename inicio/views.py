@@ -96,5 +96,11 @@ def splash_view(request):
 def dashboard(request):
     return render(request, 'dashboard.html')
 
-
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        # Aquí después puedes agregar la lógica real de envío de correo
+        messages.success(request, f'Si el correo {email} está registrado, recibirás un enlace de recuperación.')
+        return redirect('login')
+    return render(request, 'forgot-password.html')
 
