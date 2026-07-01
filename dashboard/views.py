@@ -370,13 +370,7 @@ def clientes_json(request):
         safe=False
     )
 
-# ═══════════════════════════════════════════════════════════════
-# AGREGAR ESTE BLOQUE A dashboard/views.py
-# (usa los mismos imports que ya tienes: render, redirect, messages,
-#  login_required, User, JsonResponse — solo agrega los modelos)
-# ═══════════════════════════════════════════════════════════════
-from dashboard.models import Galpon, Ave, Alimento, Alimentacion  # sumar a tu import existente
-
+from dashboard.models import Galpon, Ave, Alimento, Alimentacion  
 
 # ── Galpones ──────────────────────────────────────────────────
 @login_required
@@ -613,3 +607,74 @@ def alimentacion_eliminar(request, registro_id):
         except Alimentacion.DoesNotExist:
             messages.error(request, 'Registro no encontrado.')
     return redirect('alimentacion')
+
+# ── Producción ────────────────────────────────────────────────
+from dashboard.models import Produccion  
+from django.db.models import F, Sum
+ 
+ 
+@login_required
+def produccion_view(request):
+    from django.db.models import F
+    producciones = (Produccion.objects.select_related('usuario')
+                     .annotate(buenos=F('cantidad_huevos') - F('huevos_rotos'))
+                     .order_by('-fecha'))
+    usuarios = User.objects.filter(is_active=True).order_by('first_name')
+    total_huevos = producciones.aggregate(t=Sum('cantidad_huevos'))['t'] or 0
+    total_rotos = producciones.aggregate(t=Sum('huevos_rotos'))['t'] or 0
+    return render(request, 'private/produccion.html', {
+        'producciones': producciones,
+        'usuarios': usuarios,
+        'total_huevos': total_huevos,
+        'total_rotos': total_rotos,
+        'total_buenos': total_huevos - total_rotos,
+        'total_registros': producciones.count(),
+    })
+ 
+ 
+@login_required
+def produccion_crear(request):
+    if request.method == 'POST':
+        fecha = request.POST.get('fecha')
+        if fecha:
+            Produccion.objects.create(
+                fecha=fecha,
+                cantidad_huevos=request.POST.get('cantidad_huevos') or 0,
+                huevos_rotos=request.POST.get('huevos_rotos') or 0,
+                observaciones=request.POST.get('observaciones', ''),
+                usuario_id=request.POST.get('usuario') or request.user.pk,
+            )
+            messages.success(request, 'Registro de producción creado correctamente.')
+        else:
+            messages.error(request, 'La fecha es obligatoria.')
+    return redirect('produccion')
+ 
+ 
+@login_required
+def produccion_editar(request, produccion_id):
+    try:
+        produccion = Produccion.objects.get(pk=produccion_id)
+    except Produccion.DoesNotExist:
+        messages.error(request, 'Registro de producción no encontrado.')
+        return redirect('produccion')
+ 
+    if request.method == 'POST':
+        produccion.fecha = request.POST.get('fecha')
+        produccion.cantidad_huevos = request.POST.get('cantidad_huevos') or 0
+        produccion.huevos_rotos = request.POST.get('huevos_rotos') or 0
+        produccion.observaciones = request.POST.get('observaciones', '')
+        produccion.usuario_id = request.POST.get('usuario') or request.user.pk
+        produccion.save()
+        messages.success(request, 'Registro de producción actualizado.')
+    return redirect('produccion')
+ 
+ 
+@login_required
+def produccion_eliminar(request, produccion_id):
+    if request.method == 'POST':
+        try:
+            Produccion.objects.get(pk=produccion_id).delete()
+            messages.success(request, 'Registro de producción eliminado.')
+        except Produccion.DoesNotExist:
+            messages.error(request, 'Registro no encontrado.')
+    return redirect('produccion')

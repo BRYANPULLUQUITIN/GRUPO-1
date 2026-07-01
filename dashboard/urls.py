@@ -27,11 +27,6 @@ urlpatterns = [
     path('clientes/crear/', views.cliente_crear, name='cliente_crear'),
     path('clientes/json/', views.clientes_json, name='clientes_json'),
 
-    # ═══════════════════════════════════════════════════════════════
-# AGREGAR ESTE BLOQUE A dashboard/urls.py, dentro de urlpatterns
-# (reemplaza el comentario "# Calendario" o ponlo justo antes)
-# ═══════════════════════════════════════════════════════════════
-
     # Galpones
     path('galpones/', views.galpones_view, name='galpones'),
     path('galpones/crear/', views.galpon_crear, name='galpon_crear'),
@@ -55,4 +50,10 @@ urlpatterns = [
     path('alimentacion/crear/', views.alimentacion_crear, name='alimentacion_crear'),
     path('alimentacion/<int:registro_id>/editar/', views.alimentacion_editar, name='alimentacion_editar'),
     path('alimentacion/<int:registro_id>/eliminar/', views.alimentacion_eliminar, name='alimentacion_eliminar'),
+
+    # Producción
+    path('produccion/', views.produccion_view, name='produccion'),
+    path('produccion/crear/', views.produccion_crear, name='produccion_crear'),
+    path('produccion/<int:produccion_id>/editar/', views.produccion_editar, name='produccion_editar'),
+    path('produccion/<int:produccion_id>/eliminar/', views.produccion_eliminar, name='produccion_eliminar'),
 ]
