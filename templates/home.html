@@ -1,17 +1,15 @@
 {% load static %}
-
 {% include 'header.html' %}
-
 <!-- Hamburger -->
 <div class="hamburger_bar trans_400 d-flex flex-row align-items-center justify-content-start">
 	<div class="hamburger">
 		<div class="menu_toggle d-flex flex-row align-items-center justify-content-start">
-			<span>Menú</span>
+			<span>menu</span>
 			<div class="hamburger_container">
 				<div class="menu_hamburger">
-					<div class="line_1 hamburger_lines"></div>
-					<div class="line_2 hamburger_lines"></div>
-					<div class="line_3 hamburger_lines"></div>
+					<div class="line_1 hamburger_lines" style="transform: matrix(1, 0, 0, 1, 0, 0);"></div>
+					<div class="line_2 hamburger_lines" style="visibility: inherit; opacity: 1;"></div>
+					<div class="line_3 hamburger_lines" style="transform: matrix(1, 0, 0, 1, 0, 0);"></div>
 				</div>
 			</div>
 		</div>
@@ -19,79 +17,74 @@
 </div>
 
 <!-- Home -->
-<div class="home">
-	<div class="parallax_background parallax-window"
-		data-parallax="scroll"
-		data-image-src="{% static 'public/images/home.jpg' %}"
-		data-speed="0.8"></div>
 
-	<div class="home_container">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="home_content text-center">
-						<div class="home_subtitle page_subtitle">GRANJA AVÍCOLA SANTA TERESITA</div>
+	<div class="home">
+{% load static %}
 
-						<div class="home_title">
-							<h1>Producción Natural y Saludable de Huevos y Pollos</h1>
-						</div>
+{% load static %}
 
-						<div class="home_text ml-auto mr-auto">
-							<p>
-								Somos una granja avícola dedicada a la producción responsable de huevos frescos y aves de calidad,
-								cuidando cada proceso desde la crianza hasta la distribución.
-							</p>
+{% load static %}
+
+<div class="parallax_background parallax-window"
+     data-parallax="scroll"
+     data-image-src="{% static 'images/gallinas.jpeg' %}"
+     data-speed="0.8">
+</div>
+
+<div class="container">				<div class="row">
+					<div class="col">
+						<div class="home_content text-center">
+							<br><br><br><br><br><br><br><br><br><br><br><br>
+							<div class="home_subtitle page_subtitle">"EL POLLON"</div>
+							<div class="home_title"><h1>Una Experiencia Extraordinaria</h1></div>
+							<div class="home_text ml-auto mr-auto">
+								<p>CALIDAD Y CONFIANZA DE NO GASTAR TU DINERO EN VANO</p>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<div class="scroll_icon"></div>
 	</div>
-	<div class="scroll_icon"></div>
-</div>
 
 <!-- Intro -->
+
 <div class="intro">
 	<div class="container">
 		<div class="row">
 			<div class="col">
 				<div class="intro_content">
-					<div class="intro_subtitle page_subtitle">Calidad Garantizada</div>
-
-					<div class="intro_title">
-						<h2>LA MEJOR PRODUCCIÓN AVÍCOLA DE LA ZONA</h2>
-					</div>
-
+					<div class="intro_subtitle page_subtitle">LOS MEJORES HUEVOS DE LA ZONA</div>
+					<div class="intro_title"><h2>CALIDAD Y CONFIANZA DE NO GASTAR TU DINERO</h2></div>
 					<p>Sistema desarrollado por el grupo 1</p>
-
+ 
 					<div class="intro_text">
-						<p>
-							Nuestra granja avícola trabaja con altos estándares de higiene, bienestar animal y alimentación natural,
-							garantizando productos frescos y de excelente calidad para el consumidor.
-						</p>
+						<p>La granja avícola se dedica a la crianza, cuidado y producción de aves de corral, principalmente gallinas ponedoras, con el objetivo de obtener huevos frescos y de alta calidad. En sus instalaciones se aplican buenas prácticas de higiene, alimentación balanceada y control sanitario para garantizar el bienestar de las aves y la seguridad de los productos. Además, la granja busca ofrecer alimentos naturales y saludables, contribuyendo al abastecimiento local con productos frescos directamente del productor al consumidor.</p>
 					</div>
 				</div>
 
 				<div class="row">
 					<div class="col-xl-4 col-md-6 intro_col">
 						<div class="intro_image">
-							<img src="{% static 'public/images/intro_1.jpg' %}" alt="">
+						<img src="{% static 'images/supermercado.jpeg' %}" alt="">
 						</div>
 					</div>
 
 					<div class="col-xl-4 col-md-6 intro_col">
 						<div class="intro_image">
-							<img src="{% static 'public/images/intro_2.jpg' %}" alt="">
+							<img src="{% static 'images/camion.jpeg' %}" alt="Introduccion 2">
 						</div>
 					</div>
 				</div>
 
-			</div>
+			</div>	
 		</div>
 	</div>
 </div>
 
 <!-- Video -->
+
 <div class="video_section">
 	<div class="background_image"
 		style="background-image:url('/static/public/images/video.jpg')">
@@ -99,8 +92,8 @@
 
 	<div class="video_section_content d-flex flex-column align-items-center justify-content-center text-center">
 		<div class="video_section_title" style="color: blue; font-size: 40px;">
-			VIDEO DE LA GRANJA AVÍCOLA
-		</div>
+VIDEO PROMOCIONAL
+</div>
 
 		<div class="video_section_icon">
 			<a class="vimeo video_button"
@@ -111,42 +104,43 @@
 	</div>
 </div>
 
-<!-- Signature -->
+<!-- Signature Dish -->
+
 <div class="sig">
 	<div class="sig_content_container">
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-7">
 					<div class="sig_content">
-
-						<div class="sig_subtitle page_subtitle" style="color: orange;">
-							Producto Destacado
-						</div>
+						<div class="sig_subtitle page_subtitle" style="color: orange;">MEJOR DISTRIBUIDOR DEL PAIS</div>
 
 						<div class="sig_title">
-							<h1 style="color: darkred;">HUEVOS FRESCOS DE GRANJA</h1>
+<h1 style="color: darkred;">HUEVOS DE AVESTRUZ</h1>
+</div>
+
+						<h3 style="font-style: italic;">HUEVOS DE GRANJA</h3>
+
+						<div class="rating_r sig_rating rating_r_5">
+							<i></i><i></i><i></i><i></i><i></i>
 						</div>
 
-						<h3 style="font-style: italic;">100% Naturales</h3>
-
 						<div class="sig_name_container d-flex flex-row align-items-start justify-content-start">
-							<div class="sig_name">Calidad directa del productor</div>
-							<div class="sig_price ml-auto" style="color: green;">$3.50 / cubeta</div>
+							<div class="sig_name">LOS MEJORE HUEVOS A MEJOR PRECIO</div>
+							<div class="sig_price ml-auto" style="color: green;">3.50</div>
 						</div>
 
 						<div class="sig_content_list">
 							<ul>
-								<li><a href="index.html">Inicio</a></li>
-								<li><a href="about.html">Nosotros</a></li>
-								<li><a href="menu.html">Productos</a></li>
-								<li><a href="#">Ventas</a></li>
-								<li><a href="blog.html">Noticias</a></li>
-								<li><a href="contact.html">Contacto</a></li>
+							    <li><a href="index.html">INICIOS</a></li>
+							    <li><a href="about.html">NUESTRA </a></li>
+							    <li><a href="menu.html">PRODUCTOS</a></li>
+							    <li><a href="blog.html">BLOG</a></li>
+							    <li><a href="contact.html">CONTACTANOS</a></li>
 							</ul>
 						</div>
 
 						<div class="button sig_button trans_200">
-							<a href="#">Comprar Ahora</a>
+							<a href="#" style="font-weight: bold;">Ordena Ahora</a>
 						</div>
 
 					</div>
@@ -160,62 +154,18 @@
 			<div class="row">
 				<div class="col-lg-7 offset-lg-5">
 					<div class="sig_image">
+
 						<div class="background_image"
 							style="background-image:url('/static/public/images/sig.jpg')">
 						</div>
+
+						<img src="{% static 'public/images/sig.jpg' %}" alt="Plato Insignia">
+
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
-
-<!-- Reservas / Pedidos -->
-<div class="reservations text-center">
-
-	<div class="parallax_background parallax-window"
-		data-parallax="scroll"
-		data-image-src="{% static 'public/images/reservations.jpg' %}"
-		data-speed="0.8"></div>
-
-	<div class="container">
-		<div class="row">
-			<div class="col">
-				<div class="reservations_content d-flex flex-column align-items-center justify-content-center">
-
-					<div class="res_title">Realizar Pedido</div>
-
-					<div class="res_form_container">
-						<form action="#" id="res_form" class="res_form">
-
-							<div class="d-flex flex-sm-row flex-column align-items-center justify-content-start">
-
-								<input type="text" class="res_input" placeholder="Fecha de entrega" required>
-
-								<input type="text" class="res_input" placeholder="Hora de entrega" required>
-
-								<select class="res_select">
-									<option disabled selected>Cantidad de productos</option>
-									<option>1 cubeta de huevos</option>
-									<option>2 cubetas</option>
-									<option>5 cubetas</option>
-									<option>Mayorista</option>
-								</select>
-
-							</div>
-
-							<button class="res_button" style="background-color: orange;">
-								Hacer Pedido
-							</button>
-
-						</form>
-					</div>
-
-				</div>
-			</div>
-		</div>
-	</div>
-
 </div>
 
 {% include 'footer.html' %}

@@ -1,6 +1,7 @@
 {% load static %}
 {% include 'header.html' %}
 
+<!-- Hamburger Menu -->
 <div class="hamburger_bar trans_400 d-flex flex-row align-items-center justify-content-start">
     <div class="hamburger">
         <div class="menu_toggle d-flex flex-row align-items-center justify-content-start">
@@ -16,124 +17,441 @@
     </div>
 </div>
 
+<!-- Hero Section con imagen reducida -->
 <div class="home">
-<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="/static/images/huevosjpeg" style="background-image: url('/static/images/huevos.jpeg');" data-speed="0.8"></div>        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div class="home_content text-center">
-
-                        <div class="home_subtitle page_subtitle">
-                            Granja Avícola "El Pollón"
-                        </div>
-
-                        <div class="home_title">
-                            <h1>Contacto</h1>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="parallax_background parallax-window" 
+         data-parallax="scroll" 
+         data-image-src="/static/images/huevos.jpeg" 
+         style="background-image: url('/static/images/huevos.jpeg'); background-size: cover; background-position: center; min-height: 300px; max-height: 400px;" 
+         data-speed="0.8">
     </div>
-</div>
-
-<div class="contact">
     <div class="container">
         <div class="row">
-
-            <div class="col-lg-6">
-                <div class="contact_title">
-                    Información de Contacto
-                </div>
-
-                <div class="contact_text">
-                    <p>Estamos comprometidos con ofrecerte los productos avícolas más frescos y de la mejor calidad directamente desde nuestra granja hasta tu mesa. ¡Contáctanos para pedidos al por mayor y menor!</p>
-                </div>
-
-                <div class="contact_logo_container">
-                    <div class="contact_logo_title">
-                        Granja Avícola "El Pollón"
+            <div class="col">
+                <div class="home_content text-center" style="padding: 40px 0;">
+                    <div class="home_title">
+                        <h1 style="font-size: 38px;">Contáctanos</h1>
                     </div>
-
-                    <div class="contact_logo_subtitle">
-                        Calidad y Frescura de Origen
+                    <div class="home_description">
+                        <p style="font-size: 16px; max-width: 500px;">Estamos aquí para atenderte y ofrecerte los mejores productos avícolas</p>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            <div class="col-xl-5 col-lg-6">
-                <div class="contact_list_container d-flex flex-column align-items-lg-center justify-content-start">
+<!-- Contact Section -->
+<div class="contact py-4">
+    <div class="container">
+        <div class="row g-4 align-items-start">
 
-                    <ul class="contact_list">
-                        <li>
-                            <div>Dirección</div>
-                            <div>Píllaro, Tungurahua, Ecuador</div>
-                        </li>
+            <!-- Información de Contacto -->
+            <div class="col-lg-6">
+                <div class="contact_info">
+                    <div class="section_badge">Contacto</div>
+                    <h2 class="contact_title mb-3" style="font-size: 28px;">¿Cómo podemos ayudarte?</h2>
+                    
+                    <div class="contact_text mb-3">
+                        <p style="font-size: 15px;">En <strong>Granja Avícola "El Pollón"</strong> nos dedicamos a ofrecerte productos avícolas frescos y de la más alta calidad. Ya sea para pedidos al por mayor o para consumo familiar, estamos listos para atenderte con la mejor atención y los precios más competitivos del mercado.</p>
+                    </div>
 
-                        <li>
-                            <div>Teléfono / Pedidos</div>
-                            <div>+593 99 999 9999</div>
-                        </li>
+                    <!-- Tarjetas de Información Rápida -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <div class="info_card" style="padding: 15px;">
+                                <div class="info_icon" style="font-size: 24px;">📍</div>
+                                <h5 style="font-size: 15px;">Ubicación</h5>
+                                <p style="font-size: 13px;">Latacunga, Cotopaxi, Ecuador</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info_card" style="padding: 15px;">
+                                <div class="info_icon" style="font-size: 24px;">📞</div>
+                                <h5 style="font-size: 15px;">Teléfono</h5>
+                                <p style="font-size: 13px;">+593 345 7953 32453</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info_card" style="padding: 15px;">
+                                <div class="info_icon" style="font-size: 24px;">✉️</div>
+                                <h5 style="font-size: 15px;">Correo</h5>
+                                <p style="font-size: 13px;">info@granjaavicola.com</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info_card" style="padding: 15px;">
+                                <div class="info_icon" style="font-size: 24px;">🕐</div>
+                                <h5 style="font-size: 15px;">Horario</h5>
+                                <p style="font-size: 13px;">Lun - Sáb: 7:00 AM - 8:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
 
-                        <li>
-                            <div>Correo Electrónico</div>
-                            <div>contacto@elpollon.com</div>
-                        </li>
-                    </ul>
-
+                    <!-- Redes Sociales -->
                     <div class="contact_social">
-                        <ul class="d-flex flex-row align-items-center justify-content-start">
-                            <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                            <li><a href="#"><i class="fa fa-behance"></i></a></li>
-                            <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                        <p class="social_label" style="font-size: 14px;">Síguenos en redes sociales</p>
+                        <ul class="d-flex flex-wrap align-items-center justify-content-start gap-2">
+                            <li><a href="#" class="social_link facebook" style="padding: 8px 16px; font-size: 13px;"><i class="fa fa-facebook"></i> Facebook</a></li>
+                            <li><a href="#" class="social_link instagram" style="padding: 8px 16px; font-size: 13px;"><i class="fa fa-instagram"></i> Instagram</a></li>
+                            <li><a href="#" class="social_link whatsapp" style="padding: 8px 16px; font-size: 13px;"><i class="fa fa-whatsapp"></i> WhatsApp</a></li>
                         </ul>
                     </div>
+                </div>
+            </div>
 
+            <!-- Formulario de Contacto -->
+            <div class="col-lg-6">
+                <div class="contact_form_container" style="padding: 30px;">
+                    <div class="form_header">
+                        <h3 style="font-size: 22px;">Envía un mensaje</h3>
+                        <p style="font-size: 14px;">Te responderemos a la brevedad posible</p>
+                    </div>
+
+                    <form action="#" method="POST" class="contact_form">
+                        {% csrf_token %}
+                        
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="form_group" style="margin-bottom: 12px;">
+                                    <label for="name" class="form_label" style="font-size: 13px;">Nombre completo</label>
+                                    <input type="text" id="name" name="name" class="form_control" style="padding: 10px 14px; font-size: 14px;" placeholder="Tu nombre" required>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form_group" style="margin-bottom: 12px;">
+                                    <label for="email" class="form_label" style="font-size: 13px;">Correo electrónico</label>
+                                    <input type="email" id="email" name="email" class="form_control" style="padding: 10px 14px; font-size: 14px;" placeholder="tucorreo@ejemplo.com" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form_group" style="margin-bottom: 12px;">
+                                    <label for="phone" class="form_label" style="font-size: 13px;">Teléfono</label>
+                                    <input type="tel" id="phone" name="phone" class="form_control" style="padding: 10px 14px; font-size: 14px;" placeholder="099 999 9999">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form_group" style="margin-bottom: 12px;">
+                                    <label for="subject" class="form_label" style="font-size: 13px;">Asunto</label>
+                                    <select id="subject" name="subject" class="form_control" style="padding: 10px 14px; font-size: 14px;">
+                                        <option value="">Selecciona un tema</option>
+                                        <option value="pedido">Realizar un pedido</option>
+                                        <option value="informacion">Solicitar información</option>
+                                        <option value="cotizacion">Pedir cotización</option>
+                                        <option value="otro">Otro</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form_group" style="margin-bottom: 12px;">
+                                    <label for="message" class="form_label" style="font-size: 13px;">Mensaje</label>
+                                    <textarea id="message" name="message" class="form_control" style="padding: 10px 14px; font-size: 14px; min-height: 80px;" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form_check" style="margin: 10px 0;">
+                                    <input type="checkbox" id="terms" name="terms" required style="width: 16px; height: 16px;">
+                                    <label for="terms" style="font-size: 13px;">Acepto los <a href="#" class="terms_link">términos y condiciones</a></label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" class="btn_submit" style="padding: 12px; font-size: 16px;">
+                                    <span>Enviar mensaje</span>
+                                    <i class="fa fa-paper-plane" style="font-size: 16px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
 
         </div>
-    </div>
-</div>
 
-<div class="reservations text-center">
-
-    <div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/reservations.jpg' %}" data-speed="0.8"></div>
-
-    <div class="container">
-        <div class="reservations_content d-flex flex-column align-items-center justify-content-center">
-
-            <div class="res_stars page_subtitle">
-                Calidad Garantizada
+        <!-- Mapa de Ubicación -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="map_container" style="padding: 20px;">
+                    <h3 class="map_title text-center mb-3" style="font-size: 20px;">📍 Encuéntranos en Latacunga</h3>
+                    <div class="map_placeholder">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127615.79973983993!2d-78.549035!3d-1.178703!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91d39a8f2fa1a7cd%3A0x6b6b4f7a7f8b5b4f!2sLatacunga%2C%20Ecuador!5e0!3m2!1ses!2s!4v1647023456789!5m2!1ses!2s" 
+                            width="100%" 
+                            height="250" 
+                            style="border:0; border-radius: 10px;" 
+                            allowfullscreen="" 
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
             </div>
-
-            <div class="res_title">
-                Cotiza tu Pedido
-            </div>
-
-            <form id="res_form" class="res_form">
-
-                <input type="text" id="datepicker" class="res_input" placeholder="Fecha de entrega">
-
-                <input type="text" class="res_input timepicker" placeholder="Hora sugerida">
-
-                <select class="res_select">
-                    <option>Pedido Menor (Unidades)</option>
-                    <option>Pedido Mediano (Cubetas/Cajas)</option>
-                    <option>Pedido al por Mayor (Distribución)</option>
-                </select>
-
-                <button class="res_button">
-                    Enviar Solicitud
-                </button>
-
-            </form>
-
         </div>
     </div>
 </div>
+
+<!-- Estilos CSS Integrados -->
+<style>
+    /* Mejoras visuales generales */
+    .home {
+        position: relative;
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+    }
+
+    .parallax_background {
+        min-height: 300px !important;
+        max-height: 400px !important;
+        background-size: cover !important;
+        background-position: center !important;
+    }
+
+    .home_content {
+        padding: 40px 0;
+        background: rgba(0,0,0,0.5);
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+
+    .home_subtitle {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #FFD700;
+        font-weight: 600;
+    }
+
+    .home_title h1 {
+        font-weight: 700;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        margin: 10px 0;
+    }
+
+    .home_description p {
+        color: #ffffff;
+        opacity: 0.9;
+    }
+
+    /* Sección de contacto */
+    .contact {
+        background: #f8f9fa;
+    }
+
+    .section_badge {
+        display: inline-block;
+        background: #2E7D32;
+        color: #fff;
+        padding: 4px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+    }
+
+    .contact_title {
+        font-weight: 700;
+        color: #1B3A2D;
+    }
+
+    .contact_text p {
+        line-height: 1.6;
+        color: #555;
+    }
+
+    /* Tarjetas de información */
+    .info_card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        transition: all 0.3s ease;
+        text-align: center;
+        border-left: 3px solid #2E7D32;
+        height: 100%;
+    }
+
+    .info_card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    .info_icon {
+        margin-bottom: 5px;
+    }
+
+    .info_card h5 {
+        color: #1B3A2D;
+        font-weight: 600;
+        margin: 5px 0 3px;
+    }
+
+    .info_card p {
+        color: #666;
+        margin: 0;
+    }
+
+    /* Redes sociales */
+    .social_label {
+        font-weight: 600;
+        color: #1B3A2D;
+        margin-bottom: 8px;
+    }
+
+    .social_link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 25px;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .social_link:hover {
+        transform: scale(1.05);
+        color: #fff;
+    }
+
+    .social_link.facebook { background: #3b5998; }
+    .social_link.instagram { background: #E1306C; }
+    .social_link.whatsapp { background: #25D366; }
+
+    /* Formulario */
+    .contact_form_container {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+    }
+
+    .form_header h3 {
+        font-weight: 700;
+        color: #1B3A2D;
+        margin-bottom: 3px;
+    }
+
+    .form_header p {
+        color: #888;
+        margin-bottom: 15px;
+    }
+
+    .form_label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+    }
+
+    .form_control {
+        width: 100%;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        background: #fafafa;
+    }
+
+    .form_control:focus {
+        border-color: #2E7D32;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        background: #fff;
+    }
+
+    textarea.form_control {
+        resize: vertical;
+    }
+
+    .form_check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form_check input[type="checkbox"] {
+        accent-color: #2E7D32;
+        cursor: pointer;
+    }
+
+    .terms_link {
+        color: #2E7D32;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .terms_link:hover {
+        text-decoration: underline;
+    }
+
+    .btn_submit {
+        width: 100%;
+        background: linear-gradient(135deg, #2E7D32, #1B5E20);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn_submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+    }
+
+    /* Mapa */
+    .map_container {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+    }
+
+    .map_title {
+        font-weight: 600;
+        color: #1B3A2D;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .home {
+            min-height: 300px;
+        }
+        
+        .parallax_background {
+            min-height: 200px !important;
+            max-height: 300px !important;
+        }
+
+        .home_title h1 {
+            font-size: 28px !important;
+        }
+        
+        .contact_title {
+            font-size: 24px !important;
+        }
+        
+        .contact_form_container {
+            padding: 20px !important;
+        }
+
+        .home_content {
+            padding: 25px 0 !important;
+        }
+
+        .info_card {
+            padding: 12px !important;
+        }
+    }
+</style>
 
 {% include 'footer.html' %}
