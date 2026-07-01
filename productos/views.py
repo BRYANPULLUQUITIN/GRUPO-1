@@ -1,24 +1,21 @@
-from django.shortcuts import redirect, render
-from .models import Producto
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
-def listar_productos(request):
-    productos = Producto.objects.all()
-    return render(request, 'productos/listar_productos.html', {'productos': productos})
+# ══ Vistas del Catálogo de Productos ═══════════════════════════
 
-def crear_producto(request):
-    if request.method == 'POST':
-        nombre_producto = request.POST.get('nombre_producto')
-        precio = request.POST.get('precio')
-        precio_producto = request.POST.get('precio_producto')
-        stock = request.POST.get('stock')
-        estado_producto = request.POST.get('estado_producto')
+def productos_list(request):
+    """
+    Vista para mostrar todos los productos disponibles.
+    """
+    # Por ahora renderiza una plantilla estática, luego traeremos los datos de la Base de Datos.
+    return render(request, 'productos/productos_list.html')
 
-        Producto.objects.create(
-            nombre_producto=nombre_producto,
-            precio=precio,
-            precio_producto=precio_producto,
-            stock=stock,
-            estado_producto=estado_producto
-        )
-        return redirect('listar_productos')
+
+def producto_detail(request, pk):
+    """
+    Vista para ver el detalle en profundidad de un único producto.
+    """
+    context = {
+        'producto_id': pk
+    }
+    return render(request, 'productos/producto_detail.html', context)
