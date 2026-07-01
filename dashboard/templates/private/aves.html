@@ -1,0 +1,305 @@
+{% load static %}
+{% include 'private/header.html' %}
+
+<style>
+    :root {
+        --pink: #c2185b; --navy: #2a3f54; --violet: #7c3aed; --violet-lt: #ede9fe;
+        --green: #059669; --red: #dc2626; --amber: #d97706; --amber-lt: #fef3c7;
+        --blue: #2563eb; --blue-lt: #dbeafe;
+        --gray-50: #f8fafc; --gray-100: #f1f5f9; --gray-200: #e2e8f0;
+        --gray-400: #94a3b8; --gray-600: #475569; --gray-900: #0f172a;
+        --radius: 14px; --shadow: 0 4px 24px rgba(0,0,0,.08);
+    }
+    .stats-bar { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 22px; display: flex; align-items: center; gap: 14px; }
+    .stat-card .stat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .stat-icon.total { background: var(--violet-lt); color: var(--violet); }
+    .stat-icon.active { background: #dcfce7; color: var(--green); }
+    .stat-icon.razas { background: var(--blue-lt); color: var(--blue); }
+    .stat-num { font-size: 22px; font-weight: 800; color: var(--navy); line-height: 1; }
+    .stat-lbl { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: .6px; margin-top: 2px; }
+
+    .toolbar { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+    .search-box { flex: 1; min-width: 200px; position: relative; }
+    .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 15px; }
+    .search-box input { width: 100%; padding: 9px 12px 9px 36px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; background: var(--gray-50); }
+    .search-box input:focus { border-color: var(--violet); background: #fff; }
+    .filter-select { padding: 9px 32px 9px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; background: var(--gray-50); appearance: none; cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: right 10px center; }
+    .btn-primary { background: linear-gradient(135deg, var(--violet), #9333ea); color: #fff; border: none; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(124,58,237,.3); }
+    .btn-primary:hover { transform: translateY(-1px); }
+
+    .table-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .table-card table { width: 100%; border-collapse: collapse; }
+    .table-card thead th { padding: 14px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--gray-400); background: var(--gray-50); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+    .table-card tbody tr { border-bottom: 1px solid var(--gray-100); }
+    .table-card tbody tr:last-child { border-bottom: none; }
+    .table-card tbody tr:hover { background: var(--gray-50); }
+    .table-card tbody td { padding: 14px 16px; font-size: 13px; color: var(--gray-900); vertical-align: middle; }
+
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .badge-activo  { background: #dcfce7; color: var(--green); }
+    .badge-baja    { background: var(--amber-lt); color: var(--amber); }
+    .badge-vendido { background: var(--blue-lt); color: var(--blue); }
+    .badge-muerto  { background: #fee2e2; color: var(--red); }
+    .badge .dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+
+    .actions { display: flex; gap: 6px; align-items: center; }
+    .btn-icon { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; font-size: 13px; }
+    .btn-icon:hover { transform: scale(1.1); }
+    .btn-icon.edit { background: var(--violet-lt); color: var(--violet); }
+    .btn-icon.del  { background: #fee2e2; color: var(--red); }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--gray-400); }
+    .empty-state i { font-size: 48px; margin-bottom: 12px; display: block; }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: var(--radius); width: 100%; max-width: 560px; box-shadow: 0 20px 60px rgba(0,0,0,.2); max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid var(--gray-100); }
+    .modal-header h5 { font-size: 16px; font-weight: 700; color: var(--navy); margin:0; }
+    .modal-close { width:28px; height:28px; border-radius:7px; background: var(--gray-100); border: none; cursor: pointer; display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--gray-600); }
+    .modal-body { padding: 20px 24px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-100); display: flex; gap: 10px; justify-content: flex-end; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .form-row.full { grid-template-columns: 1fr; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--gray-600); margin-bottom: 5px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 9px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family:'Inter',sans-serif; color: var(--gray-900); background: var(--gray-50); outline: none; box-sizing: border-box; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--violet); background:#fff; }
+    .btn-cancel-modal { background: var(--gray-100); color: var(--gray-600); border: none; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; font-family:'Inter',sans-serif; cursor:pointer; }
+    .btn-cancel-modal:hover { background: var(--gray-200); }
+    .alert-msg { display:flex; align-items:center; gap:8px; padding:10px 16px; border-radius:8px; font-size:13px; font-weight:500; margin-bottom:16px; }
+    .alert-msg.success { background:#ecfdf5; color:var(--green); border:1px solid #a7f3d0; }
+    .alert-msg.error   { background:#fef2f2; color:var(--red);   border:1px solid #fecaca; }
+
+    @media (max-width:768px) { .stats-bar { grid-template-columns: 1fr 1fr; } .table-card { overflow-x: auto; } .form-row { grid-template-columns: 1fr; } }
+</style>
+
+<div class="mobile-menu-overlay"></div>
+<div class="main-container">
+<div class="pd-ltr-20 xs-pd-20-10">
+<div class="min-height-200px">
+
+    <div class="page-header">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <div class="title"><h4>Gestión de Aves</h4></div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Inicio</a></li>
+                        <li class="breadcrumb-item active">Aves</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert-msg {% if msg.tags == 'error' %}error{% else %}success{% endif %}">
+                <i class="dw {% if msg.tags == 'error' %}dw-warning{% else %}dw-check{% endif %}"></i>
+                {{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="stat-icon total"><i class="dw dw-edit2"></i></div>
+            <div><div class="stat-num">{{ total_cantidad }}</div><div class="stat-lbl">Aves registradas</div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon active"><i class="dw dw-check"></i></div>
+            <div><div class="stat-num">{{ total_activas }}</div><div class="stat-lbl">Activas</div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon razas"><i class="dw dw-library"></i></div>
+            <div><div class="stat-num">{{ total_razas }}</div><div class="stat-lbl">Razas distintas</div></div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-box">
+            <i class="dw dw-search2"></i>
+            <input type="text" id="search-input" placeholder="Buscar por raza o galpón...">
+        </div>
+        <select class="filter-select" id="filter-estado">
+            <option value="">Todos los estados</option>
+            <option value="activo">Activo</option>
+            <option value="baja">Baja</option>
+            <option value="vendido">Vendido</option>
+            <option value="muerto">Muerto</option>
+        </select>
+        <button class="btn-primary" onclick="openModal('modal-crear')">
+            <i class="dw dw-add"></i> Nuevo registro
+        </button>
+    </div>
+
+    <div class="table-card">
+        <table id="aves-table">
+            <thead>
+                <tr>
+                    <th>Raza</th><th>Cantidad</th><th>Fecha ingreso</th><th>Estado</th><th>Galpón</th><th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in aves %}
+                <tr data-name="{{ a.raza|lower }} {{ a.galpon.nombre|lower }}" data-estado="{{ a.estado }}">
+                    <td style="font-weight:600;color:var(--navy);">{{ a.raza }}</td>
+                    <td>{{ a.cantidad }}</td>
+                    <td>{{ a.fecha_ingreso|date:"d/m/Y" }}</td>
+                    <td><span class="badge badge-{{ a.estado }}"><span class="dot"></span>{{ a.get_estado_display }}</span></td>
+                    <td>{{ a.galpon.nombre|default:"—" }}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn-icon edit" title="Editar"
+                                onclick="openEditAve(
+                                    '{% url 'ave_editar' a.pk %}',
+                                    '{{ a.raza|escapejs }}',
+                                    {{ a.cantidad }},
+                                    '{{ a.fecha_ingreso|date:'Y-m-d' }}',
+                                    '{{ a.estado }}',
+                                    '{{ a.galpon_id|default:'' }}'
+                                )">
+                                <i class="dw dw-edit2"></i>
+                            </button>
+                            <form method="POST" action="{% url 'ave_eliminar' a.pk %}" style="display:inline;"
+                                  onsubmit="return confirm('¿Eliminar el registro de {{ a.raza|escapejs }}?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-icon del" title="Eliminar"><i class="dw dw-delete-3"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6"><div class="empty-state"><i class="dw dw-edit2"></i><p>No hay aves registradas todavía.</p></div></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</div>
+</div>
+
+<!-- MODAL CREAR -->
+<div class="modal-overlay" id="modal-crear" onclick="closeModalOutside(event,'modal-crear')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5><i class="dw dw-add" style="color:var(--violet);margin-right:6px;"></i>Nuevo registro de aves</h5>
+            <button class="modal-close" onclick="closeModal('modal-crear')">✕</button>
+        </div>
+        <form method="POST" action="{% url 'ave_crear' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group"><label>Raza *</label><input type="text" name="raza" required></div>
+                    <div class="form-group"><label>Cantidad</label><input type="number" name="cantidad" value="0"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Fecha de ingreso *</label><input type="date" name="fecha_ingreso" required></div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select name="estado">
+                            <option value="activo">Activo</option>
+                            <option value="baja">Baja</option>
+                            <option value="vendido">Vendido</option>
+                            <option value="muerto">Muerto</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label>Galpón</label>
+                        <select name="galpon">
+                            <option value="">— Sin asignar —</option>
+                            {% for g in galpones %}<option value="{{ g.pk }}">{{ g.nombre }}</option>{% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-modal" onclick="closeModal('modal-crear')">Cancelar</button>
+                <button type="submit" class="btn-primary"><i class="dw dw-check"></i> Crear registro</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="modal-overlay" id="modal-editar" onclick="closeModalOutside(event,'modal-editar')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5><i class="dw dw-edit2" style="color:var(--violet);margin-right:6px;"></i>Editar registro de aves</h5>
+            <button class="modal-close" onclick="closeModal('modal-editar')">✕</button>
+        </div>
+        <form method="POST" id="form-editar-ave">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group"><label>Raza *</label><input type="text" name="raza" id="edit-raza" required></div>
+                    <div class="form-group"><label>Cantidad</label><input type="number" name="cantidad" id="edit-cantidad"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Fecha de ingreso *</label><input type="date" name="fecha_ingreso" id="edit-fecha" required></div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select name="estado" id="edit-estado">
+                            <option value="activo">Activo</option>
+                            <option value="baja">Baja</option>
+                            <option value="vendido">Vendido</option>
+                            <option value="muerto">Muerto</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label>Galpón</label>
+                        <select name="galpon" id="edit-galpon">
+                            <option value="">— Sin asignar —</option>
+                            {% for g in galpones %}<option value="{{ g.pk }}">{{ g.nombre }}</option>{% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-modal" onclick="closeModal('modal-editar')">Cancelar</button>
+                <button type="submit" class="btn-primary"><i class="dw dw-check"></i> Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+    function closeModalOutside(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal('modal-crear'); closeModal('modal-editar'); } });
+
+    function openEditAve(url, raza, cantidad, fecha, estado, galponId) {
+        document.getElementById('form-editar-ave').action = url;
+        document.getElementById('edit-raza').value = raza;
+        document.getElementById('edit-cantidad').value = cantidad;
+        document.getElementById('edit-fecha').value = fecha;
+        document.getElementById('edit-estado').value = estado;
+        document.getElementById('edit-galpon').value = galponId;
+        openModal('modal-editar');
+    }
+
+    function filterTable() {
+        var q = document.getElementById('search-input').value.toLowerCase();
+        var estado = document.getElementById('filter-estado').value;
+        document.querySelectorAll('#aves-table tbody tr').forEach(function(row) {
+            var name = row.dataset.name || '';
+            var rEstado = row.dataset.estado || '';
+            var matchSearch = !q || name.includes(q);
+            var matchEstado = !estado || rEstado === estado;
+            row.style.display = (matchSearch && matchEstado) ? '' : 'none';
+        });
+    }
+    document.getElementById('search-input').addEventListener('input', filterTable);
+    document.getElementById('filter-estado').addEventListener('change', filterTable);
+</script>
+
+{% include 'private/footer.html' %}
