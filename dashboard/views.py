@@ -4,7 +4,8 @@ from django.contrib.auth.forms      import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib                 import messages
 from django.contrib.auth.models import User
-from dashboard.models import Profile
+from django.http import JsonResponse
+from dashboard.models import Profile, Evento, Cliente, Pedido
 
 
 def dashboard(request):
@@ -95,6 +96,7 @@ def usuarios_view(request):
         'departamentos': departamentos,
     })
 
+
 @login_required
 def usuario_crear(request):
     if request.method == 'POST':
@@ -134,6 +136,7 @@ def usuario_crear(request):
         messages.success(request, f'Usuario {user.get_full_name()} creado correctamente.')
     return redirect('usuarios')
 
+
 @login_required
 def usuario_eliminar(request, user_id):
     if request.method == 'POST':
@@ -149,6 +152,7 @@ def usuario_eliminar(request, user_id):
             messages.error(request, 'Usuario no encontrado.')
     return redirect('usuarios')
 
+
 @login_required
 def usuario_toggle(request, user_id):
     if request.method == 'POST':
@@ -163,8 +167,10 @@ def usuario_toggle(request, user_id):
             messages.error(request, 'Usuario no encontrado.')
     return redirect('usuarios')
 
+
 def calendario(request):
     return render(request, 'private/calendario.html')
+
 
 def usuario_editar(request, user_id):
     try:
@@ -199,9 +205,6 @@ def usuario_editar(request, user_id):
         'departamentos': departamentos,
     })
 
-import json
-from django.http import JsonResponse
-from dashboard.models import Evento
 
 # ── Calendario ────────────────────────────────────────────────
 @login_required
@@ -210,6 +213,7 @@ def calendario_view(request):
     return render(request, 'private/calendario.html', {
         'eventos': eventos,
     })
+
 
 @login_required
 def evento_crear(request):
@@ -235,6 +239,7 @@ def evento_crear(request):
 
     return redirect('calendario')
 
+
 @login_required
 def evento_eliminar(request, evento_id):
     if request.method == 'POST':
@@ -246,6 +251,7 @@ def evento_eliminar(request, evento_id):
         except Evento.DoesNotExist:
             messages.error(request, 'Evento no encontrado.')
     return redirect('calendario')
+
 
 @login_required
 def eventos_json(request):
@@ -276,92 +282,90 @@ def eventos_json(request):
         })
     return JsonResponse(data, safe=False)
 
-from dashboard.models import Evento, Cliente, Pedido
 
 # ── Pedidos ───────────────────────────────────────────────────
 @login_required
 def pedidos_view(request):
-    pedidos  = Pedido.objects.select_related('cliente', 'creado_por').all()
-    clientes = Cliente.objects.all()
+    pedidos  = Pedido.objects.select_related('cliente', 'usuario').all()
+    clientes = Cliente.objects.all().order_by('nombres')
+    usuarios = User.objects.filter(is_active=True).order_by('first_name')
     return render(request, 'private/pedidos.html', {
         'pedidos':  pedidos,
         'clientes': clientes,
+        'usuarios': usuarios,
+        'pendientes_count':  pedidos.filter(estado='pendiente').count(),
+        'completados_count': pedidos.filter(estado='completado').count(),
+        'cancelados_count':  pedidos.filter(estado='cancelado').count(),
     })
+
 
 @login_required
 def pedido_crear(request):
     if request.method == 'POST':
-        cliente_id  = request.POST.get('cliente')
-        fecha       = request.POST.get('fecha', '')
-        estado      = request.POST.get('estado', 'pendiente')
-        total       = request.POST.get('total', '0')
-        descripcion = request.POST.get('descripcion', '')
-
-        if cliente_id and fecha and total:
-            try:
-                cliente = Cliente.objects.get(pk=cliente_id)
-                Pedido.objects.create(
-                    cliente=cliente, fecha=fecha,
-                    estado=estado, total=total,
-                    descripcion=descripcion,
-                    creado_por=request.user,
-                )
-                messages.success(request, 'Pedido registrado correctamente.')
-            except Cliente.DoesNotExist:
-                messages.error(request, 'El cliente seleccionado no existe.')
-        else:
-            messages.error(request, 'Cliente, fecha y total son obligatorios.')
-
+        try:
+            Pedido.objects.create(
+                cliente_id  = request.POST.get('cliente'),
+                usuario_id  = request.POST.get('usuario') or request.user.pk,
+                fecha       = request.POST.get('fecha'),
+                estado      = request.POST.get('estado', 'pendiente'),
+                total       = request.POST.get('total', 0) or 0,
+            )
+            messages.success(request, 'Pedido creado correctamente.')
+        except Exception as e:
+            messages.error(request, f'Error al crear pedido: {e}')
     return redirect('pedidos')
+
 
 @login_required
 def pedido_editar(request, pedido_id):
     if request.method == 'POST':
         try:
-            pedido = Pedido.objects.get(pk=pedido_id)
-            cliente_id = request.POST.get('cliente')
-
-            pedido.cliente     = Cliente.objects.get(pk=cliente_id)
-            pedido.fecha       = request.POST.get('fecha', pedido.fecha)
-            pedido.estado      = request.POST.get('estado', pedido.estado)
-            pedido.total       = request.POST.get('total', pedido.total)
-            pedido.descripcion = request.POST.get('descripcion', '')
+            pedido            = Pedido.objects.get(pk=pedido_id)
+            pedido.cliente_id   = request.POST.get('cliente')
+            pedido.usuario_id   = request.POST.get('usuario') or request.user.pk
+            pedido.fecha        = request.POST.get('fecha')
+            pedido.estado       = request.POST.get('estado', 'pendiente')
+            pedido.total        = request.POST.get('total', 0) or 0
             pedido.save()
-
-            messages.success(request, f'Pedido #{pedido.pk} actualizado correctamente.')
+            messages.success(request, f'Pedido #{pedido_id} actualizado.')
         except Pedido.DoesNotExist:
             messages.error(request, 'Pedido no encontrado.')
-        except Cliente.DoesNotExist:
-            messages.error(request, 'Cliente no válido.')
-
     return redirect('pedidos')
+
 
 @login_required
 def pedido_eliminar(request, pedido_id):
     if request.method == 'POST':
         try:
-            pedido = Pedido.objects.get(pk=pedido_id)
-            pedido.delete()
+            Pedido.objects.get(pk=pedido_id).delete()
             messages.success(request, f'Pedido #{pedido_id} eliminado.')
         except Pedido.DoesNotExist:
             messages.error(request, 'Pedido no encontrado.')
     return redirect('pedidos')
 
+
 @login_required
 def cliente_crear(request):
     if request.method == 'POST':
-        nombre    = request.POST.get('nombre', '').strip()
-        telefono  = request.POST.get('telefono', '')
-        email     = request.POST.get('email', '')
-        direccion = request.POST.get('direccion', '')
-
-        if nombre:
+        nombres  = request.POST.get('nombres', '').strip()
+        if nombres:
             Cliente.objects.create(
-                nombre=nombre, telefono=telefono,
-                email=email, direccion=direccion,
+                nombres   = nombres,
+                apellidos = request.POST.get('apellidos', ''),
+                telefono  = request.POST.get('telefono', ''),
+                direccion = request.POST.get('direccion', ''),
+                correo    = request.POST.get('correo', ''),
             )
-            messages.success(request, f'Cliente "{nombre}" creado correctamente.')
+            messages.success(request, 'Cliente creado correctamente.')
         else:
-            messages.error(request, 'El nombre del cliente es obligatorio.')
-
+            messages.error(request, 'El nombre es obligatorio.')
     return redirect('pedidos')
+
+
+@login_required
+def clientes_json(request):
+    clientes = Cliente.objects.all().order_by('nombres')
+    return JsonResponse(
+        [{'id': c.pk, 'nombre': c.get_full_name()} for c in clientes],
+        safe=False
+    )

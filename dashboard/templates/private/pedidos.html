@@ -1,338 +1,861 @@
 {% load static %}
 {% include 'private/header.html' %}
 
-<div class="page-wrapper">
-    <div class="page-content">
-        <div class="container-fluid">
+<style>
+    :root {
+        --navy:      #2a3f54;
+        --violet:    #7c3aed;
+        --violet-lt: #ede9fe;
+        --pink:      #c2185b;
+        --green:     #059669;
+        --red:       #dc2626;
+        --amber:     #d97706;
+        --blue:      #2563eb;
+        --gray-50:   #f8fafc;
+        --gray-100:  #f1f5f9;
+        --gray-200:  #e2e8f0;
+        --gray-400:  #94a3b8;
+        --gray-600:  #475569;
+        --gray-900:  #0f172a;
+        --radius:    14px;
+        --shadow:    0 4px 24px rgba(0,0,0,.08);
+        --shadow-lg: 0 8px 40px rgba(0,0,0,.13);
+    }
 
-        <!-- Encabezado de página -->
-        <div class="page-header">
-            <h2 class="pd-text-primary">Pedidos</h2>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Casa</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Pedidos</li>
-                </ol>
-            </nav>
-        </div>
+    /* ── STATS ── */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    .stat-card {
+        background: #fff;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 20px;
+        display: flex; align-items: center; gap: 14px;
+    }
+    .stat-icon {
+        width: 46px; height: 46px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 20px; flex-shrink: 0;
+    }
+    .stat-icon.total      { background:#ede9fe; color:var(--violet); }
+    .stat-icon.pendiente  { background:#fef9c3; color:#ca8a04; }
+    .stat-icon.completado { background:#dcfce7; color:var(--green); }
+    .stat-icon.cancelado  { background:#fee2e2; color:var(--red); }
+    .stat-num { font-size:22px; font-weight:800; color:var(--navy); line-height:1; }
+    .stat-lbl { font-size:11px; color:var(--gray-400); text-transform:uppercase; letter-spacing:.6px; margin-top:2px; }
 
-        <!-- Mensajes -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            {% endfor %}
-        {% endif %}
+    /* ── TOOLBAR ── */
+    .toolbar {
+        background:#fff; border-radius:var(--radius);
+        box-shadow:var(--shadow); padding:14px 18px;
+        display:flex; align-items:center; gap:10px;
+        flex-wrap:wrap; margin-bottom:20px;
+    }
+    .search-box { flex:1; min-width:200px; position:relative; }
+    .search-box i { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--gray-400); }
+    .search-box input {
+        width:100%; padding:8px 10px 8px 32px;
+        border:1.5px solid var(--gray-200); border-radius:8px;
+        font-size:13px; outline:none; background:var(--gray-50);
+        font-family:'Inter',sans-serif;
+    }
+    .search-box input:focus { border-color:var(--violet); background:#fff; }
+    .filter-sel {
+        padding:8px 28px 8px 10px;
+        border:1.5px solid var(--gray-200); border-radius:8px;
+        font-size:13px; outline:none; background:var(--gray-50);
+        appearance:none;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat:no-repeat; background-position:right 8px center;
+        font-family:'Inter',sans-serif; cursor:pointer;
+    }
+    .btn-primary {
+        background:linear-gradient(135deg,var(--violet),#9333ea);
+        color:#fff; border:none; padding:9px 18px; border-radius:8px;
+        font-size:13px; font-weight:700; font-family:'Inter',sans-serif;
+        cursor:pointer; white-space:nowrap;
+        display:flex; align-items:center; gap:6px;
+        box-shadow:0 4px 14px rgba(124,58,237,.3);
+        transition:transform .15s;
+    }
+    .btn-primary:hover { transform:translateY(-1px); }
+    .btn-outline {
+        background:#fff; color:var(--violet);
+        border:1.5px solid var(--violet-lt);
+        padding:8px 14px; border-radius:8px;
+        font-size:13px; font-weight:600;
+        font-family:'Inter',sans-serif; cursor:pointer;
+        display:flex; align-items:center; gap:5px;
+        transition:background .15s;
+    }
+    .btn-outline:hover { background:var(--violet-lt); }
 
-        <!-- Acciones -->
-        <div class="row mb-20">
-            <div class="col-md-12 text-right">
-                <button type="button" class="btn btn-primary mr-10" data-toggle="modal" data-target="#modalCrearCliente">
-                    <i class="dw dw-user1"></i> Nuevo cliente
-                </button>
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalCrearPedido">
-                    <i class="dw dw-add"></i> Nuevo pedido
-                </button>
-            </div>
-        </div>
+    /* ── TABLE ── */
+    .table-card {
+        background:#fff; border-radius:var(--radius);
+        box-shadow:var(--shadow); overflow:hidden;
+    }
+    .table-card table { width:100%; border-collapse:collapse; }
+    .table-card thead th {
+        padding:13px 16px;
+        font-size:11px; font-weight:700;
+        text-transform:uppercase; letter-spacing:.7px;
+        color:var(--gray-400); background:var(--gray-50);
+        border-bottom:1px solid var(--gray-200);
+        white-space:nowrap; cursor:pointer;
+    }
+    .table-card thead th:hover { color:var(--navy); }
+    .table-card tbody tr {
+        border-bottom:1px solid var(--gray-100);
+        transition:background .12s;
+    }
+    .table-card tbody tr:last-child { border-bottom:none; }
+    .table-card tbody tr:hover { background:var(--gray-50); }
+    .table-card tbody td { padding:13px 16px; font-size:13px; color:var(--gray-900); vertical-align:middle; }
 
-        <!-- Tabla de pedidos -->
+    /* ID badge */
+    .id-badge {
+        display:inline-flex; align-items:center; justify-content:center;
+        width:32px; height:32px; border-radius:8px;
+        background:var(--violet-lt); color:var(--violet);
+        font-size:12px; font-weight:700;
+    }
+
+    /* Cliente cell */
+    .client-cell { display:flex; align-items:center; gap:9px; }
+    .av-client {
+        width:32px; height:32px; border-radius:50%;
+        background:linear-gradient(135deg,var(--pink),#f06292);
+        display:flex; align-items:center; justify-content:center;
+        font-size:11px; font-weight:700; color:#fff;
+        text-transform:uppercase; flex-shrink:0;
+    }
+    .client-name  { font-size:13px; font-weight:600; color:var(--navy); }
+    .client-email { font-size:11px; color:var(--gray-400); }
+
+    /* Estado badges */
+    .badge {
+        display:inline-flex; align-items:center; gap:4px;
+        padding:3px 10px; border-radius:20px;
+        font-size:11px; font-weight:600;
+    }
+    .badge .dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+    .badge-pendiente  { background:#fef9c3; color:#ca8a04; }
+    .badge-proceso    { background:#dbeafe; color:var(--blue); }
+    .badge-completado { background:#dcfce7; color:var(--green); }
+    .badge-cancelado  { background:#fee2e2; color:var(--red); }
+
+    /* Total */
+    .total-val { font-size:14px; font-weight:700; color:var(--navy); }
+
+    /* Acciones */
+    .actions { display:flex; gap:5px; }
+    .btn-icon {
+        width:30px; height:30px; border-radius:7px;
+        display:flex; align-items:center; justify-content:center;
+        border:none; cursor:pointer; font-size:13px;
+        transition:background .12s, transform .1s;
+    }
+    .btn-icon:hover { transform:scale(1.1); }
+    .btn-icon.edit { background:var(--violet-lt); color:var(--violet); }
+    .btn-icon.del  { background:#fee2e2; color:var(--red); }
+    .btn-icon.view { background:#dbeafe; color:var(--blue); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+        display:none; position:fixed; inset:0;
+        background:rgba(0,0,0,.45); z-index:2000;
+        align-items:center; justify-content:center; padding:20px;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal-box {
+        background:#fff; border-radius:var(--radius);
+        width:100%; max-width:560px;
+        box-shadow:0 20px 60px rgba(0,0,0,.2);
+        animation:modalIn .25s ease;
+        max-height:92vh; overflow-y:auto;
+    }
+    .modal-box.wide { max-width:700px; }
+    @keyframes modalIn {
+        from { opacity:0; transform:translateY(-14px); }
+        to   { opacity:1; transform:translateY(0); }
+    }
+    .modal-header {
+        display:flex; align-items:center; justify-content:space-between;
+        padding:18px 22px 14px;
+        border-bottom:1px solid var(--gray-100);
+        position:sticky; top:0; background:#fff; z-index:1;
+    }
+    .modal-header h5 { font-size:15px; font-weight:700; color:var(--navy); margin:0; }
+    .modal-tabs {
+        display:flex; gap:3px;
+        background:var(--gray-100); padding:3px; border-radius:8px;
+    }
+    .modal-tab {
+        padding:5px 14px; border-radius:6px; border:none;
+        font-size:12px; font-weight:600; cursor:pointer;
+        background:transparent; color:var(--gray-600);
+        font-family:'Inter',sans-serif; transition:all .15s;
+    }
+    .modal-tab.active { background:#fff; color:var(--navy); box-shadow:0 1px 4px rgba(0,0,0,.08); }
+    .modal-close {
+        width:28px; height:28px; border-radius:7px;
+        background:var(--gray-100); border:none; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
+        font-size:14px; color:var(--gray-600);
+    }
+    .modal-close:hover { background:var(--gray-200); }
+    .modal-body   { padding:18px 22px; }
+    .modal-footer {
+        padding:14px 22px;
+        border-top:1px solid var(--gray-100);
+        display:flex; gap:10px; justify-content:flex-end;
+        position:sticky; bottom:0; background:#fff;
+    }
+
+    /* Form */
+    .form-section { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--violet); margin:18px 0 12px; padding-bottom:5px; border-bottom:2px solid var(--violet-lt); }
+    .form-section:first-child { margin-top:0; }
+    .form-row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .form-row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+    .form-group { margin-bottom:12px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--gray-600); margin-bottom:4px; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width:100%; padding:9px 12px;
+        border:1.5px solid var(--gray-200); border-radius:8px;
+        font-size:13px; font-family:'Inter',sans-serif;
+        color:var(--gray-900); background:var(--gray-50);
+        outline:none; transition:border-color .2s; box-sizing:border-box;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color:var(--violet); background:#fff; }
+    .form-group textarea { resize:vertical; min-height:70px; }
+
+    .btn-save {
+        background:linear-gradient(135deg,var(--violet),#9333ea);
+        color:#fff; border:none; padding:9px 22px; border-radius:8px;
+        font-size:13px; font-weight:700; font-family:'Inter',sans-serif;
+        cursor:pointer; box-shadow:0 4px 14px rgba(124,58,237,.3);
+        display:flex; align-items:center; gap:6px;
+    }
+    .btn-save:hover { opacity:.9; }
+    .btn-cancel-m {
+        background:var(--gray-100); color:var(--gray-600);
+        border:none; padding:9px 18px; border-radius:8px;
+        font-size:13px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer;
+    }
+    .btn-cancel-m:hover { background:var(--gray-200); }
+
+    /* Tab panels en modal */
+    .tab-pane { display:none; }
+    .tab-pane.active { display:block; }
+
+    /* Detalle pedido */
+    .detail-hero {
+        background:linear-gradient(135deg,var(--navy) 0%,#1e3a5f 60%,#2d1b69 100%);
+        border-radius:10px; padding:18px 20px; margin-bottom:16px;
+        display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+    }
+    .detail-hero .dh-id { font-size:22px; font-weight:800; color:#fff; }
+    .detail-hero .dh-date { font-size:12px; color:rgba(255,255,255,.6); margin-top:2px; }
+    .detail-hero .dh-total { font-size:28px; font-weight:800; color:#fff; }
+    .detail-hero .dh-total-lbl { font-size:11px; color:rgba(255,255,255,.5); text-align:right; }
+
+    .info-row {
+        display:flex; justify-content:space-between; align-items:center;
+        padding:9px 0; border-bottom:1px solid var(--gray-100);
+        font-size:13px;
+    }
+    .info-row:last-child { border-bottom:none; }
+    .info-row .il { color:var(--gray-400); font-weight:500; }
+    .info-row .iv { color:var(--navy); font-weight:600; }
+
+    /* Alert */
+    .alert-msg {
+        display:flex; align-items:center; gap:8px;
+        padding:10px 16px; border-radius:8px;
+        font-size:13px; font-weight:500; margin-bottom:16px;
+    }
+    .alert-msg.success { background:#ecfdf5; color:var(--green); border:1px solid #a7f3d0; }
+    .alert-msg.error   { background:#fef2f2; color:var(--red);   border:1px solid #fecaca; }
+
+    /* Nuevo cliente inline */
+    .new-client-toggle {
+        font-size:12px; color:var(--violet); font-weight:600;
+        cursor:pointer; display:inline-flex; align-items:center; gap:4px;
+        margin-top:4px; background:none; border:none; padding:0;
+        font-family:'Inter',sans-serif;
+    }
+    .new-client-box {
+        background:var(--violet-lt); border-radius:10px;
+        padding:14px; margin-top:10px; display:none;
+    }
+    .new-client-box.open { display:block; }
+
+    /* Paginación */
+    .pagination-wrap {
+        display:flex; align-items:center; justify-content:space-between;
+        padding:14px 18px; border-top:1px solid var(--gray-100);
+        font-size:13px; color:var(--gray-600); flex-wrap:wrap; gap:10px;
+    }
+    .page-btns { display:flex; gap:4px; }
+    .page-btn {
+        width:30px; height:30px; border-radius:7px; border:none;
+        background:var(--gray-100); color:var(--gray-600);
+        cursor:pointer; font-size:13px; font-weight:600;
+        display:flex; align-items:center; justify-content:center;
+    }
+    .page-btn.active { background:var(--violet); color:#fff; }
+    .page-btn:hover:not(.active) { background:var(--gray-200); }
+
+    @media (max-width:768px) {
+        .stats-grid { grid-template-columns:1fr 1fr; }
+        .form-row2, .form-row3 { grid-template-columns:1fr; }
+        .table-card { overflow-x:auto; }
+    }
+</style>
+
+<div class="mobile-menu-overlay"></div>
+<div class="main-container">
+<div class="pd-ltr-20 xs-pd-20-10">
+<div class="min-height-200px">
+
+    <!-- Breadcrumb -->
+    <div class="page-header">
         <div class="row">
-            <div class="col-md-12">
-                <div class="card-box">
-                    <div class="table-responsive">
-                        <table id="tablaPedidos" class="table display data-table" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Cliente</th>
-                                    <th>Fecha</th>
-                                    <th>Estado</th>
-                                    <th>Total</th>
-                                    <th>Creado por</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for pedido in pedidos %}
-                                <tr>
-                                    <td>{{ pedido.pk }}</td>
-                                    <td>{{ pedido.cliente.nombre }}</td>
-                                    <td>{{ pedido.fecha|date:"d/m/Y" }}</td>
-                                    <td>
-                                        <span class="badge
-                                            {% if pedido.estado == 'pendiente' %}badge-warning
-                                            {% elif pedido.estado == 'proceso' %}badge-info
-                                            {% elif pedido.estado == 'enviado' %}badge-primary
-                                            {% elif pedido.estado == 'entregado' %}badge-success
-                                            {% elif pedido.estado == 'cancelado' %}badge-danger
-                                            {% endif %}">
-                                            {{ pedido.get_estado_display }}
-                                        </span>
-                                    </td>
-                                    <td>${{ pedido.total }}</td>
-                                    <td>{{ pedido.creado_por.get_full_name|default:pedido.creado_por.username|default:"—" }}</td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-outline-primary btn-editar-pedido"
-                                                data-toggle="modal" data-target="#modalEditarPedido"
-                                                data-id="{{ pedido.pk }}"
-                                                data-cliente="{{ pedido.cliente.pk }}"
-                                                data-fecha="{{ pedido.fecha|date:'Y-m-d' }}"
-                                                data-estado="{{ pedido.estado }}"
-                                                data-total="{{ pedido.total }}"
-                                                data-descripcion="{{ pedido.descripcion|default:'' }}"
-                                                title="Editar">
-                                            <i class="dw dw-edit2"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar-pedido"
-                                                data-toggle="modal" data-target="#modalEliminarPedido"
-                                                data-id="{{ pedido.pk }}"
-                                                data-nombre="{{ pedido.cliente.nombre }}"
-                                                title="Eliminar">
-                                            <i class="dw dw-delete-3"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="7" class="text-center">No hay pedidos registrados en la lista.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="col-md-6 col-sm-12">
+                <div class="title"><h4>Pedidos</h4></div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Inicio</a></li>
+                        <li class="breadcrumb-item active">Pedidos</li>
+                    </ol>
+                </nav>
             </div>
         </div>
+    </div>
 
+    <!-- Alertas Django -->
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert-msg {% if msg.tags == 'error' %}error{% else %}success{% endif %}">
+                <i class="dw {% if msg.tags == 'error' %}dw-warning{% else %}dw-check{% endif %}"></i>
+                {{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
 
-<!-- ══════════════════════════════════════
-     MODAL: Crear pedido
-══════════════════════════════════════ -->
-<div class="modal fade" id="modalCrearPedido" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon total"><i class="dw dw-invoice"></i></div>
+            <div>
+                <div class="stat-num">{{ pedidos.count }}</div>
+                <div class="stat-lbl">Total</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon pendiente"><i class="dw dw-clock1"></i></div>
+            <div>
+                <div class="stat-num">{{ pendientes_count }}</div>
+                <div class="stat-lbl">Pendientes</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon completado"><i class="dw dw-check"></i></div>
+            <div>
+                <div class="stat-num">{{ completados_count }}</div>
+                <div class="stat-lbl">Completados</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon cancelado"><i class="dw dw-close"></i></div>
+            <div>
+                <div class="stat-num">{{ cancelados_count }}</div>
+                <div class="stat-lbl">Cancelados</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="search-box">
+            <i class="dw dw-search2"></i>
+            <input type="text" id="search-input" placeholder="Buscar por cliente, usuario, estado...">
+        </div>
+        <select class="filter-sel" id="filter-estado">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="proceso">En proceso</option>
+            <option value="completado">Completado</option>
+            <option value="cancelado">Cancelado</option>
+        </select>
+        <button class="btn-outline" onclick="openModal('modal-cliente')">
+            <i class="dw dw-add"></i> Cliente
+        </button>
+        <button class="btn-primary" onclick="openModal('modal-crear')">
+            <i class="dw dw-add"></i> Nuevo pedido
+        </button>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-card">
+        <table id="pedidos-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Cliente</th>
+                    <th>Registrado por</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pedidos %}
+                <tr data-search="{{ p.cliente.get_full_name|lower }} {{ p.usuario.get_full_name|lower }}"
+                    data-estado="{{ p.estado }}">
+                    <td><span class="id-badge">#{{ p.pk }}</span></td>
+
+                    <td>
+                        <div class="client-cell">
+                            <div class="av-client">
+                                {{ p.cliente.nombres|default:""|first|upper }}{{ p.cliente.apellidos|default:""|first|upper }}
+                            </div>
+                            <div>
+                                <div class="client-name">{{ p.cliente.get_full_name }}</div>
+                                <div class="client-email">{{ p.cliente.correo|default:"—" }}</div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td>
+                        <div style="font-size:13px;font-weight:500;color:var(--navy);">
+                            {{ p.usuario.get_full_name|default:p.usuario.username }}
+                        </div>
+                        <div style="font-size:11px;color:var(--gray-400);">
+                            {{ p.usuario.profile.cargo|default:"—" }}
+                        </div>
+                    </td>
+
+                    <td style="color:var(--gray-600);">{{ p.fecha|date:"d/m/Y" }}</td>
+
+                    <td>
+                        <span class="badge badge-{{ p.estado }}">
+                            <span class="dot"></span>
+                            {{ p.get_estado_display }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="total-val">${{ p.total }}</span>
+                    </td>
+
+                    <td>
+                        <div class="actions">
+                            <!-- Ver detalle -->
+                            <button class="btn-icon view" title="Ver detalle"
+                                    onclick="verDetalle({{ p.pk }},'{{ p.cliente.get_full_name }}','{{ p.cliente.correo|default:'' }}','{{ p.usuario.get_full_name }}','{{ p.fecha|date:'d/m/Y' }}','{{ p.estado }}','{{ p.get_estado_display }}','{{ p.total }}')">
+                                <i class="dw dw-eye"></i>
+                            </button>
+                            <!-- Editar -->
+                            <button class="btn-icon edit" title="Editar"
+                                    onclick="abrirEditar({{ p.pk }},'{{ p.cliente.pk }}','{{ p.usuario.pk }}','{{ p.fecha|date:'Y-m-d' }}','{{ p.estado }}','{{ p.total }}')">
+                                <i class="dw dw-edit2"></i>
+                            </button>
+                            <!-- Eliminar -->
+                            <form method="POST" action="{% url 'pedido_eliminar' p.pk %}"
+                                  style="display:inline;"
+                                  onsubmit="return confirm('¿Eliminar Pedido #{{ p.pk }}?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-icon del" title="Eliminar">
+                                    <i class="dw dw-delete-3"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align:center;padding:50px;color:var(--gray-400);">
+                        <i class="dw dw-invoice" style="font-size:40px;display:block;margin-bottom:10px;"></i>
+                        No hay pedidos registrados todavía.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Paginación -->
+        <div class="pagination-wrap">
+            <span id="showing-text">Mostrando todos los registros</span>
+            <div class="page-btns" id="page-btns"></div>
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+
+<!-- ══ MODAL CREAR PEDIDO ══ -->
+<div class="modal-overlay" id="modal-crear" onclick="closeOut(event,'modal-crear')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5>📦 Nuevo pedido</h5>
+            <button class="modal-close" onclick="closeModal('modal-crear')">✕</button>
+        </div>
         <form method="POST" action="{% url 'pedido_crear' %}">
             {% csrf_token %}
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Nuevo pedido</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
+            <div class="modal-body">
+
+                <div class="form-section">Información del pedido</div>
+                <div class="form-row2">
                     <div class="form-group">
-                        <label>Cliente</label>
-                        <select name="cliente" class="form-control select2" required>
-                            <option value="">Seleccione un cliente...</option>
-                            {% for cliente in clientes %}
-                                <option value="{{ cliente.pk }}">{{ cliente.nombre }}</option>
+                        <label>Fecha *</label>
+                        <input type="date" name="fecha" id="crear-fecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estado *</label>
+                        <select name="estado" required>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="proceso">En proceso</option>
+                            <option value="completado">Completado</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label>Total ($) *</label>
+                        <input type="number" name="total" step="0.01" min="0"
+                               placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Usuario que registra</label>
+                        <select name="usuario">
+                            {% for u in usuarios %}
+                                <option value="{{ u.pk }}"
+                                    {% if u == request.user %}selected{% endif %}>
+                                    {{ u.get_full_name|default:u.username }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Fecha</label>
-                        <input type="date" name="fecha" class="form-control" required>
+                </div>
+
+                <div class="form-section">Cliente</div>
+                <div class="form-group">
+                    <label>Seleccionar cliente *</label>
+                    <select name="cliente" required>
+                        <option value="">Seleccionar...</option>
+                        {% for c in clientes %}
+                            <option value="{{ c.pk }}">{{ c.get_full_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="new-client-toggle"
+                            onclick="toggleNewClient('crear')">
+                        <i class="dw dw-add"></i> Registrar nuevo cliente
+                    </button>
+                </div>
+
+                <!-- Nuevo cliente inline -->
+                <div class="new-client-box" id="new-client-crear">
+                    <div style="font-size:12px;font-weight:700;color:var(--violet);margin-bottom:10px;">
+                        Datos del nuevo cliente
                     </div>
-                    <div class="form-group">
-                        <label>Estado</label>
-                        <select name="estado" class="form-control">
-                            <option value="pendiente">🕒 Pendiente</option>
-                            <option value="proceso">⚙️ En proceso</option>
-                            <option value="enviado">🚚 Enviado</option>
-                            <option value="entregado">✅ Entregado</option>
-                            <option value="cancelado">❌ Cancelado</option>
-                        </select>
+                    <div class="form-row2">
+                        <div class="form-group">
+                            <label>Nombres</label>
+                            <input type="text" placeholder="Nombres">
+                        </div>
+                        <div class="form-group">
+                            <label>Apellidos</label>
+                            <input type="text" placeholder="Apellidos">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Total</label>
-                        <input type="number" step="0.01" min="0" name="total" class="form-control" required>
+                    <div class="form-row2">
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="tel" placeholder="0999999999">
+                        </div>
+                        <div class="form-group">
+                            <label>Correo</label>
+                            <input type="email" placeholder="correo@ejemplo.com">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Descripción</label>
-                        <textarea name="descripcion" class="form-control" rows="3"></textarea>
+                    <div style="font-size:11px;color:var(--gray-400);">
+                        💡 Para guardar el cliente usa el botón "Cliente" en la barra de herramientas.
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Guardar pedido</button>
-                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-m" onclick="closeModal('modal-crear')">Cancelar</button>
+                <button type="submit" class="btn-save">
+                    <i class="dw dw-check"></i> Crear pedido
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-
-<!-- ══════════════════════════════════════
-     MODAL: Editar pedido
-══════════════════════════════════════ -->
-<div class="modal fade" id="modalEditarPedido" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <form method="POST" id="formEditarPedido" action="">
+<!-- ══ MODAL EDITAR PEDIDO ══ -->
+<div class="modal-overlay" id="modal-editar" onclick="closeOut(event,'modal-editar')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5>✏️ Editar pedido <span id="edit-id-label" style="color:var(--violet);"></span></h5>
+            <button class="modal-close" onclick="closeModal('modal-editar')">✕</button>
+        </div>
+        <form method="POST" id="form-editar" action="">
             {% csrf_token %}
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar pedido</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
+            <div class="modal-body">
+
+                <div class="form-section">Información del pedido</div>
+                <div class="form-row2">
                     <div class="form-group">
-                        <label>Cliente</label>
-                        <select name="cliente" id="editCliente" class="form-control select2" required>
-                            {% for cliente in clientes %}
-                                <option value="{{ cliente.pk }}">{{ cliente.nombre }}</option>
+                        <label>Fecha *</label>
+                        <input type="date" name="fecha" id="edit-fecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estado *</label>
+                        <select name="estado" id="edit-estado">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="proceso">En proceso</option>
+                            <option value="completado">Completado</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label>Total ($) *</label>
+                        <input type="number" name="total" id="edit-total"
+                               step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Usuario que registra</label>
+                        <select name="usuario" id="edit-usuario">
+                            {% for u in usuarios %}
+                                <option value="{{ u.pk }}">
+                                    {{ u.get_full_name|default:u.username }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Fecha</label>
-                        <input type="date" name="fecha" id="editFecha" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Estado</label>
-                        <select name="estado" id="editEstado" class="form-control">
-                            <option value="pendiente">🕒 Pendiente</option>
-                            <option value="proceso">⚙️ En proceso</option>
-                            <option value="enviado">🚚 Enviado</option>
-                            <option value="entregado">✅ Entregado</option>
-                            <option value="cancelado">❌ Cancelado</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Total</label>
-                        <input type="number" step="0.01" min="0" name="total" id="editTotal" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Descripción</label>
-                        <textarea name="descripcion" id="editDescripcion" class="form-control" rows="3"></textarea>
-                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Actualizar pedido</button>
+
+                <div class="form-section">Cliente</div>
+                <div class="form-group">
+                    <label>Cliente *</label>
+                    <select name="cliente" id="edit-cliente" required>
+                        <option value="">Seleccionar...</option>
+                        {% for c in clientes %}
+                            <option value="{{ c.pk }}">{{ c.get_full_name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-m" onclick="closeModal('modal-editar')">Cancelar</button>
+                <button type="submit" class="btn-save">
+                    <i class="dw dw-check"></i> Guardar cambios
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-
-<!-- ══════════════════════════════════════
-     MODAL: Eliminar pedido
-══════════════════════════════════════ -->
-<div class="modal fade" id="modalEliminarPedido" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <form method="POST" id="formEliminarPedido" action="">
-            {% csrf_token %}
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Eliminar pedido</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+<!-- ══ MODAL VER DETALLE ══ -->
+<div class="modal-overlay" id="modal-detalle" onclick="closeOut(event,'modal-detalle')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5>🔍 Detalle del pedido</h5>
+            <button class="modal-close" onclick="closeModal('modal-detalle')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-hero">
+                <div>
+                    <div class="dh-id" id="det-id">Pedido #—</div>
+                    <div class="dh-date" id="det-date">—</div>
                 </div>
-                <div class="modal-body">
-                    <p>¿Seguro que deseas eliminar el pedido de <strong id="eliminarNombreCliente"></strong>? Esta acción no se puede deshacer.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                <div style="text-align:right;">
+                    <div class="dh-total" id="det-total">$0.00</div>
+                    <div class="dh-total-lbl">Total</div>
                 </div>
             </div>
-        </form>
+
+            <div id="det-rows"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel-m" onclick="closeModal('modal-detalle')">Cerrar</button>
+        </div>
     </div>
 </div>
 
-
-<!-- ══════════════════════════════════════
-     MODAL: Crear cliente
-══════════════════════════════════════ -->
-<div class="modal fade" id="modalCrearCliente" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- ══ MODAL NUEVO CLIENTE ══ -->
+<div class="modal-overlay" id="modal-cliente" onclick="closeOut(event,'modal-cliente')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5>👤 Nuevo cliente</h5>
+            <button class="modal-close" onclick="closeModal('modal-cliente')">✕</button>
+        </div>
         <form method="POST" action="{% url 'cliente_crear' %}">
             {% csrf_token %}
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Nuevo cliente</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
+            <div class="modal-body">
+                <div class="form-row2">
                     <div class="form-group">
-                        <label>Nombre</label>
-                        <input type="text" name="nombre" class="form-control" required>
+                        <label>Nombres *</label>
+                        <input type="text" name="nombres" placeholder="Ej: Juan" required>
                     </div>
+                    <div class="form-group">
+                        <label>Apellidos</label>
+                        <input type="text" name="apellidos" placeholder="Ej: Pérez">
+                    </div>
+                </div>
+                <div class="form-row2">
                     <div class="form-group">
                         <label>Teléfono</label>
-                        <input type="text" name="telefono" class="form-control">
+                        <input type="tel" name="telefono" placeholder="0999999999">
                     </div>
                     <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" name="email" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Dirección</label>
-                        <input type="text" name="direccion" class="form-control">
+                        <label>Correo</label>
+                        <input type="email" name="correo" placeholder="correo@ejemplo.com">
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Guardar cliente</button>
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <input type="text" name="direccion" placeholder="Dirección del cliente">
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-m" onclick="closeModal('modal-cliente')">Cancelar</button>
+                <button type="submit" class="btn-save">
+                    <i class="dw dw-check"></i> Guardar cliente
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    // Rellenar modal de edición con los datos del pedido seleccionado
-    document.querySelectorAll('.btn-editar-pedido').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var id = this.dataset.id;
-            document.getElementById('formEditarPedido').action =
-                '/pedidos/' + id + '/editar/';
-            document.getElementById('editCliente').value = this.dataset.cliente;
-            document.getElementById('editFecha').value = this.dataset.fecha;
-            document.getElementById('editEstado').value = this.dataset.estado;
-            document.getElementById('editTotal').value = this.dataset.total;
-            document.getElementById('editDescripcion').value = this.dataset.descripcion;
-        });
+    /* ── Modales ── */
+    function openModal(id) {
+        document.getElementById(id).classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    function closeOut(e, id) {
+        if (e.target === document.getElementById(id)) closeModal(id);
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            ['modal-crear','modal-editar','modal-detalle','modal-cliente'].forEach(closeModal);
+        }
     });
 
-    // Rellenar modal de eliminación
-    document.querySelectorAll('.btn-eliminar-pedido').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var id = this.dataset.id;
-            document.getElementById('formEliminarPedido').action =
-                '/pedidos/' + id + '/eliminar/';
-            document.getElementById('eliminarNombreCliente').textContent = this.dataset.nombre;
-        });
+    /* Fecha de hoy por defecto */
+    document.addEventListener('DOMContentLoaded', function() {
+        var hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('crear-fecha').value = hoy;
     });
 
-    // Inicializar DataTable si está disponible
-    if (window.jQuery && jQuery.fn.DataTable) {
-        jQuery('#tablaPedidos').DataTable({
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-            }
-        });
+    /* ── Abrir editar con datos precargados ── */
+    function abrirEditar(id, clienteId, usuarioId, fecha, estado, total) {
+        document.getElementById('edit-id-label').textContent = '#' + id;
+        document.getElementById('form-editar').action = '/dashboard/pedidos/' + id + '/editar/';
+        document.getElementById('edit-fecha').value   = fecha;
+        document.getElementById('edit-total').value   = total;
+
+        var selEstado = document.getElementById('edit-estado');
+        for (var i = 0; i < selEstado.options.length; i++) {
+            if (selEstado.options[i].value === estado) { selEstado.selectedIndex = i; break; }
+        }
+        var selCliente = document.getElementById('edit-cliente');
+        for (var i = 0; i < selCliente.options.length; i++) {
+            if (selCliente.options[i].value == clienteId) { selCliente.selectedIndex = i; break; }
+        }
+        var selUsuario = document.getElementById('edit-usuario');
+        for (var i = 0; i < selUsuario.options.length; i++) {
+            if (selUsuario.options[i].value == usuarioId) { selUsuario.selectedIndex = i; break; }
+        }
+        openModal('modal-editar');
     }
 
-    // Inicializar select2 si está disponible
-    if (window.jQuery && jQuery.fn.select2) {
-        jQuery('.select2').select2({ width: '100%' });
+    /* ── Ver detalle ── */
+    var ESTADOS_LABEL = {
+        pendiente: 'Pendiente', proceso: 'En proceso',
+        completado: 'Completado', cancelado: 'Cancelado'
+    };
+    var ESTADOS_COLOR = {
+        pendiente: '#ca8a04', proceso: '#2563eb',
+        completado: '#059669', cancelado: '#dc2626'
+    };
+
+    function verDetalle(id, cliente, correo, usuario, fecha, estado, estadoLabel, total) {
+        document.getElementById('det-id').textContent    = 'Pedido #' + id;
+        document.getElementById('det-date').textContent  = fecha;
+        document.getElementById('det-total').textContent = '$' + parseFloat(total).toFixed(2);
+
+        var color = ESTADOS_COLOR[estado] || '#64748b';
+        var rows = [
+            ['Cliente',   cliente],
+            ['Correo',    correo || '—'],
+            ['Registrado por', usuario],
+            ['Estado',    '<span style="color:' + color + ';font-weight:700;">' + estadoLabel + '</span>'],
+        ];
+
+        document.getElementById('det-rows').innerHTML = rows.map(function(r) {
+            return '<div class="info-row">' +
+                '<span class="il">' + r[0] + '</span>' +
+                '<span class="iv">' + r[1] + '</span>' +
+            '</div>';
+        }).join('');
+
+        openModal('modal-detalle');
     }
-});
+
+    /* ── Toggle nuevo cliente inline ── */
+    function toggleNewClient(prefix) {
+        var box = document.getElementById('new-client-' + prefix);
+        box.classList.toggle('open');
+    }
+
+    /* ── Búsqueda y filtro ── */
+    function filterTable() {
+        var search = document.getElementById('search-input').value.toLowerCase();
+        var estado = document.getElementById('filter-estado').value;
+        var rows   = document.querySelectorAll('#pedidos-table tbody tr[data-search]');
+        var visible = 0;
+
+        rows.forEach(function(row) {
+            var matchSearch = !search || (row.dataset.search || '').includes(search);
+            var matchEstado = !estado || row.dataset.estado === estado;
+            var show = matchSearch && matchEstado;
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+
+        document.getElementById('showing-text').textContent =
+            'Mostrando ' + visible + ' de ' + rows.length + ' registros';
+    }
+
+    document.getElementById('search-input').addEventListener('input', filterTable);
+    document.getElementById('filter-estado').addEventListener('change', filterTable);
+
 </script>
 
 {% include 'private/footer.html' %}
