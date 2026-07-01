@@ -1,0 +1,196 @@
+{% load static %}
+{% include 'private/header.html' %}
+{% block content %}
+<div class="page-content">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <h2 class="pageheader-title">Alimentación</h2>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#modalCrearAlimentacion">
+            <i class="dw dw-add"></i> Nuevo registro
+        </button>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Alimento</th>
+                            <th>Galpón</th>
+                            <th>Porción</th>
+                            <th>Registrado por</th>
+                            <th class="text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for registro in registros %}
+                        <tr>
+                            <td>{{ registro.fecha|date:"d/m/Y" }}</td>
+                            <td>{{ registro.alimento.nombre|default:"—" }}</td>
+                            <td>{{ registro.galpon.nombre|default:"—" }}</td>
+                            <td>{{ registro.porcion }} {{ registro.alimento.unidad_medida|default:"" }}</td>
+                            <td>{{ registro.usuario.get_full_name|default:registro.usuario.username|default:"—" }}</td>
+                            <td class="text-right">
+                                <button class="btn btn-sm btn-outline-primary" data-toggle="modal"
+                                        data-target="#modalEditarAlimentacion{{ registro.pk }}">
+                                    <i class="dw dw-edit2"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" data-toggle="modal"
+                                        data-target="#modalEliminarAlimentacion{{ registro.pk }}">
+                                    <i class="dw dw-delete-3"></i>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Modal editar -->
+                        <div class="modal fade" id="modalEditarAlimentacion{{ registro.pk }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form method="post" action="{% url 'alimentacion_editar' registro.pk %}">
+                                        {% csrf_token %}
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Editar registro de alimentación</h5>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label>Fecha</label>
+                                                <input type="date" name="fecha" class="form-control"
+                                                       value="{{ registro.fecha|date:'Y-m-d' }}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Alimento</label>
+                                                <select name="alimento" class="form-control">
+                                                    <option value="">— Ninguno —</option>
+                                                    {% for a in alimentos %}
+                                                    <option value="{{ a.pk }}" {% if registro.alimento_id == a.pk %}selected{% endif %}>{{ a.nombre }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Galpón</label>
+                                                <select name="galpon" class="form-control">
+                                                    <option value="">— Ninguno —</option>
+                                                    {% for g in galpones %}
+                                                    <option value="{{ g.pk }}" {% if registro.galpon_id == g.pk %}selected{% endif %}>{{ g.nombre }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Porción</label>
+                                                <input type="number" step="0.01" name="porcion" class="form-control"
+                                                       value="{{ registro.porcion }}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Usuario responsable</label>
+                                                <select name="usuario" class="form-control">
+                                                    {% for u in usuarios %}
+                                                    <option value="{{ u.pk }}" {% if registro.usuario_id == u.pk %}selected{% endif %}>{{ u.get_full_name|default:u.username }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Observación</label>
+                                                <textarea name="observacion" class="form-control" rows="3">{{ registro.observacion|default:'' }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal eliminar -->
+                        <div class="modal fade" id="modalEliminarAlimentacion{{ registro.pk }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form method="post" action="{% url 'alimentacion_eliminar' registro.pk %}">
+                                        {% csrf_token %}
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Eliminar registro</h5>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            ¿Seguro que deseas eliminar este registro de alimentación del {{ registro.fecha|date:"d/m/Y" }}?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <tr><td colspan="6" class="text-center text-muted">No hay registros de alimentación.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal crear -->
+<div class="modal fade" id="modalCrearAlimentacion" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'alimentacion_crear' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Nuevo registro de alimentación</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <input type="date" name="fecha" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Alimento</label>
+                        <select name="alimento" class="form-control">
+                            <option value="">— Ninguno —</option>
+                            {% for a in alimentos %}
+                            <option value="{{ a.pk }}">{{ a.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Galpón</label>
+                        <select name="galpon" class="form-control">
+                            <option value="">— Ninguno —</option>
+                            {% for g in galpones %}
+                            <option value="{{ g.pk }}">{{ g.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Porción</label>
+                        <input type="number" step="0.01" name="porcion" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Usuario responsable</label>
+                        <select name="usuario" class="form-control">
+                            {% for u in usuarios %}
+                            <option value="{{ u.pk }}" {% if u.pk == request.user.pk %}selected{% endif %}>{{ u.get_full_name|default:u.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Observación</label>
+                        <textarea name="observacion" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear registro</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

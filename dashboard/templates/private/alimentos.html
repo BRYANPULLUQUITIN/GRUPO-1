@@ -1,0 +1,875 @@
+{% load static %}
+{% include 'private/header.html' %}
+
+<style>
+    :root {
+        --navy:      #2a3f54;
+        --violet:    #7c3aed;
+        --violet-lt: #ede9fe;
+        --pink:      #c2185b;
+        --green:     #059669;
+        --red:       #dc2626;
+        --amber:     #d97706;
+        --blue:      #2563eb;
+        --gray-50:   #f8fafc;
+        --gray-100:  #f1f5f9;
+        --gray-200:  #e2e8f0;
+        --gray-400:  #94a3b8;
+        --gray-600:  #475569;
+        --gray-900:  #0f172a;
+        --radius:    14px;
+        --shadow:    0 4px 24px rgba(0,0,0,.08);
+    }
+
+    /* ── STATS ── */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
+        gap: 16px; margin-bottom: 24px;
+    }
+    .stat-card {
+        background:#fff; border-radius:var(--radius);
+        box-shadow:var(--shadow); padding:20px;
+        display:flex; align-items:center; gap:14px;
+    }
+    .stat-icon {
+        width:46px; height:46px; border-radius:12px;
+        display:flex; align-items:center; justify-content:center;
+        font-size:20px; flex-shrink:0;
+    }
+    .si-total      { background:#ede9fe; color:var(--violet); }
+    .si-stock-ok   { background:#dcfce7; color:var(--green); }
+    .si-stock-bajo { background:#fef9c3; color:#ca8a04; }
+    .si-sin-stock  { background:#fee2e2; color:var(--red); }
+    .stat-num { font-size:22px; font-weight:800; color:var(--navy); line-height:1; }
+    .stat-lbl { font-size:11px; color:var(--gray-400); text-transform:uppercase; letter-spacing:.6px; margin-top:2px; }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+        background:#fff; border-radius:var(--radius);
+        box-shadow:var(--shadow); padding:14px 18px;
+        display:flex; align-items:center; gap:10px;
+        flex-wrap:wrap; margin-bottom:20px;
+    }
+    .search-box { flex:1; min-width:200px; position:relative; }
+    .search-box i { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--gray-400); }
+    .search-box input {
+        width:100%; padding:8px 10px 8px 32px;
+        border:1.5px solid var(--gray-200); border-radius:8px;
+        font-size:13px; outline:none; background:var(--gray-50);
+        font-family:'Inter',sans-serif; transition:border-color .2s;
+    }
+    .search-box input:focus { border-color:var(--violet); background:#fff; }
+    .filter-sel {
+        padding:8px 28px 8px 10px;
+        border:1.5px solid var(--gray-200); border-radius:8px;
+        font-size:13px; outline:none; background:var(--gray-50);
+        appearance:none;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat:no-repeat; background-position:right 8px center;
+        font-family:'Inter',sans-serif; cursor:pointer;
+    }
+    .btn-primary {
+        background:linear-gradient(135deg,var(--violet),#9333ea);
+        color:#fff; border:none; padding:9px 18px; border-radius:8px;
+        font-size:13px; font-weight:700; font-family:'Inter',sans-serif;
+        cursor:pointer; white-space:nowrap;
+        display:flex; align-items:center; gap:6px;
+        box-shadow:0 4px 14px rgba(124,58,237,.3);
+        transition:transform .15s;
+    }
+    .btn-primary:hover { transform:translateY(-1px); }
+
+    /* ── CARDS GRID (vista de tarjetas) ── */
+    .cards-grid {
+        display:grid;
+        grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+        gap:18px; margin-bottom:24px;
+    }
+    .alimento-card {
+        background:#fff; border-radius:var(--radius);
+        box-shadow:var(--shadow); overflow:hidden;
+        transition:transform .15s, box-shadow .15s;
+        display:flex; flex-direction:column;
+    }
+    .alimento-card:hover {
+        transform:translateY(-3px);
+        box-shadow:0 8px 32px rgba(0,0,0,.12);
+    }
+    .card-top {
+        padding:18px 18px 14px;
+        display:flex; align-items:flex-start; justify-content:space-between;
+        gap:12px;
+    }
+    .tipo-icon {
+        width:48px; height:48px; border-radius:12px;
+        display:flex; align-items:center; justify-content:center;
+        font-size:22px; flex-shrink:0;
+    }
+    .ti-concentrado { background:#ede9fe; }
+    .ti-maiz        { background:#fef9c3; }
+    .ti-soya        { background:#dcfce7; }
+    .ti-vitaminas   { background:#dbeafe; }
+    .ti-mineral     { background:#fce7f3; }
+    .ti-otro        { background:var(--gray-100); }
+
+    .card-name { font-size:15px; font-weight:700; color:var(--navy); margin-bottom:3px; }
+    .card-tipo { font-size:11px; color:var(--gray-400); text-transform:uppercase; letter-spacing:.6px; }
+
+    .card-body { padding:0 18px 16px; flex:1; }
+    .stock-row {
+        display:flex; align-items:center; justify-content:space-between;
+        margin-bottom:10px;
+    }
+    .stock-val { font-size:22px; font-weight:800; color:var(--navy); }
+    .stock-unit { font-size:12px; color:var(--gray-400); margin-left:4px; }
+    .stock-label { font-size:11px; color:var(--gray-400); }
+
+    /* Barra de stock */
+    .stock-bar { height:5px; background:var(--gray-100); border-radius:3px; overflow:hidden; margin-bottom:12px; }
+    .stock-fill { height:100%; border-radius:3px; transition:width .4s; }
+    .sf-alto  { background:var(--green); }
+    .sf-medio { background:#eab308; }
+    .sf-bajo  { background:var(--red); }
+
+    .card-desc {
+        font-size:12px; color:var(--gray-600);
+        display:-webkit-box; -webkit-line-clamp:2;
+        -webkit-box-orient:vertical; overflow:hidden;
+    }
+
+    .card-footer {
+        padding:12px 18px;
+        border-top:1px solid var(--gray-100);
+        display:flex; gap:6px; justify-content:flex-end;
+    }
+    .btn-icon {
+        width:30px; height:30px; border-radius:7px;
+        display:flex; align-items:center; justify-content:center;
+        border:none; cursor:pointer; font-size:13px;
+        transition:background .12s, transform .1s;
+    }
+    .btn-icon:hover { transform:scale(1.1); }
+    .btn-icon.edit { background:var(--violet-lt); color:var(--violet); }
+    .btn-icon.del  { background:#fee2e2; color:var(--red); }
+    .btn-icon.view { background:#dbeafe; color:var(--blue); }
+
+    /* Badge stock */
+    .badge-stock {
+        display:inline-flex; align-items:center; gap:4px;
+        padding:2px 8px; border-radius:20px;
+        font-size:10px; font-weight:700;
+    }
+    .bs-alto  { background:#dcfce7; color:var(--green); }
+    .bs-medio { background:#fef9c3; color:#ca8a04; }
+    .bs-bajo  { background:#fee2e2; color:var(--red); }
+    .bs-vacio { background:var(--gray-100); color:var(--gray-400); }
+
+    /* ── VISTA TABLA ── */
+    .table-card {
+        background:#fff; border-radius:var(--radius);
+        box-shadow:var(--shadow); overflow:hidden; display:none;
+    }
+    .table-card.active { display:block; }
+    .table-card table { width:100%; border-collapse:collapse; }
+    .table-card thead th {
+        padding:12px 16px; font-size:11px; font-weight:700;
+        text-transform:uppercase; letter-spacing:.7px;
+        color:var(--gray-400); background:var(--gray-50);
+        border-bottom:1px solid var(--gray-200); white-space:nowrap;
+    }
+    .table-card tbody tr { border-bottom:1px solid var(--gray-100); transition:background .12s; }
+    .table-card tbody tr:last-child { border-bottom:none; }
+    .table-card tbody tr:hover { background:var(--gray-50); }
+    .table-card tbody td { padding:12px 16px; font-size:13px; color:var(--gray-900); vertical-align:middle; }
+
+    /* Toggle vista */
+    .view-toggle {
+        display:flex; gap:3px;
+        background:var(--gray-100); padding:3px; border-radius:8px;
+    }
+    .vt-btn {
+        width:30px; height:30px; border-radius:6px; border:none;
+        background:transparent; color:var(--gray-400);
+        display:flex; align-items:center; justify-content:center;
+        cursor:pointer; font-size:14px; transition:all .15s;
+    }
+    .vt-btn.active { background:#fff; color:var(--violet); box-shadow:0 1px 4px rgba(0,0,0,.08); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+        display:none; position:fixed; inset:0;
+        background:rgba(0,0,0,.45); z-index:2000;
+        align-items:center; justify-content:center; padding:20px;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal-box {
+        background:#fff; border-radius:var(--radius);
+        width:100%; max-width:500px;
+        box-shadow:0 20px 60px rgba(0,0,0,.2);
+        animation:modalIn .25s ease; max-height:92vh; overflow-y:auto;
+    }
+    @keyframes modalIn {
+        from { opacity:0; transform:translateY(-14px); }
+        to   { opacity:1; transform:translateY(0); }
+    }
+    .modal-header {
+        display:flex; align-items:center; justify-content:space-between;
+        padding:18px 22px 14px; border-bottom:1px solid var(--gray-100);
+        position:sticky; top:0; background:#fff; z-index:1;
+    }
+    .modal-header h5 { font-size:15px; font-weight:700; color:var(--navy); margin:0; }
+    .modal-close {
+        width:28px; height:28px; border-radius:7px;
+        background:var(--gray-100); border:none; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
+        font-size:14px; color:var(--gray-600);
+    }
+    .modal-close:hover { background:var(--gray-200); }
+    .modal-body   { padding:18px 22px; }
+    .modal-footer {
+        padding:14px 22px; border-top:1px solid var(--gray-100);
+        display:flex; gap:10px; justify-content:flex-end;
+        position:sticky; bottom:0; background:#fff;
+    }
+
+    .form-section {
+        font-size:11px; font-weight:700; text-transform:uppercase;
+        letter-spacing:.8px; color:var(--violet);
+        margin:16px 0 10px; padding-bottom:5px;
+        border-bottom:2px solid var(--violet-lt);
+    }
+    .form-section:first-child { margin-top:0; }
+    .form-row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .form-group { margin-bottom:12px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--gray-600); margin-bottom:4px; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width:100%; padding:9px 12px;
+        border:1.5px solid var(--gray-200); border-radius:8px;
+        font-size:13px; font-family:'Inter',sans-serif;
+        color:var(--gray-900); background:var(--gray-50);
+        outline:none; transition:border-color .2s; box-sizing:border-box;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color:var(--violet); background:#fff; }
+    .form-group textarea { resize:vertical; min-height:70px; }
+
+    .btn-save {
+        background:linear-gradient(135deg,var(--violet),#9333ea);
+        color:#fff; border:none; padding:9px 22px; border-radius:8px;
+        font-size:13px; font-weight:700; font-family:'Inter',sans-serif;
+        cursor:pointer; box-shadow:0 4px 14px rgba(124,58,237,.3);
+        display:flex; align-items:center; gap:6px;
+    }
+    .btn-save:hover { opacity:.9; }
+    .btn-cancel-m {
+        background:var(--gray-100); color:var(--gray-600);
+        border:none; padding:9px 18px; border-radius:8px;
+        font-size:13px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer;
+    }
+    .btn-cancel-m:hover { background:var(--gray-200); }
+
+    /* Detalle */
+    .det-hero {
+        background:linear-gradient(135deg,var(--navy) 0%,#1e3a5f 60%,#2d1b69 100%);
+        border-radius:10px; padding:20px; margin-bottom:16px;
+        display:flex; align-items:center; gap:16px;
+    }
+    .det-icon { font-size:36px; }
+    .det-name { font-size:18px; font-weight:800; color:#fff; }
+    .det-tipo { font-size:12px; color:rgba(255,255,255,.6); margin-top:2px; }
+    .info-row { display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--gray-100); font-size:13px; }
+    .info-row:last-child { border-bottom:none; }
+    .info-row .il { color:var(--gray-400); font-weight:500; }
+    .info-row .iv { color:var(--navy); font-weight:600; }
+
+    /* Alert */
+    .alert-msg {
+        display:flex; align-items:center; gap:8px;
+        padding:10px 16px; border-radius:8px;
+        font-size:13px; font-weight:500; margin-bottom:16px;
+    }
+    .alert-msg.success { background:#ecfdf5; color:var(--green); border:1px solid #a7f3d0; }
+    .alert-msg.error   { background:#fef2f2; color:var(--red);   border:1px solid #fecaca; }
+
+    /* Empty */
+    .empty-state { text-align:center; padding:60px 20px; color:var(--gray-400); }
+    .empty-state i { font-size:48px; display:block; margin-bottom:12px; }
+
+    @media (max-width:768px) {
+        .stats-grid { grid-template-columns:1fr 1fr; }
+        .cards-grid { grid-template-columns:1fr; }
+        .form-row2  { grid-template-columns:1fr; }
+    }
+</style>
+
+<div class="mobile-menu-overlay"></div>
+<div class="main-container">
+<div class="pd-ltr-20 xs-pd-20-10">
+<div class="min-height-200px">
+
+    <!-- Breadcrumb -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <div class="title"><h4>Alimentos</h4></div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Inicio</a></li>
+                        <li class="breadcrumb-item active">Alimentos</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas -->
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert-msg {% if msg.tags == 'error' %}error{% else %}success{% endif %}">
+                <i class="dw {% if msg.tags == 'error' %}dw-warning{% else %}dw-check{% endif %}"></i>
+                {{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon si-total"><i class="dw dw-layers"></i></div>
+            <div>
+                <div class="stat-num">{{ alimentos.count }}</div>
+                <div class="stat-lbl">Total alimentos</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon si-stock-ok"><i class="dw dw-check"></i></div>
+            <div>
+                <div class="stat-num" id="cnt-ok">—</div>
+                <div class="stat-lbl">Stock normal</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon si-stock-bajo"><i class="dw dw-warning"></i></div>
+            <div>
+                <div class="stat-num" id="cnt-bajo">—</div>
+                <div class="stat-lbl">Stock bajo</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon si-sin-stock"><i class="dw dw-close"></i></div>
+            <div>
+                <div class="stat-num" id="cnt-vacio">—</div>
+                <div class="stat-lbl">Sin stock</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="search-box">
+            <i class="dw dw-search2"></i>
+            <input type="text" id="search-input" placeholder="Buscar alimento...">
+        </div>
+        <select class="filter-sel" id="filter-tipo">
+            <option value="">Todos los tipos</option>
+            <option value="concentrado">Concentrado</option>
+            <option value="maiz">Maíz</option>
+            <option value="soya">Soya</option>
+            <option value="vitaminas">Vitaminas</option>
+            <option value="mineral">Mineral</option>
+            <option value="otro">Otro</option>
+        </select>
+        <select class="filter-sel" id="filter-stock">
+            <option value="">Todos los stocks</option>
+            <option value="ok">Stock normal (>20)</option>
+            <option value="bajo">Stock bajo (1-20)</option>
+            <option value="vacio">Sin stock (0)</option>
+        </select>
+        <div class="view-toggle">
+            <button class="vt-btn active" id="btn-cards" onclick="setView('cards')" title="Tarjetas">
+                <i class="dw dw-grid"></i>
+            </button>
+            <button class="vt-btn" id="btn-table" onclick="setView('table')" title="Tabla">
+                <i class="dw dw-library"></i>
+            </button>
+        </div>
+        <button class="btn-primary" onclick="openModal('modal-crear')">
+            <i class="dw dw-add"></i> Nuevo alimento
+        </button>
+    </div>
+
+    <!-- ── VISTA TARJETAS ── -->
+    <div class="cards-grid" id="view-cards">
+        {% for a in alimentos %}
+        {% with stock=a.stock|floatformat:0 %}
+        <div class="alimento-card"
+             data-nombre="{{ a.nombre|lower }}"
+             data-tipo="{{ a.tipo }}"
+             data-stock-val="{{ a.stock }}">
+
+            <div class="card-top">
+                <div class="tipo-icon ti-{{ a.tipo }}">
+                    {% if a.tipo == 'concentrado' %}🌾
+                    {% elif a.tipo == 'maiz' %}🌽
+                    {% elif a.tipo == 'soya' %}🫘
+                    {% elif a.tipo == 'vitaminas' %}💊
+                    {% elif a.tipo == 'mineral' %}🪨
+                    {% else %}📦{% endif %}
+                </div>
+                <div style="flex:1;">
+                    <div class="card-name">{{ a.nombre }}</div>
+                    <div class="card-tipo">{{ a.get_tipo_display }}</div>
+                </div>
+                {% if a.stock == 0 %}
+                    <span class="badge-stock bs-vacio">Sin stock</span>
+                {% elif a.stock <= 20 %}
+                    <span class="badge-stock bs-bajo">⚠ Bajo</span>
+                {% else %}
+                    <span class="badge-stock bs-alto">✓ OK</span>
+                {% endif %}
+            </div>
+
+            <div class="card-body">
+                <div class="stock-row">
+                    <div>
+                        <span class="stock-val">{{ a.stock }}</span>
+                        <span class="stock-unit">{{ a.unidad_medida }}</span>
+                    </div>
+                    <div class="stock-label">Stock disponible</div>
+                </div>
+
+                <div class="stock-bar">
+                    <div class="stock-fill
+                        {% if a.stock == 0 %}sf-bajo
+                        {% elif a.stock <= 20 %}sf-medio
+                        {% else %}sf-alto{% endif %}"
+                        style="width:{% if a.stock >= 100 %}100{% elif a.stock > 0 %}{{ a.stock }}{% else %}2{% endif %}%">
+                    </div>
+                </div>
+
+                {% if a.descripcion %}
+                    <div class="card-desc">{{ a.descripcion }}</div>
+                {% endif %}
+            </div>
+
+            <div class="card-footer">
+                <button class="btn-icon view" title="Ver detalle"
+                        onclick="verDetalle({{ a.pk }},'{{ a.nombre }}','{{ a.get_tipo_display }}','{{ a.stock }}','{{ a.unidad_medida }}','{{ a.descripcion|default:'' }}')">
+                    <i class="dw dw-eye"></i>
+                </button>
+                <button class="btn-icon edit" title="Editar"
+                        onclick="abrirEditar({{ a.pk }},'{{ a.nombre }}','{{ a.tipo }}','{{ a.unidad_medida }}','{{ a.stock }}','{{ a.descripcion|default:'' }}')">
+                    <i class="dw dw-edit2"></i>
+                </button>
+                <form method="POST" action="{% url 'alimento_eliminar' a.pk %}"
+                      style="display:inline;"
+                      onsubmit="return confirm('¿Eliminar {{ a.nombre }}?')">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-icon del" title="Eliminar">
+                        <i class="dw dw-delete-3"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endwith %}
+        {% empty %}
+        <div class="empty-state" style="grid-column:1/-1;">
+            <i class="dw dw-layers"></i>
+            <p>No hay alimentos registrados todavía.</p>
+            <button class="btn-primary" onclick="openModal('modal-crear')"
+                    style="margin:12px auto 0;width:fit-content;">
+                <i class="dw dw-add"></i> Agregar primer alimento
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- ── VISTA TABLA ── -->
+    <div class="table-card" id="view-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Stock</th>
+                    <th>Unidad</th>
+                    <th>Estado</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in alimentos %}
+                <tr data-nombre="{{ a.nombre|lower }}"
+                    data-tipo="{{ a.tipo }}"
+                    data-stock-val="{{ a.stock }}">
+                    <td style="color:var(--gray-400);font-size:12px;">{{ forloop.counter }}</td>
+                    <td>
+                        <div style="font-weight:600;color:var(--navy);">{{ a.nombre }}</div>
+                    </td>
+                    <td>
+                        <span style="font-size:13px;">
+                            {% if a.tipo == 'concentrado' %}🌾
+                            {% elif a.tipo == 'maiz' %}🌽
+                            {% elif a.tipo == 'soya' %}🫘
+                            {% elif a.tipo == 'vitaminas' %}💊
+                            {% elif a.tipo == 'mineral' %}🪨
+                            {% else %}📦{% endif %}
+                            {{ a.get_tipo_display }}
+                        </span>
+                    </td>
+                    <td style="font-weight:700;font-size:15px;color:var(--navy);">{{ a.stock }}</td>
+                    <td style="color:var(--gray-600);">{{ a.unidad_medida }}</td>
+                    <td>
+                        {% if a.stock == 0 %}
+                            <span class="badge-stock bs-vacio">Sin stock</span>
+                        {% elif a.stock <= 20 %}
+                            <span class="badge-stock bs-bajo">⚠ Bajo</span>
+                        {% else %}
+                            <span class="badge-stock bs-alto">✓ Normal</span>
+                        {% endif %}
+                    </td>
+                    <td style="color:var(--gray-600);font-size:12px;max-width:180px;">
+                        {{ a.descripcion|default:"—"|truncatechars:50 }}
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:5px;">
+                            <button class="btn-icon view" title="Ver"
+                                    onclick="verDetalle({{ a.pk }},'{{ a.nombre }}','{{ a.get_tipo_display }}','{{ a.stock }}','{{ a.unidad_medida }}','{{ a.descripcion|default:'' }}')">
+                                <i class="dw dw-eye"></i>
+                            </button>
+                            <button class="btn-icon edit" title="Editar"
+                                    onclick="abrirEditar({{ a.pk }},'{{ a.nombre }}','{{ a.tipo }}','{{ a.unidad_medida }}','{{ a.stock }}','{{ a.descripcion|default:'' }}')">
+                                <i class="dw dw-edit2"></i>
+                            </button>
+                            <form method="POST" action="{% url 'alimento_eliminar' a.pk %}"
+                                  style="display:inline;"
+                                  onsubmit="return confirm('¿Eliminar {{ a.nombre }}?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-icon del" title="Eliminar">
+                                    <i class="dw dw-delete-3"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" style="text-align:center;padding:50px;color:var(--gray-400);">
+                        No hay alimentos registrados.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</div>
+</div>
+
+<!-- ══ MODAL CREAR ══ -->
+<div class="modal-overlay" id="modal-crear" onclick="closeOut(event,'modal-crear')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5>🌾 Nuevo alimento</h5>
+            <button class="modal-close" onclick="closeModal('modal-crear')">✕</button>
+        </div>
+        <form method="POST" action="{% url 'alimento_crear' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+
+                <div class="form-section">Información básica</div>
+                <div class="form-group">
+                    <label>Nombre *</label>
+                    <input type="text" name="nombre" placeholder="Ej: Concentrado ponedora" required>
+                </div>
+
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label>Tipo *</label>
+                        <select name="tipo" required>
+                            <option value="concentrado">🌾 Concentrado</option>
+                            <option value="maiz">🌽 Maíz</option>
+                            <option value="soya">🫘 Soya</option>
+                            <option value="vitaminas">💊 Vitaminas</option>
+                            <option value="mineral">🪨 Mineral</option>
+                            <option value="otro">📦 Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Unidad de medida *</label>
+                        <select name="unidad_medida" required>
+                            <option value="kg">Kilogramos (kg)</option>
+                            <option value="g">Gramos (g)</option>
+                            <option value="lb">Libras (lb)</option>
+                            <option value="sacos">Sacos</option>
+                            <option value="litros">Litros</option>
+                            <option value="unidades">Unidades</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">Stock inicial</div>
+                <div class="form-group">
+                    <label>Cantidad en stock</label>
+                    <input type="number" name="stock" step="0.01" min="0"
+                           placeholder="0.00" value="0">
+                </div>
+
+                <div class="form-section">Descripción</div>
+                <div class="form-group">
+                    <textarea name="descripcion"
+                              placeholder="Marca, proveedor, notas adicionales..."></textarea>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-m" onclick="closeModal('modal-crear')">Cancelar</button>
+                <button type="submit" class="btn-save">
+                    <i class="dw dw-check"></i> Guardar alimento
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ══ MODAL EDITAR ══ -->
+<div class="modal-overlay" id="modal-editar" onclick="closeOut(event,'modal-editar')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5>✏️ Editar alimento</h5>
+            <button class="modal-close" onclick="closeModal('modal-editar')">✕</button>
+        </div>
+        <form method="POST" id="form-editar" action="">
+            {% csrf_token %}
+            <div class="modal-body">
+
+                <div class="form-section">Información básica</div>
+                <div class="form-group">
+                    <label>Nombre *</label>
+                    <input type="text" name="nombre" id="edit-nombre" required>
+                </div>
+
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label>Tipo *</label>
+                        <select name="tipo" id="edit-tipo">
+                            <option value="concentrado">🌾 Concentrado</option>
+                            <option value="maiz">🌽 Maíz</option>
+                            <option value="soya">🫘 Soya</option>
+                            <option value="vitaminas">💊 Vitaminas</option>
+                            <option value="mineral">🪨 Mineral</option>
+                            <option value="otro">📦 Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Unidad de medida *</label>
+                        <select name="unidad_medida" id="edit-unidad">
+                            <option value="kg">Kilogramos (kg)</option>
+                            <option value="g">Gramos (g)</option>
+                            <option value="lb">Libras (lb)</option>
+                            <option value="sacos">Sacos</option>
+                            <option value="litros">Litros</option>
+                            <option value="unidades">Unidades</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">Stock</div>
+                <div class="form-group">
+                    <label>Cantidad en stock</label>
+                    <input type="number" name="stock" id="edit-stock" step="0.01" min="0">
+                </div>
+
+                <div class="form-section">Descripción</div>
+                <div class="form-group">
+                    <textarea name="descripcion" id="edit-desc"
+                              placeholder="Marca, proveedor, notas..."></textarea>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-m" onclick="closeModal('modal-editar')">Cancelar</button>
+                <button type="submit" class="btn-save">
+                    <i class="dw dw-check"></i> Guardar cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ══ MODAL DETALLE ══ -->
+<div class="modal-overlay" id="modal-detalle" onclick="closeOut(event,'modal-detalle')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h5>🔍 Detalle del alimento</h5>
+            <button class="modal-close" onclick="closeModal('modal-detalle')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="det-hero">
+                <div class="det-icon" id="det-icon">📦</div>
+                <div>
+                    <div class="det-name" id="det-nombre">—</div>
+                    <div class="det-tipo" id="det-tipo-lbl">—</div>
+                </div>
+            </div>
+            <div id="det-rows"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel-m" onclick="closeModal('modal-detalle')">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var EMOJIS = {
+        concentrado:'🌾', maiz:'🌽', soya:'🫘',
+        vitaminas:'💊', mineral:'🪨', otro:'📦'
+    };
+
+    /* ── Modales ── */
+    function openModal(id) {
+        document.getElementById(id).classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    function closeOut(e, id) {
+        if (e.target === document.getElementById(id)) closeModal(id);
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            ['modal-crear','modal-editar','modal-detalle'].forEach(closeModal);
+        }
+    });
+
+    /* ── Editar ── */
+    function abrirEditar(id, nombre, tipo, unidad, stock, desc) {
+        document.getElementById('form-editar').action = '/dashboard/alimentos/' + id + '/editar/';
+        document.getElementById('edit-nombre').value  = nombre;
+        document.getElementById('edit-stock').value   = stock;
+        document.getElementById('edit-desc').value    = desc;
+
+        setSelectVal('edit-tipo',   tipo);
+        setSelectVal('edit-unidad', unidad);
+        openModal('modal-editar');
+    }
+
+    function setSelectVal(selId, val) {
+        var sel = document.getElementById(selId);
+        for (var i = 0; i < sel.options.length; i++) {
+            if (sel.options[i].value === val) { sel.selectedIndex = i; break; }
+        }
+    }
+
+    /* ── Ver detalle ── */
+    function verDetalle(id, nombre, tipoLabel, stock, unidad, desc) {
+        var tipo = Object.keys(EMOJIS).find(function(k) {
+            return tipoLabel.toLowerCase().includes(k) || k === 'otro';
+        }) || 'otro';
+
+        document.getElementById('det-icon').textContent    = EMOJIS[tipo] || '📦';
+        document.getElementById('det-nombre').textContent  = nombre;
+        document.getElementById('det-tipo-lbl').textContent= tipoLabel;
+
+        var stockNum = parseFloat(stock);
+        var estadoStock = stockNum === 0 ? '❌ Sin stock'
+                        : stockNum <= 20 ? '⚠️ Stock bajo'
+                        : '✅ Stock normal';
+
+        var rows = [
+            ['Stock disponible', stock + ' ' + unidad],
+            ['Estado de stock',  estadoStock],
+            ['Descripción',      desc || '—'],
+        ];
+
+        document.getElementById('det-rows').innerHTML = rows.map(function(r) {
+            return '<div class="info-row">' +
+                '<span class="il">' + r[0] + '</span>' +
+                '<span class="iv">' + r[1] + '</span>' +
+            '</div>';
+        }).join('');
+
+        openModal('modal-detalle');
+    }
+
+    /* ── Vista tarjetas / tabla ── */
+    function setView(v) {
+        var cards = document.getElementById('view-cards');
+        var table = document.getElementById('view-table');
+        var btnC  = document.getElementById('btn-cards');
+        var btnT  = document.getElementById('btn-table');
+
+        if (v === 'cards') {
+            cards.style.display = 'grid';
+            table.classList.remove('active');
+            btnC.classList.add('active');
+            btnT.classList.remove('active');
+            localStorage.setItem('alimentos-view', 'cards');
+        } else {
+            cards.style.display = 'none';
+            table.classList.add('active');
+            btnT.classList.add('active');
+            btnC.classList.remove('active');
+            localStorage.setItem('alimentos-view', 'table');
+        }
+    }
+
+    /* Restaurar vista guardada */
+    document.addEventListener('DOMContentLoaded', function() {
+        var saved = localStorage.getItem('alimentos-view');
+        if (saved === 'table') setView('table');
+
+        calcStats();
+    });
+
+    /* ── Stats dinámicas ── */
+    function calcStats() {
+        var cards = document.querySelectorAll('[data-stock-val]');
+        var ok = 0, bajo = 0, vacio = 0;
+        cards.forEach(function(el) {
+            var s = parseFloat(el.dataset.stockVal);
+            if (s === 0)       vacio++;
+            else if (s <= 20)  bajo++;
+            else               ok++;
+        });
+        document.getElementById('cnt-ok').textContent    = ok;
+        document.getElementById('cnt-bajo').textContent  = bajo;
+        document.getElementById('cnt-vacio').textContent = vacio;
+    }
+
+    /* ── Filtros ── */
+    function filterItems() {
+        var search = document.getElementById('search-input').value.toLowerCase();
+        var tipo   = document.getElementById('filter-tipo').value;
+        var stock  = document.getElementById('filter-stock').value;
+
+        var items = document.querySelectorAll('[data-nombre]');
+        items.forEach(function(el) {
+            var matchName  = !search || el.dataset.nombre.includes(search);
+            var matchTipo  = !tipo   || el.dataset.tipo === tipo;
+            var stockVal   = parseFloat(el.dataset.stockVal);
+            var matchStock = true;
+            if (stock === 'ok')    matchStock = stockVal > 20;
+            if (stock === 'bajo')  matchStock = stockVal > 0 && stockVal <= 20;
+            if (stock === 'vacio') matchStock = stockVal === 0;
+
+            el.style.display = (matchName && matchTipo && matchStock) ? '' : 'none';
+        });
+    }
+
+    document.getElementById('search-input').addEventListener('input', filterItems);
+    document.getElementById('filter-tipo').addEventListener('change', filterItems);
+    document.getElementById('filter-stock').addEventListener('change', filterItems);
+
+</script>
+
+{% include 'private/footer.html' %}
