@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'inicio',
+    'inicio',  # ← tu app
     'dashboard',
 ]
 
@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'djangoquindo_db', 
+        'NAME': 'Django', 
         'USER': 'postgres',
         'PASSWORD': '12345', 
         'HOST': '127.0.0.1',
