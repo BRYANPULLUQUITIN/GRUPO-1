@@ -1,0 +1,90 @@
+{% load static %}
+{% include 'private/header.html' %}
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content shadow border-0">
+        <div class="modal-header bg-light">
+            <h5 class="modal-title text-dark fw-bold">Editar Usuario: {{ usuario.get_full_name }}</h5>
+            <button type="button" class="btn-close" onclick="closeModal()" aria-label="Close"></button>
+        </div>
+
+        <form method="POST" action="{% url 'usuario_editar' usuario.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal-body p-4">
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
+                        <input type="text" name="first_name" class="form-control" value="{{ usuario.first_name }}" placeholder="Ej: Juan" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Apellido <span class="text-danger">*</span></label>
+                        <input type="text" name="last_name" class="form-control" value="{{ usuario.last_name }}" placeholder="Ej: Pérez" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Correo electrónico <span class="text-danger">*</span></label>
+                        <input type="email" name="email" class="form-control" value="{{ usuario.email }}" placeholder="correo@ejemplo.com" required>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label fw-semibold">Cargo</label>
+                        <input type="text" name="cargo" class="form-control" value="{{ usuario.profile.cargo }}" placeholder="Ej: Desarrollador">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Departamento</label>
+                        <select name="departamento" class="form-select">
+                            <option value="">Seleccionar...</option>
+                            {% for dept in departamentos %}
+                                <option value="{{ dept }}" {% if usuario.profile.departamento == dept %}selected{% endif %}>
+                                    {{ dept }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Foto de perfil</label>
+                        <input type="file" name="foto" accept="image/*" class="form-control mb-2">
+                        {% if usuario.profile.foto %}
+                            <div class="d-flex align-items-center gap-2 mt-2">
+                                <img src="{{ usuario.profile.foto.url }}" alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                <small class="text-muted">Foto actual guardada</small>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-check form-switch card p-3 border bg-light-subtle">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <label class="form-check-label fw-bold h6 mb-0" for="is_staff">Permisos de administrador</label>
+                                    <small class="text-muted d-block">Permite al usuario acceder al panel de gestión.</small>
+                                </div>
+                                <input class="form-check-input ms-0" type="checkbox" name="is_staff" id="is_staff" style="transform: scale(1.3);" {% if usuario.is_staff %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer bg-light d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-outline-secondary px-4" onclick="closeModal()">Cancelar</button>
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="dw dw-check me-1"></i> Guardar cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% include 'private/footer.html' %}

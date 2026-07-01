@@ -1,251 +1,159 @@
 {% load static %}
 {% include 'header.html' %}
 
-<!-- Hamburger -->
+<div class="w-100 position-fixed bg-dark" style="z-index: 9999; top: 0;"></div>
 
-<div class="hamburger_bar trans_400 d-flex flex-row align-items-center justify-content-start">
-	<div class="hamburger">
-		<div class="menu_toggle d-flex flex-row align-items-center justify-content-start">
-			<span>menu</span>
-			<div class="hamburger_container">
-				<div class="menu_hamburger">
-					<div class="line_1 hamburger_lines" style="transform: matrix(1, 0, 0, 1, 0, 0);"></div>
-					<div class="line_2 hamburger_lines" style="visibility: inherit; opacity: 1;"></div>
-					<div class="line_3 hamburger_lines" style="transform: matrix(1, 0, 0, 1, 0, 0);"></div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="home" style="height: 400px;">
+    <div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/galpon1.jpg' %}" data-speed="0.8"></div>
+    <div class="home_container">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="home_content text-center">
+                        <div class="home_subtitle page_subtitle text-white text-shadow">Nuestra Granja</div>
+                        <div class="home_title"><h1 class="text-white text-shadow">Nuestro Blog Avicola</h1></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Home -->
+<div class="blog_section py-5">
+    <div class="container my-5">
+        <div class="row mb-5">
+            <div class="col text-center">
+                <div class="section_title_container">
+                    <div class="section_subtitle page_subtitle text-success font-weight-bold">Actualizaciones Recientes</div>
+                    <div class="section_title"><h1 class="font-weight-bold" style="color: #4b3621;">Lo Último de la Granja</h1></div>
+                </div>
+            </div>
+        </div>
 
-<div class="home">
-	<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="/static/public/images/blog.jpg" data-speed="0.8"></div>
-	<div class="home_container">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="home_content text-center">
-						<div class="home_subtitle page_subtitle">El Buen Aroma</div>
-						<div class="home_title"><h1>Nuestro Blog</h1></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="row">
+
+            <div class="col-lg-6 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-sm rounded-lg overflow-hidden">
+                    <img src="{% static 'images/gallinas.jpeg' %}" alt="Galpones de Crianza" class="card-img-top" style="height: 260px; object-fit: cover;">
+                    <div class="card-body p-4">
+                        <span class="badge badge-pill text-white px-3 py-2 mb-3" style="background-color: #4b3621;">Infraestructura</span>
+                        <h5 class="card-title font-weight-bold text-dark">Nuestros Galpones: Espacio y Confort Animal</h5>
+                        <p class="card-text text-muted small mb-3">
+                            <i class="fa fa-user mr-1"></i> Equipo Técnico &nbsp;|&nbsp;
+                            <i class="fa fa-folder mr-1"></i> Infraestructura
+                        </p>
+                        <p class="card-text text-secondary">Diseñamos cada galpón pensando en la capacidad ideal por metro cuadrado, ventilación cruzada y temperatura controlada para el bienestar de las aves.</p>
+                        <a href="#" class="btn btn-sm mt-2 font-weight-bold" style="color: #4b3621; border: 1px solid #4b3621;">Leer Más</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-sm rounded-lg overflow-hidden">
+                    <img src="{% static 'images/clasihuevos.jpg' %}" alt="Clasificación de Huevos" class="card-img-top" style="height: 260px; object-fit: cover;">
+                    <div class="card-body p-4">
+                        <span class="badge badge-pill text-white px-3 py-2 mb-3" style="background-color: #4b3621;">Productos</span>
+                        <h5 class="card-title font-weight-bold text-dark">Clasificación de Huevos </h5>
+                        <p class="card-text text-muted small mb-3">
+                            <i class="fa fa-user mr-1"></i> Control de Calidad &nbsp;|&nbsp;
+                            <i class="fa fa-folder mr-1"></i> Productos
+                        </p>
+                        <p class="card-text text-secondary">Cada huevo pasa por un riguroso control de calidad, limpieza y clasificación automática.</p>
+                        <a href="#" class="btn btn-sm mt-2 font-weight-bold" style="color: #4b3621; border: 1px solid #4b3621;">Leer Más</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-sm rounded-lg overflow-hidden">
+                    <img src="{% static 'images/vacunap.jpg' %}" alt="Plan de Vacunación" class="card-img-top" style="height: 260px; object-fit: cover;">
+                    <div class="card-body p-4">
+                        <span class="badge badge-pill text-white px-3 py-2 mb-3" style="background-color: #4b3621;">Sanidad</span>
+                        <h5 class="card-title font-weight-bold text-dark">Plan de Vacunación: Cuidado desde el Primer Día</h5>
+                        <p class="card-text text-muted small mb-3">
+                            <i class="fa fa-user mr-1"></i> Veterinario Jefe &nbsp;|&nbsp;
+                            <i class="fa fa-folder mr-1"></i> Sanidad
+                        </p>
+                        <p class="card-text text-secondary">Aplicamos un plan sanitario avanzado con supervisión veterinaria constante.</p>
+                        <a href="#" class="btn btn-sm mt-2 font-weight-bolSegd" style="color: #4b3621; border: 1px solid #4b3621;">Leer Más</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6 mb-4">
+                <div class="card h-100 border-0 shadow-sm rounded-lg overflow-hidden">
+                    <img src="{% static 'images/enthuevos.jpg' %}" alt="Distribución y Entregas" class="card-img-top" style="height: 260px; object-fit: cover;">
+                    <div class="card-body p-4">
+                        <span class="badge badge-pill text-white px-3 py-2 mb-3" style="background-color: #4b3621;">Logística</span>
+                        <h5 class="card-title font-weight-bold text-dark">Entregas Frescas: De la Granja a tu Negocio</h5>
+                        <p class="card-text text-muted small mb-3">
+                            <i class="fa fa-user mr-1"></i> Logística &nbsp;|&nbsp;
+                            <i class="fa fa-folder mr-1"></i> Distribución
+                        </p>
+                        <p class="card-text text-secondary">Garantizamos entregas rápidas con control de temperatura y rutas optimizadas.</p>
+                        <a href="#" class="btn btn-sm mt-2 font-weight-bold" style="color: #4b3621; border: 1px solid #4b3621;">Leer Más</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row mt-3">
+            <div class="col text-center">
+                <a href="#" class="btn btn-lg font-weight-bold px-5 py-3 text-white shadow-sm" style="background-color: #4b3621;">Ver Más Artículos</a>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Blog -->
-
-<div class="blog">
-	<div class="container">
-		<div class="row">
-
-			<!-- Blog Post -->
-			<div class="col-lg-6 blog_col">
-				<div class="blog_post">
-					<div class="blog_post_image_container">
-						<div class="blog_post_image"><img src="/static/public/images/blog_1.jpg" alt="Blog Image"></div>
-						<div class="blog_post_date"><a href="#">June 18, 2018</a></div>
-					</div>
-					<div class="blog_post_content">
-						<div class="blog_post_title"><a href="#">Our Nomenee at the Restaurants Awards</a></div>
-						<div class="blog_post_info">
-							<ul class="d-flex flex-row align-items-center justify-content-start">
-								<li>Por <a href="#">George Smith</a></li>
-								<li>En <a href="#">Estilo de Vida</a></li>
-								<li><a href="#">2 Comentarios</a></li>
-							</ul>
-						</div>
-						<div class="blog_post_text">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Ut non justo eleifend, facilisis nibh ut, interdum odio. Suspendisse potenti.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Blog Post -->
-			<div class="col-lg-6 blog_col">
-				<div class="blog_post">
-					<div class="blog_post_image_container">
-						<div class="blog_post_image"><img src="/static/public/images/blog_2.jpg" alt="Blog Image"></div>
-						<div class="blog_post_date"><a href="#">June 18, 2018</a></div>
-					</div>
-					<div class="blog_post_content">
-						<div class="blog_post_title"><a href="#">Recipe of the week</a></div>
-						<div class="blog_post_info">
-							<ul class="d-flex flex-row align-items-center justify-content-start">
-								<li>by <a href="#">George Smith</a></li>
-								<li>in <a href="#">Lifestyle</a></li>
-								<li><a href="#">2 Comments</a></li>
-							</ul>
-						</div>
-						<div class="blog_post_text">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Ut non justo eleifend, facilisis nibh ut, interdum odio. Suspendisse potenti.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Blog Post -->
-			<div class="col-lg-6 blog_col">
-				<div class="blog_post">
-					<div class="blog_post_image_container">
-						<div class="blog_post_image"><img src="/static/public/images/blog_3.jpg" alt="Blog Image"></div>
-						<div class="blog_post_date"><a href="#">June 18, 2018</a></div>
-					</div>
-					<div class="blog_post_content">
-						<div class="blog_post_title"><a href="#">Our Nomenee at the Restaurants Awards</a></div>
-						<div class="blog_post_info">
-							<ul class="d-flex flex-row align-items-center justify-content-start">
-								<li>by <a href="#">George Smith</a></li>
-								<li>in <a href="#">Lifestyle</a></li>
-								<li><a href="#">2 Comments</a></li>
-							</ul>
-						</div>
-						<div class="blog_post_text">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Ut non justo eleifend, facilisis nibh ut, interdum odio. Suspendisse potenti.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Blog Post -->
-			<div class="col-lg-6 blog_col">
-				<div class="blog_post">
-					<div class="blog_post_image_container">
-						<div class="blog_post_image"><img src="/static/public/images/blog_4.jpg" alt="Blog Image"></div>
-						<div class="blog_post_date"><a href="#">June 18, 2018</a></div>
-					</div>
-					<div class="blog_post_content">
-						<div class="blog_post_title"><a href="#">Our Nomenee at the Restaurants Awards</a></div>
-						<div class="blog_post_info">
-							<ul class="d-flex flex-row align-items-center justify-content-start">
-								<li>by <a href="#">George Smith</a></li>
-								<li>in <a href="#">Lifestyle</a></li>
-								<li><a href="#">2 Comments</a></li>
-							</ul>
-						</div>
-						<div class="blog_post_text">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Ut non justo eleifend, facilisis nibh ut, interdum odio. Suspendisse potenti.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Blog Post -->
-			<div class="col-lg-6 blog_col">
-				<div class="blog_post">
-					<div class="blog_post_image_container">
-						<div class="blog_post_image"><img src="/static/public/images/blog_5.jpg" alt="Blog Image"></div>
-						<div class="blog_post_date"><a href="#">June 18, 2018</a></div>
-					</div>
-					<div class="blog_post_content">
-						<div class="blog_post_title"><a href="#">Our Nomenee at the Restaurants Awards</a></div>
-						<div class="blog_post_info">
-							<ul class="d-flex flex-row align-items-center justify-content-start">
-								<li>by <a href="#">George Smith</a></li>
-								<li>in <a href="#">Lifestyle</a></li>
-								<li><a href="#">2 Comments</a></li>
-							</ul>
-						</div>
-						<div class="blog_post_text">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Ut non justo eleifend, facilisis nibh ut, interdum odio. Suspendisse potenti.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Blog Post -->
-			<div class="col-lg-6 blog_col">
-				<div class="blog_post">
-					<div class="blog_post_image_container">
-						<div class="blog_post_image"><img src="/static/public/images/blog_6.jpg" alt="Blog Image"></div>
-						<div class="blog_post_date"><a href="#">June 18, 2018</a></div>
-					</div>
-					<div class="blog_post_content">
-						<div class="blog_post_title"><a href="#">Our Nomenee at the Restaurants Awards</a></div>
-						<div class="blog_post_info">
-							<ul class="d-flex flex-row align-items-center justify-content-start">
-								<li>by <a href="#">George Smith</a></li>
-								<li>in <a href="#">Lifestyle</a></li>
-								<li><a href="#">2 Comments</a></li>
-							</ul>
-						</div>
-						<div class="blog_post_text">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Ut non justo eleifend, facilisis nibh ut, interdum odio. Suspendisse potenti.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-
-		</div>
-		<div class="row load_more_row">
-			<div class="col">
-				<div class="button load_more_button ml-auto mr-auto trans_200"><a href="#">Cargar Mas</a></div>
-			</div>
-		</div>
-	</div>
+<div class="testimonials py-5 position-relative">
+    <div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/aliadosh.jpg' %}" data-speed="0.8"></div>
+    <div class="container my-5">
+        <div class="row">
+            <div class="col text-center">
+                <div class="section_title_container">
+                    <h1 class="text-white font-weight-bold text-shadow">Lo que dicen nuestros aliados</h1>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-lg-8 offset-lg-2 text-center bg-white p-5 rounded shadow-lg">
+                <p class="blockquote font-italic text-muted" style="font-size: 1.25rem;">"La calidad y frescura de los productos supera nuestras expectativas."</p>
+                <h5 class="font-weight-bold mt-4" style="color: #4b3621;">- Supermercados La Estancia</h5>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Reservations -->
-
-<div class="reservations text-center">
-	<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="/static/public/images/reservations.jpg" data-speed="0.8"></div>
-	<div class="container">
-		<div class="row">
-			<div class="col">
-				<div class="reservations_content d-flex flex-column align-items-center justify-content-center">
-					<div class="res_stars page_subtitle">5 Stars</div>
-					<div class="res_title">Reserva tu Mesa</div>
-					<div class="res_form_container">
-						<form action="#" id="res_form" class="res_form">
-							<div class="d-flex flex-sm-row flex-column align-items-center justify-content-start">
-								<input type="text" id="datepicker" class="res_input" required="required">
-								<input type="text" class="res_input timepicker" required="required">
-								<select class="res_select">
-									<option disabled="" selected="">2 personas</option>
-									<option>3 personas</option>
-									<option>4 personas</option>
-									<option>5 personas</option>
-									<option>6 personas</option>
-								</select>
-							</div>
-							<button class="res_button">Reservar Mesa</button>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>		
+<div class="reservations py-5">
+    <div class="container my-5 text-center">
+        <h2 class="font-weight-bold mb-5" style="color: #4b3621;">¿Deseas realizar un pedido al por mayor?</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <form action="{% url 'contact' %}" method="POST" class="res_form bg-white p-5 rounded shadow-sm">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <input type="text" class="form-control form-control-lg border-secondary rounded" placeholder="Fecha deseada" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <input type="text" class="form-control form-control-lg border-secondary rounded" placeholder="placeholder="Cantidad de pedidos (cubetas o unidades) required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <select class="form-control form-control-lg border-secondary rounded">
+                                <option>Cubetas Tipo A</option>
+                                <option>Cubetas Tipo B</option>
+                                <option>Pollo Faenado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-lg btn-block text-white mt-4 font-weight-bold shadow-sm" style="background-color: #4b3621;">
+                        Solicitar Cotización
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Footer -->
-
-<footer class="footer">
-	<div class="container">
-		<div class="row">
-
-			<!-- Footer Logo -->
-			<div class="col-lg-3 footer_col">
-				<div class="footer_logo">
-					<div class="footer_logo_title">The Venue</div>
-					<div class="footer_logo_subtitle">restaurant</div>
-				</div>
-				<div class="copyright">
-					<p style="line-height: 1.2;">Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
-				</div>
-			</div>
-
-			<!-- Footer About -->
-			<div class="col-lg-6 footer_col">
-				<div class="footer_about">
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Ut non justo eleifend, facilisis nibh ut, interdum odio.</p>
-				</div>
-			</div>
-
-		</div>
-	</div>
-</footer>
 {% include 'footer.html' %}
